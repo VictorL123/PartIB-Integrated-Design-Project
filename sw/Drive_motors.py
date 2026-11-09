@@ -33,10 +33,10 @@ def test_drive():
 
     for _ in range(10):
         print("Forward")
-        motors.Forward()
+        motors.Forward(50)
         sleep(1)
         print("Reverse")
-        motors.Reverse
+        motors.Reverse(50)
         sleep(1)
 
 if __name__ == "__main__":
