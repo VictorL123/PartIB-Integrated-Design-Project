@@ -1,33 +1,63 @@
 """motors.py - wheel control.
 
-Start from the course Motor class in sw/test_motor.py (Forward/Reverse/off).
-Do NOT import test_motor directly if it runs code at import: copy the class here.
+Motor is the course class (sw/test_motor.py) plus set(): one number from -100 to 100.
+Everything else in the project uses Drivetrain, never a raw Motor.
 """
+from machine import Pin, PWM
+
 
 class Motor:
-    """One motor: a direction pin and a PWM pin.
-    TODO: copy the course Motor class, then add set(speed) taking -100..100
-    (positive = forward, which is dir 0 on these drivers)."""
+    def __init__(self, dir_pin, pwm_pin, invert=False):
+        self.mDir = Pin(dir_pin, Pin.OUT)      # direction pin
+        self.pwm = PWM(Pin(pwm_pin))           # speed pin
+        self.pwm.freq(1000)
+        self.pwm.duty_u16(0)                   # start stopped
+        self.invert = invert                   # for motors mounted mirror-image
 
-    def __init__(self, dir_pin, pwm_pin):
-        raise NotImplementedError
+    def off(self):
+        self.pwm.duty_u16(0)
+
+    def Forward(self, speed=100):
+        self.mDir.value(0)                     # forward = 0, reverse = 1 on these drivers
+        self.pwm.duty_u16(int(65535 * speed / 100))
+
+    def Reverse(self, speed=30):
+        self.mDir.value(1)
+        self.pwm.duty_u16(int(65535 * speed / 100))
 
     def set(self, speed):
-        raise NotImplementedError
+        """speed: -100 (full reverse) .. +100 (full forward). Applies `invert`."""
+        if self.invert:
+            speed = -speed
+        speed = max(-100, min(100, speed))     # never exceed the valid range
+        if speed > 0:
+            self.Forward(speed)
+        elif speed < 0:
+            self.Reverse(-speed)
+        else:
+            self.off()
 
 
 class Drivetrain:
-    """Two motors treated as one vehicle. The rest of the code only uses this."""
+    """Two motors treated as one vehicle."""
 
     def __init__(self, left, right):
         self.left = left
         self.right = right
 
     def drive(self, left_speed, right_speed):
-        """TODO: set both motors. Clamp to -100..100."""
+        """Set both wheel speeds (-100..100). Different speeds make it steer."""
+        self.left.set(left_speed)
+        self.right.set(right_speed)
 
     def stop(self):
-        """TODO: both motors off. Must always be safe to call."""
+        """Both motors off. Always safe to call, even twice."""
+        self.left.off()
+        self.right.off()
 
     def spin(self, direction, speed):
-        """TODO: rotate on the spot. direction = "LEFT" or "RIGHT"."""
+        """Rotate on the spot. direction = "LEFT" (anticlockwise) or "RIGHT"."""
+        if direction == "LEFT":
+            self.drive(-speed, speed)
+        else:
+            self.drive(speed, -speed)
