@@ -13,7 +13,7 @@ class LineFollower:
         self.sensors = sensors
         self.last_error = 0
 
-    def step(self, base_speed, linecount):
+    def step(self, base_speed, dt):
         """TODO:
         1. error = sensors.error()
         2. if None: lost line -> keep turning toward self.last_error's side
@@ -21,30 +21,19 @@ class LineFollower:
         4. drive.drive(base + correction, base - correction)  (swap signs if it steers away)
         5. store last_error
         Return True if the line is currently found, False if lost (main uses this for recovery)."""
-        # set dt
         dt = 1.5
-        # loop for as many lines as need to be passed
-        for i in range(linecount):
-            while self.sensors.atjunction() == False:
-                error = self.sensors.error()
-                if error == None:
-                    self.drive.stop()
-                    raise Exception("No line found")
-                integral = error * dt 
-                derivative = (error - self.last_error)/dt
-
-                mdelta = KD * derivative + KP * error + KI * integral
-                self.drive.drive(base_speed + mdelta, base_speed - mdelta)
-
-                self.last_error = error
-                sleep(dt)
+        while self.sensors.at_junction() == False:
+            error = self.sensors.error()
+            if error == None:
+                self.drive.stop()
+                return False
+            integral = error * dt 
+            derivative = (error - self.last_error)/dt
+            mdelta = KD * derivative + KP * error + KI * integral
+            self.drive.drive(base_speed + mdelta, base_speed - mdelta)
+            self.last_error = error
         self.drive.stop()
-        
-        if self.sensors._junction_count() != linecount:
-            raise AssertionError("line count and junctions passed do not match")
 
-        
-                # break if robot about to hit anything (raise exception)
 
 
     def spin(self, spin_speed, direction):
