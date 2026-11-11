@@ -7,6 +7,7 @@ class LineSensors:
     def __init__(self):
         # TODO: create Pin.IN objects for LINE_SENSOR_PINS (think: pull-up or pull-down?)
         self._junction_count = 0
+        self.online_count = 0
 
     def read(self):
         """ Read the sensors, return list of 0/1 left to right, 1 = sees line
@@ -73,3 +74,9 @@ class LineSensors:
 
     def centre_on_line(self):
         """TODO: used to know when a turn has found the line again."""
+        values = self.read()
+        if (values[1] and values[2]):
+            self.online_count += 1
+        else:
+            self.online_count = 0
+        return self.online_count >= JUNCTION_CONFIRM

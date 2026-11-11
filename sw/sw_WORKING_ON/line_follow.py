@@ -38,7 +38,8 @@ class LineFollower:
 
                 self.last_error = error
                 sleep(dt)
-
+        self.drive.stop()
+        
         if self.sensors._junction_count() != linecount:
             raise AssertionError("line count and junctions passed do not match")
 
@@ -46,7 +47,13 @@ class LineFollower:
                 # break if robot about to hit anything (raise exception)
 
 
-
+    def spin(self, spin_speed, direction):
+        while self.sensors.centre_on_line() == False:
+            self.drive.spin(direction, spin_speed)
+            # break if robot about to hit anything
+        self.drive.stop()
+        
+        
 
 
     def reset(self):
