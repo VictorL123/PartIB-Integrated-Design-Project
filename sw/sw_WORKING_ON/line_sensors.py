@@ -1,7 +1,7 @@
 """line_sensors.py - turn raw sensor pins into the numbers the controller needs."""
 from config import LINE_SENSOR_PINS, LINE_SENSOR_WEIGHTS, LINE_ON_VALUE, JUNCTION_CONFIRM
 from machine import Pin
-import numpy as np
+
 
 class LineSensors:
     def __init__(self):
@@ -9,10 +9,15 @@ class LineSensors:
         self._junction_count = 0
 
     def read(self):
-        """TODO: return a list of 0/1, 1 = sees the line (use LINE_ON_VALUE)."""
+        """ Read the sensors, return list of 0/1 left to right, 1 = sees line
+        TODO: return a list of 0/1, 1 = sees the line (use LINE_ON_VALUE)."""
+        # initialise list
         values = []
+        # get data for each pin
         for i in range(len(LINE_SENSOR_PINS)):
+            # set pin
             sensor_pin = Pin(LINE_SENSOR_PINS[i], Pin.IN)
+            # check if on line and add values to list
             if sensor_pin.value() == LINE_ON_VALUE:
                 values.append(1)
             else:
@@ -25,7 +30,9 @@ class LineSensors:
         """TODO: weighted position of the line. 
         Negative = line is left (speed up right), positive = line is right (speed up left).
         Return None if no sensor sees the line (lost)."""
+        # read sensors
         sensors = self.read()
+        #  set error
         if sensors == [0,1,1,0]:
             error = 0
         elif sensors == [0,1,0,0]:
@@ -46,7 +53,7 @@ class LineSensors:
             # at junction
             error = 0
         else:
-            # 1011, 1101, 1001
+            # other conditions: 1011, 1101, 1001
             raise AssertionError("sensor condition does not support error")
 
         return error        
@@ -55,8 +62,10 @@ class LineSensors:
     def at_junction(self):
         """TODO: True only after the outer sensors have seen the line JUNCTION_CONFIRM
         readings IN A ROW. Reset the counter when they don't."""
+        # read values
         values = self.read()
-        if values[0] and values[-1]:
+        # this may not work for corners that are not t junctions of the robot does not enter on line
+        if (values[0] or values[-1]) and (values[1] and values[2]):
             self._junction_count += 1
         else:
             self._junction_count = 0

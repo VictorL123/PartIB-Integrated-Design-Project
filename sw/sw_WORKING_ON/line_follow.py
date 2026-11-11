@@ -8,6 +8,7 @@ from motors import Drivetrain
 
 class LineFollower:
     def __init__(self, robot, sensors):
+        # initialise
         self.drive = robot
         self.sensors = sensors
         self.last_error = 0
@@ -20,7 +21,9 @@ class LineFollower:
         4. drive.drive(base + correction, base - correction)  (swap signs if it steers away)
         5. store last_error
         Return True if the line is currently found, False if lost (main uses this for recovery)."""
+        # set dt
         dt = 1.5
+        # loop for as many lines as need to be passed
         for i in range(linecount):
             while self.sensors.atjunction() == False:
                 error = self.sensors.error()
@@ -36,7 +39,10 @@ class LineFollower:
                 self.last_error = error
                 sleep(dt)
 
+        if self.sensors._junction_count() != linecount:
+            raise AssertionError("line count and junctions passed do not match")
 
+        
                 # break if robot about to hit anything (raise exception)
 
 
