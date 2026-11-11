@@ -36,6 +36,7 @@ SLOW_SPEED = 30           # approaching packages / ramp
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 KP = 12                   # steer harder the further the line is off-centre
 KD = 8                    # damps oscillation; raise after KP is tuned
+KI = 0
 JUNCTION_CONFIRM = 3      # consecutive readings before we believe a junction
 JUNCTION_CROSS_MS = 300   # drive straight this long to get past a junction (tune!)
 DEBOUNCE_MS = 25          # button debounce

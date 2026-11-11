@@ -1,6 +1,7 @@
 """line_sensors.py - turn raw sensor pins into the numbers the controller needs."""
 from config import LINE_SENSOR_PINS, LINE_SENSOR_WEIGHTS, LINE_ON_VALUE, JUNCTION_CONFIRM
 from machine import Pin
+import numpy as np
 
 class LineSensors:
     def __init__(self):
@@ -39,13 +40,11 @@ class LineSensors:
             error = 5
         elif sensors == [1,0,0,0]:
             error = -5
-        elif sensors == [1,0,0,1]:
+        elif sensors == [1,0,0,1] or sensors == [0,0,0,0]:
             error = None
-        elif sensors == [0,0,0,0]:
-            error = None
-            raise Exception("no line found")
         elif sensors == [1,1,1,1] or sensors == [0,1,1,1] or sensors == [1,1,1,0]:
-            self.at_junction()
+            # at junction
+            error = 0
         else:
             # 1011, 1101, 1001
             raise AssertionError("sensor condition does not support error")
@@ -56,6 +55,12 @@ class LineSensors:
     def at_junction(self):
         """TODO: True only after the outer sensors have seen the line JUNCTION_CONFIRM
         readings IN A ROW. Reset the counter when they don't."""
+        values = self.read()
+        if values[0] and values[-1]:
+            self._junction_count += 1
+        else:
+            self._junction_count = 0
+        return self._junction_count >= JUNCTION_CONFIRM
 
     def centre_on_line(self):
         """TODO: used to know when a turn has found the line again."""

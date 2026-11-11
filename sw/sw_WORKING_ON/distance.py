@@ -4,6 +4,9 @@ Import path: from libs.VL53L0X.VL53L0X import VL53L0X
 Course setup (see sw/test_vl53l0x.py): I2C(id=0, sda=Pin(8), scl=Pin(9)), then
 set_Vcsel_pulse_period(type[0], 18) and (type[1], 14), then start() once, read() returns mm.
 """
+
+# distance sensor for safety??????????
+
 from config import PACKAGE_NEAR_MM
 
 
