@@ -29,7 +29,9 @@ class LineFollower:
             mdelta = KD * derivative + KP * error + KI * integral
             self.drive.drive(base_speed + mdelta, base_speed - mdelta)
             self.last_error = error
-        self.drive.stop()
+
+        return True
+    
 
 
 
