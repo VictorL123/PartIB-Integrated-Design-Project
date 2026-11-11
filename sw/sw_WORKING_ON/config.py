@@ -18,7 +18,7 @@ RIGHT_MOTOR_DIR, RIGHT_MOTOR_PWM = 4, 5
 LEFT_MOTOR_INVERT = False    # set True if "forward" spins that wheel backwards
 RIGHT_MOTOR_INVERT = False   # (motors are mounted mirrored, so one usually needs this)
 
-LINE_SENSOR_PINS = ()        # left -> right, e.g. (20, 21, 22, 26)
+LINE_SENSOR_PINS = [8,9,10,11]       # left -> right, e.g. (20, 21, 22, 26)
 LINE_SENSOR_WEIGHTS = None   # None = auto: 3 sensors -> (-2,0,2), 4 -> (-3,-1,1,3), ...
 LINE_ON_VALUE = 1            # what a sensor reads when it is over the line (check!)
 LINE_SENSOR_PULL = None      # None, "UP" or "DOWN": depends on the sensor board output
@@ -31,11 +31,12 @@ GREEN_PIN = None
 LED_ON_VALUE = 1             # pin level that lights the LED through your isolator circuit
 
 # ---------------- TUNING ----------------
-BASE_SPEED = 50           # 0-100
+DT = 1.5
+BASE_SPEED = 100           # 0-100
 SLOW_SPEED = 30           # approaching packages / ramp
 SEARCH_SPEED = 30         # pivot speed when the line is lost
-KP = 12                   # steer harder the further the line is off-centre
-KD = 8                    # damps oscillation; raise after KP is tuned
+KP = 8                   # steer harder the further the line is off-centre
+KD = 2                    # damps oscillation; raise after KP is tuned
 KI = 0
 JUNCTION_CONFIRM = 3      # consecutive readings before we believe a junction
 JUNCTION_CROSS_MS = 300   # drive straight this long to get past a junction (tune!)

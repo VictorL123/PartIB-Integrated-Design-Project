@@ -1,8 +1,6 @@
 """line_follow.py - the PD controller. One call = one control step."""
-from config import KP, KD, KI
-from line_sensors import LineSensors
+from config import KP, KD, KI, DT
 from utime import sleep
-from motors import Drivetrain
 
 # what is a control step? where does the line counting happen? what is drive? can drivetrain accommodate changing one wheel?
 
@@ -13,7 +11,7 @@ class LineFollower:
         self.sensors = sensors
         self.last_error = 0
 
-    def step(self, base_speed, dt):
+    def step(self, base_speed):
         """TODO:
         1. error = sensors.error()
         2. if None: lost line -> keep turning toward self.last_error's side
@@ -21,14 +19,13 @@ class LineFollower:
         4. drive.drive(base + correction, base - correction)  (swap signs if it steers away)
         5. store last_error
         Return True if the line is currently found, False if lost (main uses this for recovery)."""
-        dt = 1.5
         while self.sensors.at_junction() == False:
             error = self.sensors.error()
             if error == None:
                 self.drive.stop()
                 return False
-            integral = error * dt 
-            derivative = (error - self.last_error)/dt
+            integral = error * DT 
+            derivative = (error - self.last_error)/DT
             mdelta = KD * derivative + KP * error + KI * integral
             self.drive.drive(base_speed + mdelta, base_speed - mdelta)
             self.last_error = error

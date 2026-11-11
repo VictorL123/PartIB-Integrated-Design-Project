@@ -16,9 +16,9 @@ def test_drive():
                   require("RIGHT_MOTOR_PWM", RIGHT_MOTOR_PWM), RIGHT_MOTOR_INVERT)
     drive = Drivetrain(left, right)
     try:
-        #print("left wheel forward");  left.set(40);  sleep(1.5);  left.set(0)
-        #print("right wheel forward"); right.set(40); sleep(1.5);  right.set(0)
-        #print("both forward");        drive.drive(40, 40);        sleep(1.5)
+        print("left wheel forward");  left.set(40);  sleep(1.5);  left.set(0)
+        print("right wheel forward"); right.set(40); sleep(1.5);  right.set(0)
+        print("both forward");        drive.drive(40, 40);        sleep(1.5)
         print("spin LEFT (anticlockwise from above)"); drive.spin("LEFT", 40);  sleep(1.5)
         print("spin RIGHT");          drive.spin("RIGHT", 40);    sleep(1.5)
     finally:

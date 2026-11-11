@@ -55,7 +55,8 @@ class LineSensors:
             error = 0
         else:
             # other conditions: 1011, 1101, 1001
-            raise AssertionError("sensor condition does not support error")
+            #raise AssertionError("sensor condition does not support error")
+            error = None
 
         return error        
 
