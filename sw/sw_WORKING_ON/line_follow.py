@@ -35,7 +35,7 @@ class LineFollower:
 
 
 
-    def spin(self, spin_speed, direction):
+    def turn(self, spin_speed, direction):
         while self.sensors.centre_on_line() == False:
             self.drive.spin(direction, spin_speed)
             # break if robot about to hit anything
