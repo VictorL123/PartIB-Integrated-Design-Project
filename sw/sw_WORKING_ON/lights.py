@@ -8,7 +8,7 @@ start area for the scoring - ask a demonstrator how to reconcile these.
 
 from machine import Pin
 from utime import sleep
-from config import AMBER_PIN, RED_PIN, GREEN_PIN, LED_ON_VALUE, FLASH_HZ    
+from config import AMBER_PIN, RED_PIN, GREEN_PIN, LED_ON_VALUE, LED_OFF_VALUE, FLASH_HZ    
 
 class Lights:
     def __init__(self):
@@ -25,7 +25,6 @@ class Lights:
     def amber_flash(self, on):
         """TODO: start or stop the periodic toggle at FLASH_HZ."""
         print("Flashing LED")
-        # is this just never goint to stop???
         while on:
             self.amber_on()
             sleep(1/FLASH_HZ)
@@ -36,7 +35,7 @@ class Lights:
 
     def amber_off(self):
         """TODO"""
-        self.amber.value(0)
+        self.amber.value(LED_OFF_VALUE)
 
 
 

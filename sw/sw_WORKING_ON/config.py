@@ -25,10 +25,11 @@ LINE_SENSOR_PULL = None      # None, "UP" or "DOWN": depends on the sensor board
 
 HALL_PIN = None                            # magnetic field sensor (digital or ADC?)
 IR_PIN = None                              # IR receiver for the traffic light
-AMBER_PIN = None                           # -> optical isolator -> LED
+AMBER_PIN = 12                           # -> optical isolator -> LED
 RED_PIN = None
 GREEN_PIN = None
-LED_ON_VALUE = 1             # pin level that lights the LED through your isolator circuit
+LED_ON_VALUE = 0             # pin level that lights the LED through your isolator circuit
+LED_OFF_VALUE = 1
 
 # ---------------- TUNING ----------------
 DT = 1.5
