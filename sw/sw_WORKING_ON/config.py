@@ -28,14 +28,17 @@ IR_PIN = None                              # IR receiver for the traffic light
 AMBER_PIN = 12                           # -> optical isolator -> LED
 RED_PIN = None
 GREEN_PIN = None
-LED_ON_VALUE = 0             # pin level that lights the LED through your isolator circuit
-LED_OFF_VALUE = 1
+LED_ON_VALUE = 1             # pin level that lights the LED through your isolator circuit
+LED_OFF_VALUE = 0
 
 # ---------------- TUNING ----------------
 DT = 1.5
-BASE_SPEED = 100           # 0-100
+BASE_SPEED = 50           # 0-100
 SLOW_SPEED = 30           # approaching packages / ramp
 SEARCH_SPEED = 30         # pivot speed when the line is lost
+SPIN_SPEED = 40
+TURN_90_MS = 1500
+STRAIGHT_BEFORE_TURN = 1000
 KP = 8                   # steer harder the further the line is off-centre
 KD = 2                    # damps oscillation; raise after KP is tuned
 KI = 0
