@@ -36,11 +36,16 @@ class LineFollower:
 
 
     def turn(self, spin_speed, direction):
-        
-        while self.sensors.centre_on_line() == False:
-            self.drive.spin(direction, spin_speed)
-            # break if robot about to hit anything
-        self.drive.stop()
+
+        #check that there is a line in expected direction of turn
+        values = self.sensors.read()
+        if (direction == "LEFT" and values == [1,1,1,0]) or (direction == "RIGHT" and values == [0,1,1,1]) or (direction == "180" and values == [0,1,1,0]):
+            while self.sensors.centre_on_line() == False:
+                self.drive.spin(direction, spin_speed)
+                # break if robot about to hit anything
+            self.drive.stop()
+        else:
+            print("line not found")
         
         
 
