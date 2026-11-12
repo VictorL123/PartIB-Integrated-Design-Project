@@ -71,7 +71,18 @@ class LineSensors:
             self._junction_count += 1
         else:
             self._junction_count = 0
+
         return self._junction_count >= JUNCTION_CONFIRM
+    
+        # if self._junction_count >= JUNCTION_CONFIRM:
+        #     if values[0] and values[-1]:
+        #         return "T-JUNCTION"
+        #     elif values[0]:
+        #         return "LEFT"
+        #     elif values[-1]:
+        #         return "RIGHT"
+        # else:
+        #     return False
 
     def centre_on_line(self):
         """TODO: used to know when a turn has found the line again."""
