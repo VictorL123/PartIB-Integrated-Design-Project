@@ -29,6 +29,7 @@ def run():
         # --- safety first, every loop ---
         # TODO: if stop_pressed(): stop motors, lights off, state = "WAIT_START"
         # TODO: if time is nearly up and state is not RETURN/DONE: plan_to("START"), state = "RETURN"
+        # distance sensor safety check here? - change state to recover if state is not already grab or approach package
 
         if state == "WAIT_START":
             # TODO: wait for start_pressed(); record t_start; amber flash on; plan first trip

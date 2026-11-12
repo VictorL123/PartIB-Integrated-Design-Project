@@ -10,6 +10,7 @@ class LineFollower:
         self.drive = robot
         self.sensors = sensors
         self.last_error = 0
+        self.integral = 0
 
     def step(self, base_speed):
         """TODO:
@@ -19,14 +20,14 @@ class LineFollower:
         4. drive.drive(base + correction, base - correction)  (swap signs if it steers away)
         5. store last_error
         Return True if the line is currently found, False if lost (main uses this for recovery)."""
-        while self.sensors.at_junction() == False:
+        if self.sensors.at_junction() == False:
             error = self.sensors.error()
             if error == None:
                 self.drive.stop()
                 return False
-            integral = error * DT 
+            self.integral = error * DT 
             derivative = (error - self.last_error)/DT
-            mdelta = KD * derivative + KP * error + KI * integral
+            mdelta = KD * derivative + KP * error + KI * self.integral
             self.drive.drive(base_speed + mdelta, base_speed - mdelta)
             self.last_error = error
 
