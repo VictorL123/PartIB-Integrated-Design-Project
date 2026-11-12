@@ -13,9 +13,9 @@ from config import AMBER_PIN, RED_PIN, GREEN_PIN, LED_ON_VALUE, LED_OFF_VALUE, F
 class Lights:
     def __init__(self):
         """TODO: Pin.OUT for amber, red, green; a Timer object for flashing."""
-        self.red = Pin(RED_PIN, Pin.OUT)
+        #self.red = Pin(RED_PIN, Pin.OUT)
         self.amber = Pin(AMBER_PIN, Pin.OUT)
-        self.green = Pin(GREEN_PIN, Pin.OUT)
+        #self.green = Pin(GREEN_PIN, Pin.OUT)
 
     def amber_on(self):
         """TODO"""
@@ -25,12 +25,11 @@ class Lights:
     def amber_flash(self, on):
         """TODO: start or stop the periodic toggle at FLASH_HZ."""
         print("Flashing LED")
-        while on:
-            self.amber_on()
-            sleep(1/FLASH_HZ)
-            self.amber_off()
-            sleep(1/FLASH_HZ)
+        self.amber_on()
+        sleep(1/FLASH_HZ)
         self.amber_off()
+        sleep(1/FLASH_HZ)
+
         
 
     def amber_off(self):
