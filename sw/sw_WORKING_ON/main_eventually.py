@@ -22,6 +22,7 @@ def run():
         if state == "WAIT_START":
             # TODO: wait for start_pressed(); record t_start; amber flash on; plan first trip
             robot.lights.amber_on()
+            sleep_ms(2000)
             robot.navigate.plan_to("LINE_FOLLOWER_TEST")
             t_start = ticks_ms()
             state = "TRAVEL"
@@ -30,47 +31,37 @@ def run():
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
-            if robot.navigate.peek_next_move() == "LEFTTURN":
-                robot.navigate.next_move()
-                robot.follower.turn("LEFT", SPIN_SPEED)
 
             if robot.sensors.at_junction():
-                if robot.navigate.peek_next_move() == "STRAIGHT":
-                    robot.navigate.next_move()
+                if robot.navigate.next_move() == "STRAIGHT":
                     robot.follower.step(BASE_SPEED)
                     sleep_ms(250)
 
-                elif robot.navigate.peek_next_move() == "STRAIGHT1S":
-                    robot.navigate.next_move()
+                elif robot.navigate.next_move() == "STRAIGHT1S":
                     t_end = time.time() + STRAIGHT_TIME
                     while time.time() < t_end:
                         robot.follower.step(BASE_SPEED)
 
-                elif robot.navigate.peek_next_move() == "LEFTTURN":
-                    robot.navigate.next_move()
+                elif robot.navigate.next_move() == "LEFTTURN":
                     robot.follower.turn("LEFT", SPIN_SPEED)
 
-                elif robot.navigate.peek_next_move() == "RIGHTTURN":
-                    robot.navigate.next_move()
+                elif robot.navigate.next_move() == "RIGHTTURN":
                     robot.follower.turn("RIGHT", SPIN_SPEED)
 
-                elif robot.navigate.peek_next_move() == "ABOUTTURN":
-                    robot.navigate.next_move()
+                elif robot.navigate.next_move() == "ABOUTTURN":
                     robot.follower.turn("180", SPIN_SPEED)
                     
-                elif robot.navigate.peek_next_move() == "WAIT2S":
-                    robot.navigate.next_move()
+                elif robot.navigate.next_move() == "WAIT2S":
                     t_end = time.time() + WAIT_TIME
                     while time.time() < t_end:
                         robot.drive.stop()
 
-                elif robot.navigate.peak_next_move() == "STOP":
-                    robot.navigate.next_move()
+                elif robot.navigate.next_move() == "STOP":
                     #specifically just for linefollower
                     robot.drive.stop()
             
                 #if robot.navigate._arrived() == False:
-                robot.follower.step(BASE_SPEED)
+            robot.follower.step(BASE_SPEED)
                 # elif robot.navigate._arrived() == True:
                 #     # TODO: when not for the line follower test: will have to load next route, OR change state...
                 #     pass

@@ -88,42 +88,11 @@ class Route:
                
             self._plan.append(ROUTES[(self.location, destination)])
 
-    def peek_next_move(self):
-        return self._plan[0]
-
     def next_move(self):
         """TODO: pop and return the next action in the plan."""
+        next_move = self._plan[0]
         self._plan.pop(0)
-
-
-        # if move == "STRAIGHT":
-        #             robot.follower.step(BASE_SPEED)
-
-        # elif move == "STRAIGHT1S":
-        #     t_end = time.time() + STRAIGHT_TIME
-        #     while time.time() < t_end:
-        #         robot.follower.step(BASE_SPEED)
-
-        # elif move == "LEFTTURN":
-        #     robot.follower.turn("LEFT", SPIN_SPEED)
-
-        # elif move == "RIGHTTURN":
-        #     robot.follower.turn("RIGHT", SPIN_SPEED)
-
-        # elif move == "ABOUTTURN":
-        #     robot.follower.turn("180", SPIN_SPEED)
-            
-        # elif move == "WAIT2S":
-        #     t_end = time.time() + WAIT_TIME
-        #     while time.time() < t_end:
-        #         robot.drive.stop()
-
-        # elif move == "STOP":
-        #     robot.drive.stop()
-
-
-            # should break but not stop moving when meets junction
-
+        return next_move
 
     def arrived(self, destination):
         """TODO: True when the plan is empty."""
