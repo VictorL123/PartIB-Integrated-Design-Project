@@ -74,7 +74,7 @@ def run():
                         robot.navigate.next_move()
                         print("calling right turn into bay")
                         robot.follower.turn("RIGHT", SPIN_SPEED)
-                        t_end = time.time() + STRAIGHT_TIME
+                        t_end = time.time() + STRAIGHT_TIME_DEPOT
                         while time.time() < t_end:
                             print("Going straight after turning into bay")
                             robot.follower.step(BASE_SPEED)
@@ -84,9 +84,9 @@ def run():
                             robot.drive.stop()
                         robot.follower.turn("180", SPIN_SPEED)
                         
-                    elif robot.navigate.peek_next_move() == "LEFTTURNINTOBAY":
+                    elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
                         robot.navigate.next_move()
-                        print("calling left turn into bay")
+                        print("calling left turn into depo")
                         t_end = time.time() + STRAIGHT_TIME_DEPOT
                         while time.time() < t_end:
                             robot.follower.step(BASE_SPEED)
@@ -94,7 +94,7 @@ def run():
                         print("waiting 2s")
                         while time.time() < t_end:
                             robot.drive.stop()
-                        robot.follower.step(-BASE_SPEED)
+                        robot.follower.step(-BASE_SPEED) # I don't know if this will work to reverse?
 
                     elif robot.navigate.peek_next_move() == "STOP":
                         robot.navigate.next_move()
@@ -102,21 +102,25 @@ def run():
                         #specifically just for linefollower
                         robot.drive.stop()
                 
-                    #if robot.navigate._arrived() == False:
                 robot.follower.step(BASE_SPEED)
 
                 if robot.navigate._arrived() == True:
+                    """when not for the linefollower, this just means that have reached end of route
+                    TODO: need to load either next route or next state"""
                     if robot.sensors.at_junction():
                         robot.lights.amber_off()
                         robot.drive.stop()
+                
 
-
-                    
+        elif state == "SEARCH":
+            # TODO: go through rack; turn; follow line to make sure pointing in right direction; package_there() -> search next or APPROACH_PACKAGE
+            pass  
             
         elif state == "APPROACH_PACKAGE":
             # TODO: follow line slowly until package_near(); stop; -> "GRAB"
             pass
         elif state == "GRAB":
+            # do we grab before we read_polarity?
             # TODO: close, raise to CARRY, read_polarity(), show_polarity(), plan to N or S depot
             pass
         elif state == "DELIVER":

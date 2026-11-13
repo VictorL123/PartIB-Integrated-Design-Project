@@ -17,26 +17,26 @@ import time
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_r_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_top"): ["STRAIGHT", "WAIT_LIGHTS", "STRAIGHT"],
-    # ("START", "deposit_L1"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
-    # ("START", "deposit_L2"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT", "RIGHTTURN"],
-    # ("START", "deposit_R1"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
-    # ("START", "deposit_R2"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT", "LEFTTURN"],
+    ("START", "rack_top"): ["WAIT_LIGHTS"],
+    # ("START", "deposit_L1"):["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
+    # ("START", "deposit_L2"):["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
+    # ("START", "deposit_R1"):["STRAIGHT", "LEFTTURN", "LEFTTURN"],
+    # ("START", "deposit_R2"):["STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
     ("rack_L_low", "deposit_L1"): ["STRAIGHT", "LEFTTURN"],
-    # ("rack_L_low", "deposit_L2"): ["STRAIGHT", "LEFTTURN"],
-    # ("rack_L_low", "START"): ["STRAIGHT", "STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    # ("rack_R_low", "deposit_R1"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN"],
-    # ("rack_R_low", "deposit_R2"): ["STRAIGHT, RIGHTTURN"],
-    # ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
-    # ("rack_top", "START"): ["STRAIGHT", "STRAIGHT"],
+    # ("rack_L_low", "deposit_L2"): ["LEFTTURN"],
+    # ("rack_L_low", "START"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
+    # ("rack_R_low", "deposit_R1"): ["STRAIGHT", "RIGHTTURN"],
+    # ("rack_R_low", "deposit_R2"): ["RIGHTTURN"],
+    # ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT"],
+    # ("rack_top", "START"): ["STRAIGHT"],
     ("deposit_L1", "START"): ["LEFTTURN", "LEFTTURN", "STRAIGHT"],
-    # ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT", "STRAIGHT"],
-    # ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    # ("deposit_L2", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
-    # ("deposit_R1", "START"): ["RIGHTTURN", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
-    # ("deposit_R1", "rack_R_low"): ["LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    # ("deposit_R2", "START"): ["RIGHTTURN", "STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
-    # ("deposit_R2", "rack_R_low"): ["LEFTTURN", "STRAIGHT"]
+    # ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
+    # ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
+    # ("deposit_L2", "rack_L_low"): ["RIGHTTURN"],
+    # ("deposit_R1", "START"): ["RIGHTTURN", "RIGHTTURN", "STRAIGHT"],
+    # ("deposit_R1", "rack_R_low"): ["LEFTTURN", "STRAIGHT"],
+    # ("deposit_R2", "START"): ["RIGHTTURN", "STRAIGHT", "RIGHTTURN", "STRAIGHT"],
+    # ("deposit_R2", "rack_R_low"): ["LEFTTURN"]
 
     # need to ensure it stops at the end
 
@@ -62,7 +62,7 @@ class Route:
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
             self._plan.extend(["RIGHTTURNINTOBAY", "LEFTTURN"]) # back to beginning of L low rack
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
-            self._plan.extend(["LEFTTURNINTOBAY"], ["RIGHTTURN"])
+            self._plan.extend(["LEFTTURNINTODEPOSIT"], ["RIGHTTURN"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
