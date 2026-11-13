@@ -52,7 +52,7 @@ class Route:
         self.lastlocation = "START"
         #for the line follower test, this will not change (since the movements are prescribed, it doesn't need to)
         self._plan = []
-        self.arrived = False
+        self._arrived = False
 
 
     def plan_to(self, destination):
@@ -90,7 +90,7 @@ class Route:
     def next_move(self):
         """TODO: pop and return the next action in the plan."""
         # run the next move (first in self._plan), then pop it
-        move = self._plan(0)
+        move = self._plan[0]
         robot = Robot()
         if move == "STRAIGHT":
             robot.follower.step(BASE_SPEED)
@@ -101,13 +101,13 @@ class Route:
                 robot.follower.step(BASE_SPEED)
 
         elif move == "LEFTTURN":
-            robot.follower.turn(SPIN_SPEED, "LEFT")
+            robot.follower.turn("LEFT", SPIN_SPEED)
 
         elif move == "RIGHTTURN":
-            robot.follower.turn(SPIN_SPEED, "RIGHT")
+            robot.follower.turn("RIGHT", SPIN_SPEED)
 
         elif move == "ABOUTTURN":
-            robot.follower.turn(SPIN_SPEED, "180")
+            robot.follower.turn("180", SPIN_SPEED)
             
         elif move == "WAIT2S":
             t_end = time.time() + 2
@@ -122,7 +122,7 @@ class Route:
     def arrived(self, destination):
         """TODO: True when the plan is empty."""
         if len(self._plan) < 1:
-            self.arrived = True
+            self._arrived = True
             self.lastlocation = self.location
             self.location = destination
 
