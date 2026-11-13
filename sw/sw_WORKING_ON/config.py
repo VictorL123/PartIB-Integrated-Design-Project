@@ -6,17 +6,17 @@ This file deliberately imports nothing from `machine`, so it is plain data.
 """
 
 # ---------------- KNOWN (course examples) ----------------
-I2C_ID, I2C_SDA, I2C_SCL = 0, 8, 9        # VL53L0X / TCS3472 on I2C0
+I2C_ID, I2C_SDA, I2C_SCL = 0, 20, 21        # VL53L0X / TCS3472 on I2C0
 SERVO_PIN = 15                             # "Servo 1", 50 Hz, 0-270 deg
 ACTUATOR_DIR, ACTUATOR_PWM = 0, 1          # linear actuator on Motor Driv1 #1
 START_BUTTON_PIN = 12                      # Pin.IN with PULL_DOWN in the example
 # Motor convention in the course Motor class: dir 0 = forward, 1 = reverse
 
 # ---------------- FILL IN (your wiring) ----------------
-LEFT_MOTOR_DIR, LEFT_MOTOR_PWM = 7, 6     # e.g. GP4/GP5 is Motor 3
-RIGHT_MOTOR_DIR, RIGHT_MOTOR_PWM = 4, 5
+LEFT_MOTOR_DIR, LEFT_MOTOR_PWM = 4, 5     # e.g. GP4/GP5 is Motor 3
+RIGHT_MOTOR_DIR, RIGHT_MOTOR_PWM = 7, 6
 LEFT_MOTOR_INVERT = False    # set True if "forward" spins that wheel backwards
-RIGHT_MOTOR_INVERT = False   # (motors are mounted mirrored, so one usually needs this)
+RIGHT_MOTOR_INVERT = True   # (motors are mounted mirrored, so one usually needs this)
 
 LINE_SENSOR_PINS = [8,9,10,11]       # left -> right, e.g. (20, 21, 22, 26)
 LINE_SENSOR_WEIGHTS = None   # None = auto: 3 sensors -> (-2,0,2), 4 -> (-3,-1,1,3), ...
