@@ -18,10 +18,10 @@ ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_r_low"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_top"): ["STRAIGHT", "WAIT_LIGHTS", "STRAIGHT"],
-    # ("START", "deposit_L1"):[]
-    # ("START", "deposit_L2"):[]
-    # ("START", "deposit_R1"):[]
-    # ("START", "deposit_R2"):[]
+    # ("START", "deposit_L1"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
+    # ("START", "deposit_L2"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT", "RIGHTTURN"],
+    # ("START", "deposit_R1"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
+    # ("START", "deposit_R2"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT", "LEFTTURN"],
     ("rack_L_low", "deposit_L1"): ["STRAIGHT", "STRAIGHT", "LEFTTURN"],
     # ("rack_L_low", "deposit_L2"): ["STRAIGHT", "LEFTTURN"],
     # ("rack_L_low", "START"): ["STRAIGHT", "STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
@@ -29,14 +29,14 @@ ROUTES = {
     # ("rack_R_low", "deposit_R2"): ["STRAIGHT, RIGHTTURN"],
     # ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     # ("rack_top", "START"): ["STRAIGHT", "STRAIGHT"],
-    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"]
-    # ("deposit_L1", "rack_L_low"): []
-    # ("deposit_L2", "START"): []
-    # ("deposit_L2", "rack_L_low"): []
-    # ("deposit_R1", "START"): []
-    # ("deposit_R1", "rack_R_low"): []
-    # ("deposit_R2", "START"): []
-    # ("deposit_R2", "rack_R_low"): []
+    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
+    # ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT", "STRAIGHT"],
+    # ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
+    # ("deposit_L2", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
+    # ("deposit_R1", "START"): ["RIGHTTURN", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
+    # ("deposit_R1", "rack_R_low"): ["LEFTTURN", "STRAIGHT", "STRAIGHT"],
+    # ("deposit_R2", "START"): ["RIGHTTURN", "STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
+    # ("deposit_R2", "rack_R_low"): ["LEFTTURN", "STRAIGHT"]
 
     # need to ensure it stops at the end
 
