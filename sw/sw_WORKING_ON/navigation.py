@@ -3,7 +3,7 @@
 The route is DATA: for each trip, the list of actions to take at successive junctions.
 Fill ROUTES by walking the table and counting junctions on the line.
 """
-from robot import Robot
+#from robot import Robot
 from config import BASE_SPEED, SPIN_SPEED, STRAIGHT_TIME, WAIT_TIME
 import time
 
@@ -92,33 +92,35 @@ class Route:
         """TODO: pop and return the next action in the plan."""
         # run the next move (first in self._plan), then pop it
         move = self._plan[0]
-        robot = Robot()
-        if move == "STRAIGHT":
-            robot.follower.step(BASE_SPEED)
-
-        if move == "STRAIGHT1S":
-            t_end = time.time() + STRAIGHT_TIME
-            while time.time() < t_end:
-                robot.follower.step(BASE_SPEED)
-
-        elif move == "LEFTTURN":
-            robot.follower.turn("LEFT", SPIN_SPEED)
-
-        elif move == "RIGHTTURN":
-            robot.follower.turn("RIGHT", SPIN_SPEED)
-
-        elif move == "ABOUTTURN":
-            robot.follower.turn("180", SPIN_SPEED)
-            
-        elif move == "WAIT2S":
-            t_end = time.time() + WAIT_TIME
-            while time.time() < t_end:
-                robot.drive.stop()
-
-        elif move == "STOP":
-            robot.drive.stop()
-
+        #robot = Robot()
         self._plan.pop(0)
+        # if move == "STRAIGHT":
+        #             robot.follower.step(BASE_SPEED)
+
+        # elif move == "STRAIGHT1S":
+        #     t_end = time.time() + STRAIGHT_TIME
+        #     while time.time() < t_end:
+        #         robot.follower.step(BASE_SPEED)
+
+        # elif move == "LEFTTURN":
+        #     robot.follower.turn("LEFT", SPIN_SPEED)
+
+        # elif move == "RIGHTTURN":
+        #     robot.follower.turn("RIGHT", SPIN_SPEED)
+
+        # elif move == "ABOUTTURN":
+        #     robot.follower.turn("180", SPIN_SPEED)
+            
+        # elif move == "WAIT2S":
+        #     t_end = time.time() + WAIT_TIME
+        #     while time.time() < t_end:
+        #         robot.drive.stop()
+
+        # elif move == "STOP":
+        #     robot.drive.stop()
+
+        return move
+
 
             # should break but not stop moving when meets junction
 

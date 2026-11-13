@@ -5,6 +5,7 @@ Each state does one job and names the next state. No pin numbers, no maths in he
 from utime import ticks_ms, sleep_ms, ticks_diff
 from config import *
 from robot import Robot
+import time
 
 
 def run():
@@ -29,9 +30,40 @@ def run():
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
+
             if robot.sensors.at_junction():
-                robot.navigate.next_move()
-            robot.follower.step(BASE_SPEED)
+                if robot.navigate.next_move() == "STRAIGHT":
+                    robot.follower.step(BASE_SPEED)
+                    sleep_ms(250)
+
+                elif robot.navigate.next_move() == "STRAIGHT1S":
+                    t_end = time.time() + STRAIGHT_TIME
+                    while time.time() < t_end:
+                        robot.follower.step(BASE_SPEED)
+
+                elif robot.navigate.next_move() == "LEFTTURN":
+                    robot.follower.turn("LEFT", SPIN_SPEED)
+
+                elif robot.navigate.next_move() == "RIGHTTURN":
+                    robot.follower.turn("RIGHT", SPIN_SPEED)
+
+                elif robot.navigate.next_move() == "ABOUTTURN":
+                    robot.follower.turn("180", SPIN_SPEED)
+                    
+                elif robot.navigate.next_move() == "WAIT2S":
+                    t_end = time.time() + WAIT_TIME
+                    while time.time() < t_end:
+                        robot.drive.stop()
+
+                elif robot.navigate.next_move() == "STOP":
+                    #specifically just for linefollower
+                    robot.drive.stop()
+            
+                #if robot.navigate._arrived() == False:
+                robot.follower.step(BASE_SPEED)
+                # elif robot.navigate._arrived() == True:
+                #     # TODO: when not for the line follower test: will have to load next route, OR change state...
+                #     pass
             
         elif state == "APPROACH_PACKAGE":
             # TODO: follow line slowly until package_near(); stop; -> "GRAB"
