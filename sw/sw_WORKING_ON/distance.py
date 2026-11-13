@@ -25,25 +25,30 @@ class DistanceSensor:
         self.vl53l0.set_Vcsel_pulse_period(self.vl53l0.vcsel_period_type[1], 14)
     
     
-        
         print("Starting vl53l0...")
 
         # Start device
         self.vl53l0.start()
 
-        # Read ten samples
-        for _ in range(10):
-            distance = self.vl53l0.read()
-            print(f"Distance = {distance}mm")  # Check calibration!
-            sleep(0.5)
+        # # Read ten samples
+        # for _ in range(10):
+        #     distance = self.vl53l0.read()
+        #     print(f"Distance = {distance}mm")  # Check calibration!
+        #     sleep(0.5)
         
-        # Stop device
-        self.vl53l0.stop()
+        # # Stop device
+        # self.vl53l0.stop()
 
     def mm(self):
         """TODO: return distance in mm, or None if the read fails or the reading means
         'nothing in range' (the driver returns ~8190 then). Wrap in try/except."""
+        try:
+            distance = self.vl53l0.read() - 30
+            print(f"Distance = {distance}mm")  # Check calibration!
 
+        except:
+            print("No valid reading")
+            return None
 
     def package_near(self):
-        """TODO: True if mm() is not None and below PACKAGE_NEAR_MM."""
+        """TODO: True if mm() is not None an.d below PACKAGE_NEAR_MM."""
