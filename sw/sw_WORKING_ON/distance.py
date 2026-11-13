@@ -7,7 +7,7 @@ set_Vcsel_pulse_period(type[0], 18) and (type[1], 14), then start() once, read()
 
 # distance sensor for safety??????????
 
-from config import PACKAGE_NEAR_MM, I2C_ID, I2C_SDA, I2C_SCL
+from config import PACKAGE_NEAR_MM, PACKAGE_THERE_MM, I2C_ID, I2C_SDA, I2C_SCL
 from libs.VL53L0X.VL53L0X import VL53L0X
 from machine import Pin, I2C
 from utime import sleep
@@ -44,7 +44,7 @@ class DistanceSensor:
         'nothing in range' (the driver returns ~8190 then). Wrap in try/except."""
         try:
             distance = self.vl53l0.read() - 30
-            print(f"Distance = {distance}mm")  # Check calibration!
+            print(f"Distance = {distance}mm")
 
         except:
             print("No valid reading")
@@ -52,3 +52,20 @@ class DistanceSensor:
 
     def package_near(self):
         """TODO: True if mm() is not None an.d below PACKAGE_NEAR_MM."""
+        if self.mm() != None and self.mm() < PACKAGE_NEAR_MM:
+            return True
+        elif self.mm() != None:
+            return False
+        else:
+            return None
+
+    def package_there(self):
+        """TODO: True if mm() is not None an.d below PACKAGE_THERE_MM."""
+        if self.mm() != None and self.mm() < PACKAGE_NEAR_MM:
+            return True
+        elif self.mm() != None:
+            return False
+        else:
+            return None
+
+

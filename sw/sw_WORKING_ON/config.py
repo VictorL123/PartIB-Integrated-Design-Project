@@ -50,6 +50,7 @@ DEBOUNCE_MS = 25          # button debounce
 FLASH_HZ = 2              # amber FLASH rate (on/off cycles per second). Keep it under
                           # 3 Hz and check what the brief's H&S rule wants.
 PACKAGE_NEAR_MM = 60      # distance reading that means "block is in the gripper"
+PACKAGE_THERE_MM = 200    # distance reading that means "block exists in the bay"
 LIFT_TIME_MS = 0          # actuator has no feedback: time the carry height by testing
 RUN_TIME_MS = 5 * 60 * 1000
 HEAD_HOME_MARGIN_MS = 30 * 1000   # start returning home this long before time is up
