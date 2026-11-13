@@ -88,12 +88,14 @@ class Route:
                
             self._plan.append(ROUTES[(self.location, destination)])
 
+    def peek_next_move(self):
+        return self._plan[0]
+
     def next_move(self):
         """TODO: pop and return the next action in the plan."""
-        # run the next move (first in self._plan), then pop it
-        move = self._plan[0]
-        #robot = Robot()
         self._plan.pop(0)
+
+
         # if move == "STRAIGHT":
         #             robot.follower.step(BASE_SPEED)
 
@@ -118,8 +120,6 @@ class Route:
 
         # elif move == "STOP":
         #     robot.drive.stop()
-
-        return move
 
 
             # should break but not stop moving when meets junction

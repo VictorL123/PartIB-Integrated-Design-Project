@@ -30,32 +30,42 @@ def run():
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
+            if robot.navigate.peek_next_move() == "LEFTTURN":
+                robot.navigate.next_move()
+                robot.follower.turn("LEFT", SPIN_SPEED)
 
             if robot.sensors.at_junction():
-                if robot.navigate.next_move() == "STRAIGHT":
+                if robot.navigate.peek_next_move() == "STRAIGHT":
+                    robot.navigate.next_move()
                     robot.follower.step(BASE_SPEED)
                     sleep_ms(250)
 
-                elif robot.navigate.next_move() == "STRAIGHT1S":
+                elif robot.navigate.peek_next_move() == "STRAIGHT1S":
+                    robot.navigate.next_move()
                     t_end = time.time() + STRAIGHT_TIME
                     while time.time() < t_end:
                         robot.follower.step(BASE_SPEED)
 
-                elif robot.navigate.next_move() == "LEFTTURN":
+                elif robot.navigate.peek_next_move() == "LEFTTURN":
+                    robot.navigate.next_move()
                     robot.follower.turn("LEFT", SPIN_SPEED)
 
-                elif robot.navigate.next_move() == "RIGHTTURN":
+                elif robot.navigate.peek_next_move() == "RIGHTTURN":
+                    robot.navigate.next_move()
                     robot.follower.turn("RIGHT", SPIN_SPEED)
 
-                elif robot.navigate.next_move() == "ABOUTTURN":
+                elif robot.navigate.peek_next_move() == "ABOUTTURN":
+                    robot.navigate.next_move()
                     robot.follower.turn("180", SPIN_SPEED)
                     
-                elif robot.navigate.next_move() == "WAIT2S":
+                elif robot.navigate.peek_next_move() == "WAIT2S":
+                    robot.navigate.next_move()
                     t_end = time.time() + WAIT_TIME
                     while time.time() < t_end:
                         robot.drive.stop()
 
-                elif robot.navigate.next_move() == "STOP":
+                elif robot.navigate.peak_next_move() == "STOP":
+                    robot.navigate.next_move()
                     #specifically just for linefollower
                     robot.drive.stop()
             
