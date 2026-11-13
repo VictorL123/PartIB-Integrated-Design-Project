@@ -43,7 +43,7 @@ def run():
                     elif robot.navigate.peek_next_move() == "STRAIGHT1S":
                         robot.navigate.next_move()
                         print("calling straight 1 s")
-                        t_end = time.time() + STRAIGHT_TIME
+                        t_end = time.time() + STRAIGHT_TIME_BAY
                         while time.time() < t_end:
                             robot.follower.step(BASE_SPEED)
                         robot.follower.turn("180", SPIN_SPEED)
@@ -87,7 +87,7 @@ def run():
                     elif robot.navigate.peek_next_move() == "LEFTTURNINTOBAY":
                         robot.navigate.next_move()
                         print("calling left turn into bay")
-                        t_end = time.time() + STRAIGHT_TIME
+                        t_end = time.time() + STRAIGHT_TIME_DEPOT
                         while time.time() < t_end:
                             robot.follower.step(BASE_SPEED)
                         t_end = time.time() + WAIT_TIME
