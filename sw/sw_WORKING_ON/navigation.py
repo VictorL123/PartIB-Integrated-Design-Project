@@ -15,21 +15,21 @@ import time
 # TODO: fill in from the real table layout
 # assume routes starting from START will start off in the right direction
 ROUTES = {
-    ("START", "rack_L_low"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_r_low"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT", "STRAIGHT"],
+    ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
+    ("START", "rack_r_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_top"): ["STRAIGHT", "WAIT_LIGHTS", "STRAIGHT"],
     # ("START", "deposit_L1"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
     # ("START", "deposit_L2"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT", "RIGHTTURN"],
     # ("START", "deposit_R1"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
     # ("START", "deposit_R2"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT", "LEFTTURN"],
-    ("rack_L_low", "deposit_L1"): ["STRAIGHT", "STRAIGHT", "LEFTTURN"],
+    ("rack_L_low", "deposit_L1"): ["STRAIGHT", "LEFTTURN"],
     # ("rack_L_low", "deposit_L2"): ["STRAIGHT", "LEFTTURN"],
     # ("rack_L_low", "START"): ["STRAIGHT", "STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
     # ("rack_R_low", "deposit_R1"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN"],
     # ("rack_R_low", "deposit_R2"): ["STRAIGHT, RIGHTTURN"],
     # ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     # ("rack_top", "START"): ["STRAIGHT", "STRAIGHT"],
-    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
+    ("deposit_L1", "START"): ["LEFTTURN", "LEFTTURN", "STRAIGHT"],
     # ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     # ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
     # ("deposit_L2", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
@@ -59,11 +59,10 @@ class Route:
         """TODO: load ROUTES[(self.location, destination)] into self._plan."""
         if destination == "LINE_FOLLOWER_TEST": 
             # Prescribed circuit for line follower
-            self._plan.extend(["LEFTTURN"])
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
-            self._plan.extend(["STRAIGHT", "RIGHTTURN", "STRAIGHT1S", "WAIT2S", "ABOUTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT"]) # back to beginning of L low rack
+            self._plan.extend(["RIGHTTURNINTOBAY", "LEFTTURN"]) # back to beginning of L low rack
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
-            self._plan.extend(["STRAIGHT1S", "WAIT2S", "ABOUTTURN", "STRAIGHT"])
+            self._plan.extend(["LEFTTURNINTOBAY"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
@@ -88,11 +87,12 @@ class Route:
                
             self._plan.append(ROUTES[(self.location, destination)])
 
+    def peek_next_move(self):
+        return self._plan[0]
+
     def next_move(self):
         """TODO: pop and return the next action in the plan."""
-        next_move = self._plan[0]
         self._plan.pop(0)
-        return next_move
 
     def arrived(self, destination):
         """TODO: True when the plan is empty."""

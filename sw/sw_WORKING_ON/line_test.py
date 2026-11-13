@@ -9,7 +9,7 @@ def running(robot):
     print("Running")
     if robot.sensors.at_junction():
         print("At junction")
-        robot.follower.turn("LEFT",SPIN_SPEED)
+        robot.follower.turn("RIGHT",SPIN_SPEED)
     robot.follower.step(BASE_SPEED)
 
         

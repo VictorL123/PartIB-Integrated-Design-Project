@@ -33,14 +33,15 @@ LED_OFF_VALUE = 0
 
 # ---------------- TUNING ----------------
 DT = 1.5
-BASE_SPEED = 50           # 0-100
+BASE_SPEED = 60           # 0-100
 SLOW_SPEED = 30           # approaching packages / ramp
 SEARCH_SPEED = 30         # pivot speed when the line is lost
-SPIN_SPEED = 40
-TURN_90_MS = 1500
+SPIN_SPEED = 50
+TURN_90_MS = 1300
+TURN_180_MS = 3500
 STRAIGHT_BEFORE_TURN = 1000
-STRAIGHT_TIME = 1
-WAIT_TIME = 2
+STRAIGHT_TIME = 3
+WAIT_TIME = 3
 KP = 8                   # steer harder the further the line is off-centre
 KD = 2                    # damps oscillation; raise after KP is tuned
 KI = 0

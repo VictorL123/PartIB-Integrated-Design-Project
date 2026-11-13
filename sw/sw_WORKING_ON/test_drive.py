@@ -21,6 +21,8 @@ def test_drive():
         print("both forward");        drive.drive(40, 40);        sleep(1.5)
         print("spin LEFT (anticlockwise from above)"); drive.spin("LEFT", 40);  sleep(1.5)
         print("spin RIGHT");          drive.spin("RIGHT", 40);    sleep(1.5)
+        while True:
+            drive.drive(60,60)
     finally:
         drive.stop()
         print("stopped")

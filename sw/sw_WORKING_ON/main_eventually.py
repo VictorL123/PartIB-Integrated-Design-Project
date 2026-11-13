@@ -33,30 +33,71 @@ def run():
             robot.lights.amber_flash(elapsed)
 
             if robot.sensors.at_junction():
-                if robot.navigate.next_move() == "STRAIGHT":
+                if robot.navigate.peek_next_move() == "STRAIGHT":
+                    robot.navigate.next_move()
+                    print("calling straight")
                     robot.follower.step(BASE_SPEED)
                     sleep_ms(250)
 
-                elif robot.navigate.next_move() == "STRAIGHT1S":
+                elif robot.navigate.peek_next_move() == "STRAIGHT1S":
+                    robot.navigate.next_move()
+                    print("calling straight 1 s")
                     t_end = time.time() + STRAIGHT_TIME
                     while time.time() < t_end:
                         robot.follower.step(BASE_SPEED)
+                    robot.follower.turn("180", SPIN_SPEED)
 
-                elif robot.navigate.next_move() == "LEFTTURN":
+                elif robot.navigate.peek_next_move() == "LEFTTURN":
+                    print("calling left turn")
+                    robot.navigate.next_move()
                     robot.follower.turn("LEFT", SPIN_SPEED)
 
-                elif robot.navigate.next_move() == "RIGHTTURN":
+                elif robot.navigate.peek_next_move() == "RIGHTTURN":
+                    robot.navigate.next_move()
+                    print("calling turn from main")
                     robot.follower.turn("RIGHT", SPIN_SPEED)
 
-                elif robot.navigate.next_move() == "ABOUTTURN":
+                elif robot.navigate.peek_next_move() == "ABOUTTURN":
+                    robot.navigate.next_move()
+                    print("calling about turn")
                     robot.follower.turn("180", SPIN_SPEED)
                     
-                elif robot.navigate.next_move() == "WAIT2S":
+                elif robot.navigate.peek_next_move() == "WAIT2S":
+                    robot.navigate.next_move()
                     t_end = time.time() + WAIT_TIME
+                    print("waiting 2s")
                     while time.time() < t_end:
                         robot.drive.stop()
 
-                elif robot.navigate.next_move() == "STOP":
+                elif robot.navigate.peek_next_move() == "RIGHTTURNINTOBAY":
+                    robot.navigate.next_move()
+                    print("calling right turn into bay")
+                    robot.follower.turn("RIGHT", SPIN_SPEED)
+                    t_end = time.time() + STRAIGHT_TIME
+                    while time.time() < t_end:
+                        print("Going straight after turning into bay")
+                        robot.follower.step(BASE_SPEED)
+                    t_end = time.time() + WAIT_TIME
+                    print("waiting 2s")
+                    while time.time() < t_end:
+                        robot.drive.stop()
+                    robot.follower.turn("180", SPIN_SPEED)
+                    
+                elif robot.navigate.peek_next_move() == "LEFTTURNINTOBAY":
+                    robot.navigate.next_move()
+                    print("calling left turn into bay")
+                    t_end = time.time() + STRAIGHT_TIME
+                    while time.time() < t_end:
+                        robot.follower.step(BASE_SPEED)
+                    t_end = time.time() + WAIT_TIME
+                    print("waiting 2s")
+                    while time.time() < t_end:
+                        robot.drive.stop()
+                    robot.follower.turn("180", SPIN_SPEED)
+
+                elif robot.navigate.peek_next_move() == "STOP":
+                    robot.navigate.next_move()
+                    print("stopping")
                     #specifically just for linefollower
                     robot.drive.stop()
             

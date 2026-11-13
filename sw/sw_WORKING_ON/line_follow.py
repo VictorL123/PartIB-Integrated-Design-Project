@@ -1,5 +1,5 @@
 """line_follow.py - the PD controller. One call = one control step."""
-from config import KP, KD, KI, DT, TURN_90_MS, SPIN_SPEED, STRAIGHT_BEFORE_TURN
+from config import KP, KD, KI, DT, TURN_90_MS, SPIN_SPEED, STRAIGHT_BEFORE_TURN, TURN_180_MS
 from utime import sleep_ms
 
 # what is a control step? where does the line counting happen? what is drive? can drivetrain accommodate changing one wheel?
@@ -36,16 +36,19 @@ class LineFollower:
 
 
     def turn(self, direction, spin_speed=SPIN_SPEED):
+        print("in turn function")
         if direction in ("LEFT", "RIGHT"):
             duration = TURN_90_MS
+            print("before going straight")
             sleep_ms(STRAIGHT_BEFORE_TURN)
+            print("after going straight")
             
         elif direction == "180":
-            duration = 2 * TURN_90_MS
+            duration = TURN_180_MS
             direction = "RIGHT"          # a U-turn still needs a side to spin toward
         else:
             return
-
+        print("turning")
         self.drive.spin(direction, spin_speed)
         sleep_ms(duration)
         self.drive.stop()                # without this the robot never stops turning
