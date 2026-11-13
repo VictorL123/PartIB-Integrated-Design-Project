@@ -4,7 +4,7 @@ The route is DATA: for each trip, the list of actions to take at successive junc
 Fill ROUTES by walking the table and counting junctions on the line.
 """
 from robot import Robot
-from config import BASE_SPEED, SPIN_SPEED
+from config import BASE_SPEED, SPIN_SPEED, STRAIGHT_TIME, WAIT_TIME
 import time
 
 # bays_l_low = [0] * 6
@@ -97,7 +97,7 @@ class Route:
             robot.follower.step(BASE_SPEED)
 
         if move == "STRAIGHT1S":
-            t_end = time.time() + 1
+            t_end = time.time() + STRAIGHT_TIME
             while time.time() < t_end:
                 robot.follower.step(BASE_SPEED)
 
@@ -111,7 +111,7 @@ class Route:
             robot.follower.turn("180", SPIN_SPEED)
             
         elif move == "WAIT2S":
-            t_end = time.time() + 2
+            t_end = time.time() + WAIT_TIME
             while time.time() < t_end:
                 robot.drive.stop()
 
