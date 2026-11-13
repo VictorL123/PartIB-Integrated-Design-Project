@@ -65,6 +65,7 @@ class Route:
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
             self._plan.extend(["STRAIGHT1S", "WAIT2S", "ABOUTTURN", "STRAIGHT"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
+            self._plan.extend(["STOP"])
 
         else:
             #orientation is variable at "START"
@@ -114,6 +115,9 @@ class Route:
             while time.time() < t_end:
                 robot.drive.stop()
 
+        elif move == "STOP":
+            robot.drive.stop()
+
         self._plan.pop(0)
 
             # should break but not stop moving when meets junction
@@ -125,6 +129,8 @@ class Route:
             self._arrived = True
             self.lastlocation = self.location
             self.location = destination
+        elif len(self._plan) > 0:
+            self._arrived = False
 
     def packages_remaining(self):
         # 0 = not investigated
