@@ -2,26 +2,13 @@
 
 Each state does one job and names the next state. No pin numbers, no maths in here.
 """
-import time
+from utime import ticks_ms, sleep_ms, ticks_diff
 from config import *
-from motors import Motor, Drivetrain
-from line_sensors import LineSensors
-from line_follow import LineFollower
-from navigation import Route, turn
-from distance import DistanceSensor
-from grabber import Grabber
-from magnet import read_polarity
-from lights import Lights
-from ir_receiver import wait_for_green
-from buttons import start_pressed, stop_pressed
-
-
-def build_robot():
-    """TODO: create every object once and return them (or put them in a dict)."""
+from robot import Robot
 
 
 def run():
-    # TODO: robot = build_robot()
+    robot = Robot()
     state = "WAIT_START"
     t_start = 0
 
@@ -33,11 +20,19 @@ def run():
 
         if state == "WAIT_START":
             # TODO: wait for start_pressed(); record t_start; amber flash on; plan first trip
-            pass
+            robot.lights.amber_on()
+            robot.navigate.plan_to("LINE_FOLLOWER_TEST")
+            t_start = ticks_ms()
+            state = "TRAVEL"
         elif state == "TRAVEL":
             # TODO: follower.step(); on junction -> route.next_move() -> turn() or wait_for_green()
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
-            pass
+            elapsed = ticks_diff(ticks_ms(),t_start)
+            robot.lights.amber_flash(elapsed)
+            if robot.sensors.at_junction():
+                robot.navigate.next_move()
+            robot.follower.step(BASE_SPEED)
+            
         elif state == "APPROACH_PACKAGE":
             # TODO: follow line slowly until package_near(); stop; -> "GRAB"
             pass
@@ -56,7 +51,7 @@ def run():
         elif state == "DONE":
             pass
 
-        time.sleep_ms(5)
+        sleep_ms(5)
 
 
 try:

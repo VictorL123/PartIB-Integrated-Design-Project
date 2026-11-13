@@ -22,15 +22,12 @@ class Lights:
         self.amber.value(LED_ON_VALUE)
 
 
-    def amber_flash(self, on):
-        """TODO: start or stop the periodic toggle at FLASH_HZ."""
-        print("Flashing LED")
-        self.amber_on()
-        sleep(1/FLASH_HZ)
-        self.amber_off()
-        sleep(1/FLASH_HZ)
-
-        
+    def amber_flash(self, elapsed):
+        led_on = ((elapsed // 1000) % 2 == 0)
+        if led_on:
+            self.amber_on()
+        else:
+            self.amber_off()
 
     def amber_off(self):
         """TODO"""
