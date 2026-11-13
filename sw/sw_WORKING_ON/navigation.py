@@ -62,7 +62,7 @@ class Route:
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
             self._plan.extend(["RIGHTTURNINTOBAY", "LEFTTURN"]) # back to beginning of L low rack
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
-            self._plan.extend(["LEFTTURNINTOBAY"])
+            self._plan.extend(["LEFTTURNINTOBAY"], ["RIGHTTURN"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
@@ -94,12 +94,12 @@ class Route:
         """TODO: pop and return the next action in the plan."""
         self._plan.pop(0)
 
-    def arrived(self, destination):
+    def arrived(self):
         """TODO: True when the plan is empty."""
         if len(self._plan) < 1:
             self._arrived = True
             self.lastlocation = self.location
-            self.location = destination
+            #self.location = destination
         elif len(self._plan) > 0:
             self._arrived = False
 
