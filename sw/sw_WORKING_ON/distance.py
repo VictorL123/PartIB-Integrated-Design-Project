@@ -45,6 +45,7 @@ class DistanceSensor:
         try:
             distance = self.vl53l0.read() - 30
             print(f"Distance = {distance}mm")
+            return distance
 
         except:
             print("No valid reading")
@@ -61,7 +62,7 @@ class DistanceSensor:
 
     def package_there(self):
         """TODO: True if mm() is not None an.d below PACKAGE_THERE_MM."""
-        if self.mm() != None and self.mm() < PACKAGE_NEAR_MM:
+        if self.mm() != None and self.mm() < PACKAGE_THERE_MM:
             return True
         elif self.mm() != None:
             return False
