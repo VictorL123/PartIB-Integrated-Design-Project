@@ -31,7 +31,26 @@ class LineFollower:
         self.last_error = error
 
         return True
-    
+
+    def stepreverse(self, base_speed):
+        """TODO:
+        1. error = sensors.error()
+        2. if None: lost line -> keep turning toward self.last_error's side
+        3. correction = KP*error + KD*(error - last_error)
+        4. drive.drive(base + correction, base - correction)  (swap signs if it steers away)
+        5. store last_error
+        Return True if the line is currently found, False if lost (main uses this for recovery)."""
+        error = self.sensors.error()
+        if error == None:
+            self.drive.stop()
+            return False
+        self.integral = error * DT 
+        derivative = (error - self.last_error)/DT
+        mdelta = KD * derivative + KP * error + KI * self.integral
+        self.drive.drive(-(base_speed + mdelta), -(base_speed - mdelta))
+        self.last_error = error
+
+        return True
 
 
 

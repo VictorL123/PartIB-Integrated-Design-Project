@@ -94,7 +94,7 @@ def run():
                         print("waiting 2s")
                         while time.time() < t_end:
                             robot.drive.stop()
-                        robot.follower.step(-BASE_SPEED) # I don't know if this will work to reverse?
+                        robot.follower.stepreverse(BASE_SPEED) # I don't know if this will work to reverse?
 
                     elif robot.navigate.peek_next_move() == "STOP":
                         robot.navigate.next_move()
