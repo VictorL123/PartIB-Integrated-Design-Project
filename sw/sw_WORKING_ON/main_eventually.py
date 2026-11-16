@@ -32,7 +32,7 @@ def run():
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
 
-            while robot.navigate._arrived() == False:
+            while robot.navigate._arrived == False:
                 if robot.sensors.at_junction():
                     if robot.navigate.peek_next_move() == "STRAIGHT":
                         robot.navigate.next_move()
@@ -74,7 +74,7 @@ def run():
                         robot.navigate.next_move()
                         print("calling right turn into bay")
                         robot.follower.turn("RIGHT", SPIN_SPEED)
-                        t_end = time.time() + STRAIGHT_TIME_DEPOT
+                        t_end = time.time() + STRAIGHT_TIME_BAY
                         while time.time() < t_end:
                             print("Going straight after turning into bay")
                             robot.follower.step(BASE_SPEED)
@@ -104,7 +104,7 @@ def run():
                 
                 robot.follower.step(BASE_SPEED)
 
-                if robot.navigate._arrived() == True:
+                if robot.navigate._arrived == True:
                     """when not for the linefollower, this just means that have reached end of route
                     TODO: need to load either next route or next state"""
                     if robot.sensors.at_junction():
