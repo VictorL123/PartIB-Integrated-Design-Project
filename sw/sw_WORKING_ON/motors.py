@@ -4,7 +4,7 @@ Motor is the course class (sw/test_motor.py) plus set(): one number from -100 to
 Everything else in the project uses Drivetrain, never a raw Motor.
 """
 from machine import Pin, PWM
-
+from config import LEFT_MOTOR_CORRECTION
 
 class Motor:
     def __init__(self, dir_pin, pwm_pin, invert=False):
@@ -47,7 +47,7 @@ class Drivetrain:
 
     def drive(self, left_speed, right_speed):
         """Set both wheel speeds (-100..100). Different speeds make it steer."""
-        self.left.set(left_speed)
+        self.left.set(left_speed*LEFT_MOTOR_CORRECTION)
         self.right.set(right_speed)
 
     def stop(self):
