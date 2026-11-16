@@ -98,7 +98,13 @@ def run():
                         print("waiting 2s in deposit")
                         while time.time() < t_end:
                             robot.drive.stop()
-                        robot.follower.stepreverse(BASE_SPEED) # I don't know if this will work to reverse?
+                        #robot.follower.stepreverse(BASE_SPEED) # I don't know if this will work to reverse?
+                        #sleep_ms(250)
+                        
+                    elif robot.navigate.peek_next_move() == "REVERSERIGHTTURN":
+                        robot.navigate.next_move()
+                        print("calling turn from main")
+                        robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
                         
                     elif robot.navigate.peek_next_move() == "REVERSE":
                         reversing = True

@@ -56,7 +56,7 @@ class LineFollower:
         self.drive.drive(-base_speed, -base_speed)
 
 
-    def turn(self, direction, spin_speed=SPIN_SPEED):
+    def turn(self, direction, spin_speed=SPIN_SPEED, reversing=False):
         print("in turn function")
         if direction == "LEFT":
             duration = TURN_LEFT_90_MS
@@ -64,11 +64,17 @@ class LineFollower:
             sleep_ms(STRAIGHT_BEFORE_TURN)
             print("after going straight")
             
-        elif direction == "RIGHT":
+        elif direction == "RIGHT" and reversing == False:
                     duration = TURN_RIGHT_90_MS
                     print("before going straight")
                     sleep_ms(STRAIGHT_BEFORE_TURN)
                     print("after going straight")
+                    
+        elif direction == "RIGHT" and reversing == True:
+            duration = TURN_RIGHT_90_MS
+            print("before going straight")
+            sleep_ms(STRAIGHT_BEFORE_TURN-250)
+            print("after going straight")
             
         elif direction == "180":
             duration = TURN_180_MS

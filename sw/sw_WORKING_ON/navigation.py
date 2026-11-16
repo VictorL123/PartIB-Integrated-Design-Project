@@ -60,7 +60,7 @@ class Route:
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
             self._plan.extend(["RIGHTTURNINTOBAY", "LEFTTURN"]) # back to beginning of L low rack
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
-            self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "RIGHTTURN"])
+            self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "REVERSERIGHTTURN"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
