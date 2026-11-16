@@ -28,7 +28,7 @@ ROUTES = {
     # ("rack_R_low", "deposit_R2"): ["RIGHTTURN"],
     # ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT"],
     # ("rack_top", "START"): ["STRAIGHT"],
-    ("deposit_L1", "START"): ["LEFTTURN", "LEFTTURN", "STRAIGHT"],
+    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT"],
     # ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
     # ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
     # ("deposit_L2", "rack_L_low"): ["RIGHTTURN"],
@@ -51,7 +51,6 @@ class Route:
         self.lastlocation = "START"
         #for the line follower test, this will not change (since the movements are prescribed, it doesn't need to)
         self._plan = []
-        self._arrived = False
 
 
     def plan_to(self, destination):
@@ -61,7 +60,7 @@ class Route:
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
             self._plan.extend(["RIGHTTURNINTOBAY", "LEFTTURN"]) # back to beginning of L low rack
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
-            self._plan.extend(["LEFTTURNINTODEPOSIT", "RIGHTTURN"])
+            self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "RIGHTTURN"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
@@ -96,11 +95,12 @@ class Route:
     def arrived(self):
         """TODO: True when the plan is empty."""
         if len(self._plan) < 1:
-            self._arrived = True
+            
             self.lastlocation = self.location
             #self.location = destination
+            return True
         elif len(self._plan) > 0:
-            self._arrived = False
+            return False
 
     def packages_remaining(self):
         # 0 = not investigated

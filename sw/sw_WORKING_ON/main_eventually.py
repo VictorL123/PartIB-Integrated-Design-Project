@@ -12,6 +12,7 @@ def run():
     robot = Robot()
     state = "WAIT_START"
     t_start = 0
+    reversing = False
 
     while True:
         # --- safety first, every loop ---
@@ -32,8 +33,9 @@ def run():
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
 
-            while robot.navigate._arrived == False:
+            if robot.navigate.arrived() == False:
                 if robot.sensors.at_junction():
+                    reversing = False
                     if robot.navigate.peek_next_move() == "STRAIGHT":
                         robot.navigate.next_move()
                         print("calling straight")
@@ -74,12 +76,13 @@ def run():
                         robot.navigate.next_move()
                         print("calling right turn into bay")
                         robot.follower.turn("RIGHT", SPIN_SPEED)
+                        print(time.time())
                         t_end = time.time() + STRAIGHT_TIME_BAY
+                        print(t_end)
                         while time.time() < t_end:
-                            print("Going straight after turning into bay")
                             robot.follower.step(BASE_SPEED)
                         t_end = time.time() + WAIT_TIME
-                        print("waiting 2s")
+                        print("waiting 2s in bay")
                         while time.time() < t_end:
                             robot.drive.stop()
                         robot.follower.turn("180", SPIN_SPEED)
@@ -91,25 +94,33 @@ def run():
                         while time.time() < t_end:
                             robot.follower.step(BASE_SPEED)
                         t_end = time.time() + WAIT_TIME
-                        print("waiting 2s")
+                        print("waiting 2s in deposit")
                         while time.time() < t_end:
                             robot.drive.stop()
                         robot.follower.stepreverse(BASE_SPEED) # I don't know if this will work to reverse?
+                        
+                    elif robot.navigate.peek_next_move() == "REVERSE":
+                        reversing = True
+                        robot.navigate.next_move()
 
                     elif robot.navigate.peek_next_move() == "STOP":
                         robot.navigate.next_move()
                         print("stopping")
                         #specifically just for linefollower
+                        robot.follower.step(BASE_SPEED)
+                        sleep_ms(200)
                         robot.drive.stop()
-                
-                robot.follower.step(BASE_SPEED)
+                if reversing == True:
+                    robot.follower.reverse(BASE_SPEED)
+                else:
+                    robot.follower.step(BASE_SPEED)
 
-                if robot.navigate._arrived == True:
-                    """when not for the linefollower, this just means that have reached end of route
-                    TODO: need to load either next route or next state"""
-                    if robot.sensors.at_junction():
-                        robot.lights.amber_off()
-                        robot.drive.stop()
+            if robot.navigate.arrived() == True:
+                """when not for the linefollower, this just means that have reached end of route
+                TODO: need to load either next route or next state"""
+                if robot.sensors.at_junction():
+                    robot.lights.amber_off()
+                    robot.drive.stop()
                 
 
         elif state == "SEARCH":
@@ -117,11 +128,11 @@ def run():
             pass  
             
         elif state == "APPROACH_PACKAGE":
-            # TODO: follow line slowly until package_near(); stop; -> "GRAB"
+            # TODO: follow line slowly until package_near(); stop; read_polarity -> "GRAB"
             pass
         elif state == "GRAB":
             # do we grab before we read_polarity?
-            # TODO: close, raise to CARRY, read_polarity(), show_polarity(), plan to N or S depot
+            # TODO: close, raise to CARRY, show_polarity(), plan to N or S depot
             pass
         elif state == "DELIVER":
             # TODO: travel to depot, lower, open, polarity lights off, back off, -> next rack or RETURN
