@@ -26,13 +26,14 @@ def run():
             #robot.lights.amber_on()
             sleep_ms(2000)
             robot.navigate.plan_to("LINE_FOLLOWER_TEST")
+            #robot.navigate.plan_to("rack_L_low")
             t_start = ticks_ms()
             state = "TRAVEL"
         elif state == "TRAVEL":
             # TODO: follower.step(); on junction -> route.next_move() -> turn() or wait_for_green()
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
-            #elapsed = ticks_diff(ticks_ms(),t_start)
-            #robot.lights.amber_flash(elapsed)
+            elapsed = ticks_diff(ticks_ms(),t_start)
+            robot.lights.amber_flash(elapsed)
 
             if robot.navigate.arrived() == False:
                 if robot.sensors.at_junction():
@@ -45,35 +46,30 @@ def run():
 
                     elif robot.navigate.peek_next_move() == "STRAIGHT1S":
                         robot.navigate.next_move()
-                        print("calling straight 1 s")
-                        t_end = time.time() + STRAIGHT_TIME_BAY
-                        while time.time() < t_end:
+                        print("calling straight for straight_time_bay")
+                        t0 = ticks_ms()
+                        while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_BAY:
                             robot.follower.step(BASE_SPEED)
                         robot.follower.turn("180", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "LEFTTURN":
+                        # steps so must be going forward
+                        robot.follower.step()
                         print("calling left turn")
-                        robot.lights.amber_off()
                         robot.navigate.next_move()
                         robot.follower.turn("LEFT", SPIN_SPEED)
-                        robot.lights.amber_on()
 
                     elif robot.navigate.peek_next_move() == "RIGHTTURN":
-                        robot.navigate.next_move()
+                        # steps so must be going forward
+                        robot.follower.step()
                         print("calling turn from main")
+                        robot.navigate.next_move()
                         robot.follower.turn("RIGHT", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "ABOUTTURN":
                         robot.navigate.next_move()
                         print("calling about turn")
                         robot.follower.turn("180", SPIN_SPEED)
-                        
-                    elif robot.navigate.peek_next_move() == "WAIT2S":
-                        robot.navigate.next_move()
-                        t_end = time.time() + WAIT_TIME
-                        print("waiting 2s")
-                        while time.time() < t_end:
-                            robot.drive.stop()
 
                     elif robot.navigate.peek_next_move() == "RIGHTTURNINTOBAY":
                         robot.navigate.next_move()
@@ -84,21 +80,20 @@ def run():
                             robot.follower.step(BASE_SPEED)
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < WAIT_TIME*1000:
+                            print("waiting 2s in bay")
                             robot.drive.stop()
-                        robot.follower.turn("180", SPIN_SPEED)
-                        robot.lights.amber_on()
                         
                     elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
                         robot.navigate.next_move()
                         print("calling left turn into depo")
-                        t_end = time.time() + STRAIGHT_TIME_DEPOT
-                        while time.time() < t_end:
+                        t0 = ticks_ms()
+                        while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_DEPOT*1000:
                             robot.follower.step(BASE_SPEED)
-                        t_end = time.time() + WAIT_TIME
+                        t0 = ticks_ms()
                         print("waiting 2s in deposit")
-                        while time.time() < t_end:
+                        while ticks_diff(ticks_ms(), t0) < WAIT_TIME*1000:
                             robot.drive.stop()
-                        #robot.follower.stepreverse(BASE_SPEED) # I don't know if this will work to reverse?
+                        #robot.follower.stepreverse(BASE_SPEED) 
                         #sleep_ms(250)
                         
                     elif robot.navigate.peek_next_move() == "REVERSERIGHTTURN":
@@ -108,26 +103,26 @@ def run():
                         
                     elif robot.navigate.peek_next_move() == "REVERSE":
                         reversing = True
+                        robot.follower.reverse(BASE_SPEED) # using reverse not step reverse - unsure
+                        sleep_ms(250)
                         robot.navigate.next_move()
 
                     elif robot.navigate.peek_next_move() == "STOP":
                         robot.navigate.next_move()
                         print("stopping")
-                        #specifically just for linefollower
                         robot.follower.step(BASE_SPEED)
-                        sleep_ms(200)
+                        sleep_ms(500)
                         robot.drive.stop()
+
                 if reversing == True:
-                    robot.follower.reverse(BASE_SPEED)
+                    robot.follower.stepreverse(BASE_SPEED) #using step reverse - haven't seen this work yet?
                 else:
                     robot.follower.step(BASE_SPEED)
 
             if robot.navigate.arrived() == True:
                 """when not for the linefollower, this just means that have reached end of route
                 TODO: need to load either next route or next state"""
-                if robot.sensors.at_junction():
-                    robot.lights.amber_off()
-                    robot.drive.stop()
+                robot.drive.stop()
                 
 
         elif state == "SEARCH":
@@ -142,7 +137,7 @@ def run():
             # TODO: close, raise to CARRY, show_polarity(), plan to N or S depot
             pass
         elif state == "DELIVER":
-            # TODO: travel to depot, lower, open, polarity lights off, back off, -> next rack or RETURN
+            # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
             pass
         elif state == "RECOVER":
             # TODO: stop, search for the line; decide how to give up safely

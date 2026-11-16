@@ -4,7 +4,6 @@ The route is DATA: for each trip, the list of actions to take at successive junc
 Fill ROUTES by walking the table and counting junctions on the line.
 """
 #from robot import Robot
-import time
 
 # bays_l_low = [0] * 6
 # bays_r_low = [0] * 6
@@ -42,14 +41,12 @@ ROUTES = {
     
 }
 # Special entries you will probably want: "WAIT_LIGHTS" (traffic lights before top deck)
-#how to count junctions?? how to put that information here
-
 
 class Route:
     def __init__(self):
         self.location = "START"
         self.lastlocation = "START"
-        #for the line follower test, this will not change (since the movements are prescribed, it doesn't need to)
+        # for the line follower test, this will not change (since the movements are prescribed, it doesn't need to)
         self._plan = []
 
 
@@ -58,9 +55,10 @@ class Route:
         if destination == "LINE_FOLLOWER_TEST": 
             # Prescribed circuit for line follower
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
-            self._plan.extend(["RIGHTTURNINTOBAY", "LEFTTURN"]) # back to beginning of L low rack
+            self._plan.extend(["RIGHTTURNINTOBAY", "REVERSE", "RIGHTTURN"]) # back to beginning of L low rack
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
-            self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "REVERSERIGHTTURN"])
+            # self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "REVERSERIGHTTURN"]) # trying to do the reverse, then forwards turn
+            self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "RIGHTTURN"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
@@ -89,13 +87,11 @@ class Route:
         return self._plan[0]
 
     def next_move(self):
-        """TODO: pop and return the next action in the plan."""
         self._plan.pop(0)
 
     def arrived(self):
         """TODO: True when the plan is empty."""
         if len(self._plan) < 1:
-            
             self.lastlocation = self.location
             #self.location = destination
             return True

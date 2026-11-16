@@ -65,10 +65,10 @@ class LineFollower:
             print("after going straight")
             
         elif direction == "RIGHT" and reversing == False:
-                    duration = TURN_RIGHT_90_MS
-                    print("before going straight")
-                    sleep_ms(STRAIGHT_BEFORE_TURN)
-                    print("after going straight")
+            duration = TURN_RIGHT_90_MS
+            print("before going straight")
+            sleep_ms(STRAIGHT_BEFORE_TURN)
+            print("after going straight")
                     
         elif direction == "RIGHT" and reversing == True:
             duration = TURN_RIGHT_90_MS
