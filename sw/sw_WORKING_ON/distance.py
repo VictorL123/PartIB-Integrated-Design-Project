@@ -43,7 +43,7 @@ class DistanceSensor:
         """TODO: return distance in mm, or None if the read fails or the reading means
         'nothing in range' (the driver returns ~8190 then). Wrap in try/except."""
         try:
-            distance = self.vl53l0.read() - 30
+            distance = self.vl53l0.read() - 25
             print(f"Distance = {distance}mm")
             return distance
 

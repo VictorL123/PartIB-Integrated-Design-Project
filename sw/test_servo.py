@@ -2,6 +2,8 @@ from machine import Pin, PWM
 import time
 
 class Servo:
+    # 6.4V to servo
+
     # Common settings for 270° servos:
     # 0.5 ms → minimum (0°)
     # 2.5 ms → maximum (270°)
