@@ -5,6 +5,7 @@ Each state does one job and names the next state. No pin numbers, no maths in he
 from utime import ticks_ms, sleep_ms, ticks_diff
 from config import *
 from robot import Robot
+from machine import Pin
 import time
 
 
@@ -54,14 +55,14 @@ def run():
 
                     elif robot.navigate.peek_next_move() == "LEFTTURN":
                         # steps so must be going forward
-                        robot.follower.step()
+                        robot.follower.step(BASE_SPEED)
                         print("calling left turn")
                         robot.navigate.next_move()
                         robot.follower.turn("LEFT", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "RIGHTTURN":
                         # steps so must be going forward
-                        robot.follower.step()
+                        robot.follower.step(BASE_SPEED)
                         print("calling turn from main")
                         robot.navigate.next_move()
                         robot.follower.turn("RIGHT", SPIN_SPEED)
@@ -150,5 +151,14 @@ def run():
 
         sleep_ms(5)
 
+def main():
+    "Check if button pressed"
+    stop_button = Pin(START_BUTTON_PIN, Pin.IN, Pin.PULL_DOWN) 
+    start = 1
+    while start == 1:
+        # Poll the value
+        start = stop_button.value()
+        print(start) 
+    run()
 
-run()
+main()
