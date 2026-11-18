@@ -7,7 +7,8 @@ This file deliberately imports nothing from `machine`, so it is plain data.
 
 # ---------------- KNOWN (course examples) ----------------
 I2C_ID, I2C_SDA, I2C_SCL = 0, 12, 14        # VL53L0X / TCS3472 on I2C0
-SERVO_PIN = 15                             # "Servo 1", 50 Hz, 0-270 deg
+SERVO_HORIZONTAL_PIN = 15                             # "Servo 1", 50 Hz, 0-270 deg
+SERVO_VERTICAL_PIN = None
 ACTUATOR_DIR, ACTUATOR_PWM = 0, 1          # linear actuator on Motor Driv1 #1
 START_BUTTON_PIN = 22                      # Pin.IN with PULL_DOWN in the example
 # Motor convention in the course Motor class: dir 0 = forward, 1 = reverse
@@ -35,6 +36,7 @@ LED_OFF_VALUE = 0
 DT = 1.5
 BASE_SPEED = 60           # 0-100
 SLOW_SPEED = 30           # approaching packages / ramp
+EXTRA_SLOW_SPEED = 15     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
 LEFT_MOTOR_CORRECTION = 0.98
@@ -46,6 +48,7 @@ STRAIGHT_TIME_DEPOT = 1300
 STRAIGHT_TIME_BAY = 3000
 STRAIGHT_TIME_SEARCH = 1700
 WAIT_TIME = 3000
+FORWARD_BEFORE_GRAB = 150
 KP = 12                   # steer harder the further the line is off-centre
 KD = 2                    # damps oscillation; raise after KP is tuned
 KI = 0
