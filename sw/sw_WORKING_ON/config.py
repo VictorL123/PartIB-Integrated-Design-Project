@@ -6,7 +6,7 @@ This file deliberately imports nothing from `machine`, so it is plain data.
 """
 
 # ---------------- KNOWN (course examples) ----------------
-I2C_ID, I2C_SDA, I2C_SCL = 0, 20, 21        # VL53L0X / TCS3472 on I2C0
+I2C_ID, I2C_SDA, I2C_SCL = 0, 12, 14        # VL53L0X / TCS3472 on I2C0
 SERVO_PIN = 15                             # "Servo 1", 50 Hz, 0-270 deg
 ACTUATOR_DIR, ACTUATOR_PWM = 0, 1          # linear actuator on Motor Driv1 #1
 START_BUTTON_PIN = 22                      # Pin.IN with PULL_DOWN in the example
@@ -18,16 +18,16 @@ RIGHT_MOTOR_DIR, RIGHT_MOTOR_PWM = 7, 6
 LEFT_MOTOR_INVERT = False    # set True if "forward" spins that wheel backwards
 RIGHT_MOTOR_INVERT = True   # (motors are mounted mirrored, so one usually needs this)
 
-LINE_SENSOR_PINS = [8,9,10,11]       # left -> right, e.g. (20, 21, 22, 26)
+LINE_SENSOR_PINS = [21,20,19,18]       # left -> right, e.g. (20, 21, 22, 26)
 LINE_SENSOR_WEIGHTS = None   # None = auto: 3 sensors -> (-2,0,2), 4 -> (-3,-1,1,3), ...
 LINE_ON_VALUE = 1            # what a sensor reads when it is over the line (check!)
 LINE_SENSOR_PULL = None      # None, "UP" or "DOWN": depends on the sensor board output
 
-HALL_PIN = None                            # magnetic field sensor (digital or ADC?)
-IR_PIN = None                              # IR receiver for the traffic light
-AMBER_PIN = 12                           # -> optical isolator -> LED
-RED_PIN = None
-GREEN_PIN = None
+HALL_PIN = 16                            # magnetic field sensor (digital or ADC?)
+IR_PIN = 17                              # IR receiver for the traffic light
+AMBER_PIN = 8                           # -> optical isolator -> LED
+RED_PIN = 10
+GREEN_PIN = 9
 LED_ON_VALUE = 1             # pin level that lights the LED through your isolator circuit
 LED_OFF_VALUE = 0
 
