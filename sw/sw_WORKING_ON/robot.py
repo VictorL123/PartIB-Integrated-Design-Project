@@ -5,6 +5,7 @@ from line_sensors import LineSensors
 from line_follow import LineFollower
 from lights import Lights
 from navigation import Route
+from distance import DistanceSensor
 
 class Robot:
     def __init__(self):
@@ -17,3 +18,4 @@ class Robot:
         self.follower = LineFollower(self.drive,self.sensors)
         self.lights = Lights()
         self.navigate = Route()
+        self.distance = DistanceSensor()

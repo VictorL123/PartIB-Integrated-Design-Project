@@ -7,6 +7,7 @@ from config import *
 from robot import Robot
 from distance import DistanceSensor
 from machine import Pin
+from magnet import read_polarity
 import time
 from map import table
 
@@ -124,8 +125,9 @@ def run():
                     elif robot.navigate.peek_next_move() == "STOP":
                         robot.navigate.next_move()
                         print("stopping")
-                        robot.follower.step(BASE_SPEED)
-                        sleep_ms(500)
+                        t0 = ticks_ms()
+                        while ticks_diff(ticks_ms(), t0) < 200:
+                            robot.follower.step(BASE_SPEED)
                         robot.drive.stop()
 
                 if reversing == True:
@@ -138,14 +140,14 @@ def run():
                 TODO: need to load either next route or next state"""
                 robot.drive.stop()
                 #decide on next state by location
-                if robot.navigate.location() in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
+                if robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
                     state = "SEARCH"
-                elif robot.navigate.location() in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
+                elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
                     state = "DELIVER"
 
         elif state == "SEARCH":
             # TODO: go through rack; turn; follow line to make sure pointing in right direction; package_there() -> search next or APPROACH_PACKAGE
-            if robot.navigate.location() in ("rack_L_low", "rack_L_top"):
+            if robot.navigate.location in ("rack_L_low", "rack_L_top"):
                 if robot.sensors.at_junction():
                     bay_count += 1
                     print(bay_count)
@@ -155,13 +157,13 @@ def run():
                     while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_SEARCH:
                         robot.follower.step(BASE_SPEED)
                     robot.drive.stop()
-                    if DistanceSensor.package_there():
+                    if robot.distance.package_there():
                         print("package there")
                         state = "APPROACH_PACKAGE"
                     else:
                         print("package not there")
                         while robot.sensors.at_junction == False:
-                            robot.follower.stepreverse()
+                            robot.follower.stepreverse(BASE_SPEED)
                         if bay_count < 6:
                             #keep going to search next bay
                             robot.follower.turn("LEFT", SPIN_SPEED)
@@ -203,9 +205,31 @@ def run():
             pass  
             
         elif state == "APPROACH_PACKAGE":
-            # TODO: follow line slowly until package_near(); stop; read_polarity() -> "GRAB" (if relevant polarity has no free depos, should pass)
-            pass
+            # TODO: follow line slowly until package_near(); stop; read_polarity -> "GRAB"
+            if robot.distance.package_near() != True:
+                robot.follower.step(SLOW_SPEED)
+                
+            elif robot.distance.package_near():
+                # Drive forward for a given amount
+                t0 = ticks_ms()
+                while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
+                    robot.follower.step(EXTRA_SLOW_SPEED)
+                robot.drive.stop()
+                polarity = read_polarity()
+                
+                # If polarity is either "N" or "S"
+                if polarity != None:
+                    state = "GRAB"
+                    
+                # If box has no polarity then search next bay
+                elif polarity == None:
+                    t0 = ticks_ms()
+                    while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
+                        robot.follower.stepreverse(EXTRA_SLOW_SPEED)
+                    
+                    # TODO: Add code for how to go back to searching
 
+                
         elif state == "GRAB":
             # TODO: close, raise to CARRY, show_polarity()
             # grab, return to end of rack
@@ -244,7 +268,6 @@ def main():
     while start == 1:
         # Poll the value
         start = stop_button.value()
-        print(start) 
     run()
 
 main()
