@@ -187,11 +187,15 @@ def run():
                                 for i in range(4, 8):
                                     # cycle through the first dictionary entries for deposits
                                     # not looking at where is next closest!!
-                                    val = list(map.values())[i]
+                                    val = list(table.values())[i]
                                     if val == "UNSEARCHED":
-                                        robot.navigate.plan_to(list(map)[i])
+                                        robot.navigate.plan_to(list(table)[i])
                                         break
-                            
+
+                                # if here then all racks are recorded as searched
+                                print("error, all racks searched")
+                                table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
+                                robot.navigate.plan_to("rack_L_top")
                             state = "TRAVEL"                                    
 
                 robot.follower.step(BASE_SPEED)
