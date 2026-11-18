@@ -13,14 +13,29 @@ from config import AMBER_PIN, RED_PIN, GREEN_PIN, LED_ON_VALUE, LED_OFF_VALUE, F
 class Lights:
     def __init__(self):
         """TODO: Pin.OUT for amber, red, green; a Timer object for flashing."""
-        #self.red = Pin(RED_PIN, Pin.OUT)
+        self.red = Pin(RED_PIN, Pin.OUT)
         self.amber = Pin(AMBER_PIN, Pin.OUT)
-        #self.green = Pin(GREEN_PIN, Pin.OUT)
+        self.green = Pin(GREEN_PIN, Pin.OUT)
 
     def amber_on(self):
         """TODO"""
         self.amber.value(LED_ON_VALUE)
 
+    def amber_off(self):
+        """TODO"""
+        self.amber.value(LED_OFF_VALUE)
+
+    def green_on(self):
+        self.green.value(LED_ON_VALUE)
+
+    def green_off(self):
+        self.green.value(LED_OFF_VALUE)
+
+    def red_on(self):
+        self.red.value(LED_ON_VALUE)
+
+    def red_off(self):
+        self.red.value(LED_OFF_VALUE)
 
     def amber_flash(self, elapsed):
         led_on = ((elapsed // 1000) % 2 == 0)
@@ -29,11 +44,15 @@ class Lights:
         else:
             self.amber_off()
 
-    def amber_off(self):
-        """TODO"""
-        self.amber.value(LED_OFF_VALUE)
-
-
+    def red_green_test(self, elapsed):
+        """A funtion to flash the red and green LEDs on and off for a test, using the floor division operator //"""
+        flash_when = ((elapsed // 1000) % 2)
+        if flash_when == 0:
+            self.red_on()
+            self.green_on()
+        else:
+            self.red_off()
+            self.green_off()
 
     def show_polarity(self, polarity):
         """TODO: "N" -> red steady, "S" -> green steady, None -> both off."""

@@ -35,6 +35,7 @@ def run():
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
+            robot.lights.red_green_test(elapsed) #Tests the red and green LEDs have been soldered correctly lmao
 
             if robot.navigate.arrived() == False:
                 if robot.sensors.at_junction():
