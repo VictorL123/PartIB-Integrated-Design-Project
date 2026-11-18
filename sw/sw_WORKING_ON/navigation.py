@@ -3,19 +3,14 @@
 The route is DATA: for each trip, the list of actions to take at successive junctions.
 Fill ROUTES by walking the table and counting junctions on the line.
 """
-#from robot import Robot
-
-# bays_l_low = [0] * 6
-# bays_r_low = [0] * 6
-# bays_l_top = [0] * 6
-# bays_l_top = [0] * 6
 
 # TODO: fill in from the real table layout
 # assume routes starting from START will start off in the right direction
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_r_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_top"): ["WAIT_LIGHTS"],
+    ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
+    ("START", "rack_L_top"): ["WAIT_LIGHTS"],
+    ("START", "rack_R_top"): ["WAIT_LIGHTS"],
     # ("START", "deposit_L1"):["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
     # ("START", "deposit_L2"):["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
     # ("START", "deposit_R1"):["STRAIGHT", "LEFTTURN", "LEFTTURN"],
@@ -26,7 +21,8 @@ ROUTES = {
     # ("rack_R_low", "deposit_R1"): ["STRAIGHT", "RIGHTTURN"],
     # ("rack_R_low", "deposit_R2"): ["RIGHTTURN"],
     # ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT"],
-    # ("rack_top", "START"): ["STRAIGHT"],
+    # ("rack_L_top", "START"): ["STRAIGHT"],
+    # ("rack_R_top", "START"): ["STRAIGHT"],
     ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT"],
     # ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
     # ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
@@ -66,14 +62,14 @@ class Route:
             #orientation is variable at "START"
             if self.location == "START":
                 if self.lastlocation in ("rack_L_low", "deposit_L1", "deposit_L2"):
-                    if destination == "rack_top":
+                    if destination in ("rack_L_top", "rack_R_top"):
                         self._plan.extend(["RIGHTTURN"])
 
                 elif self.lastlocation in ("rack_R_low", "deposit_R1", "deposit_R2"):
-                    if destination == "rack_top":
+                    if destination in ("rack_L_top", "rack_R_top"):
                         self._plan.extend(["LEFTTURN"])
                 
-                elif self.lastlocation == "rack_top":
+                elif self.lastlocation in ("rack_L_top", "rack_R_top"):
                     if destination in ("rack_L_low", "deposit_L1", "deposit_L2"):
                         self._plan.extend(["RIGHTTURN"])
 

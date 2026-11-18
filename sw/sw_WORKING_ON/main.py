@@ -5,7 +5,9 @@ Each state does one job and names the next state. No pin numbers, no maths in he
 from utime import ticks_ms, sleep_ms, ticks_diff
 from config import *
 from robot import Robot
+from distance import DistanceSensor
 import time
+from map import table
 
 
 def run():
@@ -13,6 +15,7 @@ def run():
     state = "WAIT_START"
     t_start = 0
     reversing = False
+    bay_count = 0
 
     while True:
         # --- safety first, every loop ---
@@ -29,6 +32,7 @@ def run():
             #robot.navigate.plan_to("rack_L_low")
             t_start = ticks_ms()
             state = "TRAVEL"
+
         elif state == "TRAVEL":
             # TODO: follower.step(); on junction -> route.next_move() -> turn() or wait_for_green()
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
@@ -76,10 +80,10 @@ def run():
                         print("calling right turn into bay")
                         robot.follower.turn("RIGHT", SPIN_SPEED)
                         t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY*1000:
+                        while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY:
                             robot.follower.step(BASE_SPEED)
                         t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(),t0) < WAIT_TIME*1000:
+                        while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
                             print("waiting 2s in bay")
                             robot.drive.stop()
                         
@@ -87,11 +91,11 @@ def run():
                         robot.navigate.next_move()
                         print("calling left turn into depo")
                         t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_DEPOT*1000:
+                        while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_DEPOT:
                             robot.follower.step(BASE_SPEED)
                         t0 = ticks_ms()
                         print("waiting 2s in deposit")
-                        while ticks_diff(ticks_ms(), t0) < WAIT_TIME*1000:
+                        while ticks_diff(ticks_ms(), t0) < WAIT_TIME:
                             robot.drive.stop()
                         #robot.follower.stepreverse(BASE_SPEED) 
                         #sleep_ms(250)
@@ -115,7 +119,7 @@ def run():
                         robot.drive.stop()
 
                 if reversing == True:
-                    robot.follower.stepreverse(BASE_SPEED) #using step reverse - haven't seen this work yet?
+                    robot.follower.stepreverse(BASE_SPEED) #using stepreverse - haven't seen this work yet?
                 else:
                     robot.follower.step(BASE_SPEED)
 
@@ -123,32 +127,101 @@ def run():
                 """when not for the linefollower, this just means that have reached end of route
                 TODO: need to load either next route or next state"""
                 robot.drive.stop()
-                
+                #decide on next state by location
+                if robot.navigate.location() in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
+                    state = "SEARCH"
+                elif robot.navigate.location() in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
+                    state = "DELIVER"
 
         elif state == "SEARCH":
             # TODO: go through rack; turn; follow line to make sure pointing in right direction; package_there() -> search next or APPROACH_PACKAGE
+            if robot.navigate.location() in ("rack_L_low", "rack_L_top"):
+                if robot.sensors.at_junction():
+                    bay_count += 1
+                    print(bay_count)
+                    robot.follower.turn("RIGHT", SPIN_SPEED)
+                    print("calling right turn")
+                    t0 = ticks_ms()
+                    while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_SEARCH:
+                        robot.follower.step(BASE_SPEED)
+                    robot.drive.stop()
+                    if DistanceSensor.package_there():
+                        print("package there")
+                        state = "APPROACH_PACKAGE"
+                    else:
+                        print("package not there")
+                        while robot.sensors.at_junction == False:
+                            robot.follower.stepreverse()
+                        if bay_count < 6:
+                            #keep going to search next bay
+                            robot.follower.turn("LEFT", SPIN_SPEED)
+                            pass
+                        else: 
+                            #give up, go to next rack. raise error
+                            print("Error: no magnet found in rack")
+                            robot.follower.turn("RIGHT", SPIN_SPEED)
+                            if robot.sensors.at_junction():
+                                if bay_count > 1:
+                                    bay_count -= 1
+                                    print("calling straight")
+                                    robot.follower.step(BASE_SPEED)
+                                    sleep_ms(250)
+                                else:
+                                    # reached last bay
+                                    print("end of rack")
+                                    bay_count -= 1
+
+                            #need to load route for next rack
+                            if read_polarity() == False:
+                                # assuming returns False if nothing there: means holding no box
+                                for i in range(4, 8):
+                                    # cycle through the first dictionary entries for deposits
+                                    # not looking at where is next closest!!
+                                    val = list(map.values())[i]
+                                    if val == "UNSEARCHED":
+                                        robot.navigate.plan_to(list(map)[i])
+                                        break
+                            
+                            state = "TRAVEL"                                    
+
+                robot.follower.step(BASE_SPEED)
+
             pass  
             
         elif state == "APPROACH_PACKAGE":
-            # TODO: follow line slowly until package_near(); stop; read_polarity -> "GRAB"
+            # TODO: follow line slowly until package_near(); stop; read_polarity() -> "GRAB" (if relevant polarity has no free depos, should pass)
             pass
+
         elif state == "GRAB":
-            # do we grab before we read_polarity?
-            # TODO: close, raise to CARRY, show_polarity(), plan to N or S depot
+            # TODO: close, raise to CARRY, show_polarity()
+            # grab, return to end of rack
+            # (haven't coded anything for what the closest depo is)
+
+            # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
             pass
+            
         elif state == "DELIVER":
             # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
             pass
+        
         elif state == "RECOVER":
             # TODO: stop, search for the line; decide how to give up safely
             pass
+        
         elif state == "RETURN":
             # TODO: travel to START, park inside the box, amber off, -> "DONE"
             pass
+
         elif state == "DONE":
             pass
 
         sleep_ms(5)
+        t0 = ticks_ms()
+        # finetune: only if 2 boxes are delivered, 
+        # when 15s left
+        # if ticks_diff(t_start, t0) > 255000:
+        #     state == "RETURN"
+
 
 
 run()
