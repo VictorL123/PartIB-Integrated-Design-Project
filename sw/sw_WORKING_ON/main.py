@@ -23,6 +23,8 @@ def run():
 
         if state == "WAIT_START":
             robot.lights.amber_off()
+            robot.lights.red_off()
+            robot.lights.green_off() #Turn all the lights off at the start
             # TODO: wait for start_pressed(); record t_start; amber flash on; plan first trip
             #robot.lights.amber_on()
             sleep_ms(2000)

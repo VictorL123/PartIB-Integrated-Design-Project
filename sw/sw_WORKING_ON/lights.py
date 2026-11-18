@@ -55,4 +55,21 @@ class Lights:
             self.green_off()
 
     def show_polarity(self, polarity):
-        """TODO: "N" -> red steady, "S" -> green steady, None -> both off."""
+        """ "N" -> red steady, "S" -> green steady, None -> both off. """
+        if polarity == "N":
+            self.red_on()
+            self.green_off()
+
+        elif polarity == "S":
+            self.red_off()
+            self.green_on()
+
+        elif polarity == None:
+            self.red_off()
+            self.green_off()
+
+        else:
+            #Faliure state, if this occurs something is wrong and panic should ensue
+            self.red_on()
+            self.green_on()
+            print("Error in the polarity function, the result was not one of 'N', 'S', or None")
