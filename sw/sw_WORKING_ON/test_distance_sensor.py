@@ -1,4 +1,7 @@
 from distance import DistanceSensor
+from utime import sleep_ms
 
 distance_sensor = DistanceSensor()
-distance_sensor.mm()
+for i in range(100):
+    distance_sensor.mm()
+    sleep_ms(1000)

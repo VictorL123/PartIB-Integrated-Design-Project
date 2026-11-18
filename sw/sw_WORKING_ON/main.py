@@ -6,6 +6,7 @@ from utime import ticks_ms, sleep_ms, ticks_diff
 from config import *
 from robot import Robot
 from distance import DistanceSensor
+from machine import Pin
 import time
 from map import table
 
@@ -25,6 +26,8 @@ def run():
 
         if state == "WAIT_START":
             robot.lights.amber_off()
+            robot.lights.red_off()
+            robot.lights.green_off() #Turn all the lights off at the start
             # TODO: wait for start_pressed(); record t_start; amber flash on; plan first trip
             #robot.lights.amber_on()
             sleep_ms(2000)
@@ -38,6 +41,7 @@ def run():
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
+            robot.lights.red_green_test(elapsed) #Tests the red and green LEDs have been soldered correctly lmao
 
             if robot.navigate.arrived() == False:
                 if robot.sensors.at_junction():
@@ -58,14 +62,15 @@ def run():
 
                     elif robot.navigate.peek_next_move() == "LEFTTURN":
                         # steps so must be going forward
-                        robot.follower.step()
+                        robot.follower.step(BASE_SPEED)
                         print("calling left turn")
                         robot.navigate.next_move()
                         robot.follower.turn("LEFT", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "RIGHTTURN":
                         # steps so must be going forward
-                        robot.follower.step()
+                        robot.follower.step(BASE_SPEED)
+                        reversing = False
                         print("calling turn from main")
                         robot.navigate.next_move()
                         robot.follower.turn("RIGHT", SPIN_SPEED)
@@ -82,10 +87,13 @@ def run():
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY:
                             robot.follower.step(BASE_SPEED)
+                        print("stopping")
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
                             print("waiting 2s in bay")
                             robot.drive.stop()
+                        reversing = True
+
                         
                     elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
                         robot.navigate.next_move()
@@ -97,6 +105,7 @@ def run():
                         print("waiting 2s in deposit")
                         while ticks_diff(ticks_ms(), t0) < WAIT_TIME:
                             robot.drive.stop()
+                        reversing = True
                         #robot.follower.stepreverse(BASE_SPEED) 
                         #sleep_ms(250)
                         
@@ -106,6 +115,7 @@ def run():
                         robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
                         
                     elif robot.navigate.peek_next_move() == "REVERSE":
+                        print("reversing!!!")
                         reversing = True
                         robot.follower.reverse(BASE_SPEED) # using reverse not step reverse - unsure
                         sleep_ms(250)
@@ -119,7 +129,7 @@ def run():
                         robot.drive.stop()
 
                 if reversing == True:
-                    robot.follower.stepreverse(BASE_SPEED) #using stepreverse - haven't seen this work yet?
+                    robot.follower.reverse(BASE_SPEED) #using step reverse - haven't seen this work yet?
                 else:
                     robot.follower.step(BASE_SPEED)
 
@@ -223,5 +233,14 @@ def run():
         #     state == "RETURN"
 
 
+def main():
+    "Check if button pressed"
+    stop_button = Pin(START_BUTTON_PIN, Pin.IN, Pin.PULL_DOWN) 
+    start = 1
+    while start == 1:
+        # Poll the value
+        start = stop_button.value()
+        print(start) 
+    run()
 
-run()
+main()
