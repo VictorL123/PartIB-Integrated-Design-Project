@@ -163,7 +163,7 @@ def run():
                     else:
                         print("package not there")
                         while robot.sensors.at_junction == False:
-                            robot.follower.stepreverse(BASE_SPEED)
+                            robot.follower.reverse(BASE_SPEED)
                         if bay_count < 6:
                             #keep going to search next bay
                             robot.follower.turn("LEFT", SPIN_SPEED)
@@ -184,20 +184,23 @@ def run():
                                     bay_count -= 1
 
                             #need to load route for next rack
-                            if read_polarity() == False:
-                                # assuming returns False if nothing there: means holding no box
-                                for i in range(4, 8):
-                                    # cycle through the first dictionary entries for deposits
-                                    # not looking at where is next closest!!
-                                    val = list(table.values())[i]
-                                    if val == "UNSEARCHED":
-                                        robot.navigate.plan_to(list(table)[i])
-                                        break
+                            for i in range(4, 8):
+                                # cycle through the first dictionary entries for deposits
+                                # not looking at where is next closest!!
+                                val = list(table.values())[i]
+                                if val == "UNSEARCHED":
+                                    robot.navigate.plan_to(list(table)[i])
+                                    planned = True
+                                    break
 
                                 # if here then all racks are recorded as searched
-                                print("error, all racks searched")
-                                table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
-                                robot.navigate.plan_to("rack_L_top")
+                                if planned == False:
+                                    # have to use planned variable as some routes (eg from top left rack to top right) are empty
+                                    print("error, all racks searched")
+                                    table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
+                                    robot.navigate.plan_to("rack_L_top")
+                            
+                            planned = False
                             state = "TRAVEL"                                    
 
                 robot.follower.step(BASE_SPEED)
