@@ -63,6 +63,7 @@ def run():
                     elif robot.navigate.peek_next_move() == "RIGHTTURN":
                         # steps so must be going forward
                         robot.follower.step(BASE_SPEED)
+                        reversing = False
                         print("calling turn from main")
                         robot.navigate.next_move()
                         robot.follower.turn("RIGHT", SPIN_SPEED)
@@ -79,10 +80,13 @@ def run():
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY*1000:
                             robot.follower.step(BASE_SPEED)
+                        print("stopping")
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < WAIT_TIME*1000:
                             print("waiting 2s in bay")
                             robot.drive.stop()
+                        reversing = True
+
                         
                     elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
                         robot.navigate.next_move()
@@ -94,6 +98,7 @@ def run():
                         print("waiting 2s in deposit")
                         while ticks_diff(ticks_ms(), t0) < WAIT_TIME*1000:
                             robot.drive.stop()
+                        reversing = True
                         #robot.follower.stepreverse(BASE_SPEED) 
                         #sleep_ms(250)
                         
@@ -103,6 +108,7 @@ def run():
                         robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
                         
                     elif robot.navigate.peek_next_move() == "REVERSE":
+                        print("reversing!!!")
                         reversing = True
                         robot.follower.reverse(BASE_SPEED) # using reverse not step reverse - unsure
                         sleep_ms(250)
@@ -116,7 +122,7 @@ def run():
                         robot.drive.stop()
 
                 if reversing == True:
-                    robot.follower.stepreverse(BASE_SPEED) #using step reverse - haven't seen this work yet?
+                    robot.follower.reverse(BASE_SPEED) #using step reverse - haven't seen this work yet?
                 else:
                     robot.follower.step(BASE_SPEED)
 

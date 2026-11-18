@@ -55,10 +55,10 @@ class Route:
         if destination == "LINE_FOLLOWER_TEST": 
             # Prescribed circuit for line follower
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
-            self._plan.extend(["RIGHTTURNINTOBAY", "REVERSE", "RIGHTTURN"]) # back to beginning of L low rack
+            self._plan.extend(["RIGHTTURNINTOBAY", "RIGHTTURN"]) # back to beginning of L low rack
             self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
             # self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "REVERSERIGHTTURN"]) # trying to do the reverse, then forwards turn
-            self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "RIGHTTURN"])
+            self._plan.extend(["LEFTTURNINTODEPOSIT", "RIGHTTURN"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
