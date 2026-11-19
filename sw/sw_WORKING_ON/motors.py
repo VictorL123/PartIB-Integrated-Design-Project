@@ -61,3 +61,10 @@ class Drivetrain:
             self.drive(-speed, speed)
         else:
             self.drive(speed, -speed)
+
+    def halfspin(self, direction, speed):
+        """Rotate while still moving, used when robot holding box. direction = "LEFT" (anticlockwise) or "RIGHT"."""
+        if direction == "LEFT":
+            self.drive(0, speed)
+        else:
+            self.drive(speed, 0)
