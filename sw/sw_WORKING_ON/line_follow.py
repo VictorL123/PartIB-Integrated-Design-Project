@@ -1,7 +1,8 @@
 """line_follow.py - the PD controller. One call = one control step."""
-from config import KP, KD, KI, DT, TURN_LEFT_90_MS, TURN_RIGHT_90_MS, SPIN_SPEED, STRAIGHT_BEFORE_TURN, TURN_180_MS
+from config import KP, KD, KI, DT, TURN_LEFT_90_MS, TURN_RIGHT_90_MS, SPIN_SPEED, STRAIGHT_BEFORE_TURN, STRAIGHT_BEFORE_HALFSPIN, TURN_180_MS
 from utime import sleep_ms
-
+from magnet import read_polarity
+from navigation import Route
 # what is a control step? where does the line counting happen? what is drive? can drivetrain accommodate changing one wheel?
 
 class LineFollower:
@@ -61,20 +62,20 @@ class LineFollower:
         if direction == "LEFT":
             duration = TURN_LEFT_90_MS
             print("before going straight")
-            sleep_ms(STRAIGHT_BEFORE_TURN)
-            print("after going straight")
+            #sleep_ms(STRAIGHT_BEFORE_TURN)
+            #print("after going straight")
             
         elif direction == "RIGHT" and reversing == False:
             duration = TURN_RIGHT_90_MS
             print("before going straight")
-            sleep_ms(STRAIGHT_BEFORE_TURN)
-            print("after going straight")
+            #sleep_ms(STRAIGHT_BEFORE_TURN)
+            #print("after going straight")
                     
         elif direction == "RIGHT" and reversing == True:
             duration = TURN_RIGHT_90_MS
             print("before going straight")
-            sleep_ms(STRAIGHT_BEFORE_TURN-250)
-            print("after going straight")
+            #sleep_ms(STRAIGHT_BEFORE_TURN-250)
+            #print("after going straight")
             
         elif direction == "180":
             duration = TURN_180_MS
@@ -82,11 +83,23 @@ class LineFollower:
         else:
             print("BROKEN")
             return
-        print("turning")
-        self.drive.spin(direction, spin_speed)
-        sleep_ms(duration)
-        self.drive.stop()                # without this the robot never stops turning
         
+        if read_polarity() == "None":
+            if direction != "180":
+                sleep_ms(STRAIGHT_BEFORE_TURN)
+                print("after going straight")
+            print("turning")
+            self.drive.spin(direction, spin_speed)
+            sleep_ms(duration)
+            self.drive.stop()                # without this the robot never stops turning
+        else:
+            if direction != "180":
+                sleep_ms(STRAIGHT_BEFORE_HALFSPIN)
+            print("turning halfspin")
+            self.drive.halfspin(direction, spin_speed)
+            sleep_ms(duration)
+            self.drive.stop() 
+
         
 
 

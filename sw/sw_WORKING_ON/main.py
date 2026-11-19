@@ -251,6 +251,7 @@ def run():
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_DELIVER:
                 robot.follower.step(EXTRA_SLOW_SPEED) 
             #deposit box
+            robot.carrying = False
             Lights.red_off()
             Lights.green_off()
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
