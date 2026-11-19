@@ -5,7 +5,7 @@ Fill ROUTES by walking the table and counting junctions on the line.
 """
 
 # TODO: fill in from the real table layout
-# assume routes starting from START will start off in the right direction
+# assume routes starting from START and depos will start off in the right direction
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
@@ -38,7 +38,6 @@ ROUTES = {
 
     
 }
-# Special entries you will probably want: "WAIT_LIGHTS" (traffic lights before top deck)
 
 class Route:
     def __init__(self):
@@ -75,8 +74,22 @@ class Route:
                     if destination in ("rack_L_low", "deposit_L1", "deposit_L2"):
                         self._plan.extend(["RIGHTTURN"])
 
-                    if destination in ("rack_R_low", "deposit_R1", "deposit_R2"):
+                    elif destination in ("rack_R_low", "deposit_R1", "deposit_R2"):
                         self._plan.extend(["LEFTTURN"])
+
+            #orientation is variable at depos
+            if self.location in ("deposit_L1", "deposit_L2"):
+                if destination == "rack_L_low":
+                    self._plan.extend(["LEFTTURN"])
+                else:
+                    self._plan.extend(["RIGHTTURN"])
+
+            elif self.location in ("deposit_R1", "deposit_R2"):
+                if destination == "rack_R_low":
+                    self._plan.extend(["RIGHTTTURN"])
+                else:
+                    self._plan.extend(["LEFTTURN"])
+
 
                
             self._plan.append(ROUTES[(self.location, destination)])
