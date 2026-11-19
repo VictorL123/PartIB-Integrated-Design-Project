@@ -6,6 +6,8 @@ Unknown: the exact signal format. Start by printing what the receiver pin does
 from config import IR_PIN, IR_THREASHOLD
 from machine import Pin, ADC
 from utime import sleep_ms
+from robot import Robot
+from lights import Lights
 
 
 def wait_for_green(timeout_ms=5):
@@ -13,12 +15,16 @@ def wait_for_green(timeout_ms=5):
     #Set up the IR sensor and read the contents of the pin
     IR_sensor = ADC(Pin(IR_PIN))
     input_value = IR_sensor.read_u16()
+    robot = Robot()
 
     #Convert from the raw input into voltage
     v_out = input_value * (3.3 / 65535) 
 
     if v_out < IR_THREASHOLD:
-        #If it sees the green light pulse, then it returns true and breaks the loop
+        #If it sees the green light pulse, then it returns true and breaks the loop and flashes green to show me for testing
+        robot.lights.green_on()
+        sleep_ms(100)
+        robot.lights.green_off()
         return True
 
     else:
