@@ -5,9 +5,10 @@ Unknown: the exact signal format. Start by printing what the receiver pin does
 """
 from config import IR_PIN, IR_THREASHOLD
 from machine import Pin, ADC
+from utime import sleep_ms
 
 
-def wait_for_green(timeout_ms=None):
+def wait_for_green(timeout_ms=5):
     """ Looks for the IR pulse from the green light, and then returns True when it's seen the pulse, and a False otherwise """
     #Set up the IR sensor and read the contents of the pin
     IR_sensor = ADC(Pin(IR_PIN))
@@ -16,5 +17,13 @@ def wait_for_green(timeout_ms=None):
     #Convert from the raw input into voltage
     v_out = input_value * (3.3 / 65535) 
 
-    
+    if v_out < IR_THREASHOLD:
+        #If it sees the green light pulse, then it returns true and breaks the loop
+        return True
+
+    else:
+        #If the light is still red, then loop inside this function by going back and getting a new reading
+        sleep_ms(timeout_ms)
+        wait_for_green()
+
 
