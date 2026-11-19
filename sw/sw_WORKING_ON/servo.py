@@ -74,5 +74,5 @@ def test_positions():
     # time.sleep(4)
  
 # Run test
-test_positions()
+#test_positions()
  

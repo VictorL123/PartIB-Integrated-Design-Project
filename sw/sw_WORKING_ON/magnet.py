@@ -12,6 +12,7 @@ from utime import sleep_ms
 def read_polarity():
     """Returns "N", "S" or None (no clear field). Averaged over a few samples. CHECK THE DAMN THRESHOLDS!!!!!!!!"""
     #Define the hall effect sensors' input pin 
+    return None
     magnet_sensor = ADC(Pin(HALL_PIN))
     v_total = 0
 
@@ -32,3 +33,4 @@ def read_polarity():
         return "S"
     else: 
         return None
+
