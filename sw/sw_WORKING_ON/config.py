@@ -68,6 +68,8 @@ HEAD_HOME_MARGIN_MS = 30 * 1000   # start returning home this long before time i
 LOST_LINE_TIMEOUT_MS = 1500       # give up (and stop) if the line is lost this long
 
 IR_THREASHOLD = 2
+HALL_LOWER_THREASHOLD = 1.6
+HALL_UPPER_THREASHOLD = 1.9 #Threasholds for the analogue inputs in voltages
 
 # ---------------- bench-test options (line_test.py only) ----------------
 TEST_STOP_AFTER_JUNCTIONS = None  # e.g. 2 = stop after crossing 2 junctions
