@@ -21,13 +21,20 @@ class Grabber:
 
     def close(self):
         """TODO: servo to the closed angle (find an angle that grips without crushing)."""
-        self.horizontal_servo.set_angle(60)        
+        self.horizontal_servo.set_angle(60)
         
     def raise_to(self, level):
+        # sets height of grabber for collection
         """TODO: level = "CARRY", "LOW_RACK" or "UPPER_RACK". Drive the actuator for a
         measured time, then stop. Always stop the actuator afterwards."""
         if level == "UPPER_RACK":
+            self.servo_vertical.set_angle(0)
+        elif level == "LOWER_RACK":
             self.servo_vertical.set_angle(30)
+
+    def pick_up(self):
+        # pick up height
+        self.servo_vertical.set_angle(40)
 
     def lower_to_ground(self):
         """Lower back to the ground when delivering to depot"""
