@@ -12,17 +12,16 @@ from config import AMBER_PIN, RED_PIN, GREEN_PIN, LED_ON_VALUE, LED_OFF_VALUE, F
 
 class Lights:
     def __init__(self):
-        """TODO: Pin.OUT for amber, red, green; a Timer object for flashing."""
+        """Pin.OUT for amber, red, green """
         self.red = Pin(RED_PIN, Pin.OUT)
         self.amber = Pin(AMBER_PIN, Pin.OUT)
         self.green = Pin(GREEN_PIN, Pin.OUT)
 
+    # functions for lights on/off
     def amber_on(self):
-        """TODO"""
         self.amber.value(LED_ON_VALUE)
 
     def amber_off(self):
-        """TODO"""
         self.amber.value(LED_OFF_VALUE)
 
     def green_on(self):

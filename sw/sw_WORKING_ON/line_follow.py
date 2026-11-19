@@ -14,13 +14,8 @@ class LineFollower:
         self.integral = 0
 
     def step(self, base_speed):
-        """TODO:
-        1. error = sensors.error()
-        2. if None: lost line -> keep turning toward self.last_error's side
-        3. correction = KP*error + KD*(error - last_error)
-        4. drive.drive(base + correction, base - correction)  (swap signs if it steers away)
-        5. store last_error
-        Return True if the line is currently found, False if lost (main uses this for recovery)."""
+        """ gets error, appplies one instance of PID control. 
+        Returns True if the line is currently found, False if lost (use this for recovery?)."""
         error = self.sensors.error()
         if error == None:
             self.drive.stop()
@@ -34,13 +29,7 @@ class LineFollower:
         return True
 
     def stepreverse(self, base_speed):
-        """TODO:
-        1. error = sensors.error()
-        2. if None: lost line -> keep turning toward self.last_error's side
-        3. correction = KP*error + KD*(error - last_error)
-        4. drive.drive(base + correction, base - correction)  (swap signs if it steers away)
-        5. store last_error
-        Return True if the line is currently found, False if lost (main uses this for recovery)."""
+        """step as above but in reverse"""
         error = self.sensors.error()
         if error == None:
             self.drive.stop()
@@ -54,28 +43,20 @@ class LineFollower:
         return True
 
     def reverse(self, base_speed):
+        """reverse with no PID control"""
         self.drive.drive(-base_speed, -base_speed)
 
 
     def turn(self, direction, spin_speed=SPIN_SPEED, reversing=False):
-        print("in turn function")
+        """turn left, right or 180 TODO: needs a bit of tidying"""
+        print("In turn function")
         if direction == "LEFT":
             duration = TURN_LEFT_90_MS
             print("before going straight")
-            #sleep_ms(STRAIGHT_BEFORE_TURN)
-            #print("after going straight")
             
-        elif direction == "RIGHT" and reversing == False:
+        elif direction == "RIGHT":
             duration = TURN_RIGHT_90_MS
             print("before going straight")
-            #sleep_ms(STRAIGHT_BEFORE_TURN)
-            #print("after going straight")
-                    
-        elif direction == "RIGHT" and reversing == True:
-            duration = TURN_RIGHT_90_MS
-            print("before going straight")
-            #sleep_ms(STRAIGHT_BEFORE_TURN-250)
-            #print("after going straight")
             
         elif direction == "180":
             duration = TURN_180_MS
@@ -84,9 +65,12 @@ class LineFollower:
             print("BROKEN")
             return
         
-        if read_polarity() == "None":
-            if direction != "180":
+        if read_polarity() == None:
+            if direction != "180" and reversing == False:
                 sleep_ms(STRAIGHT_BEFORE_TURN)
+                print("after going straight")
+            elif direction != "180" and reversing == True:
+                sleep_ms(STRAIGHT_BEFORE_TURN-250)            # TODO: needs calibrating - value is equivalent of thickness of the line
                 print("after going straight")
             print("turning")
             self.drive.spin(direction, spin_speed)

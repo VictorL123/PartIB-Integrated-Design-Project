@@ -14,7 +14,7 @@ from utime import sleep
 
 class DistanceSensor:
     def __init__(self):
-        """TODO: set up I2C + driver as above, call start() once (continuous mode)."""
+        """Set up I2C + driver, call start() once (continuous mode)."""
         # config I2C Bus
         self.i2c_bus = I2C(id=I2C_ID, sda=Pin(I2C_SDA), scl=Pin( I2C_SCL)) # I2C0 on GP8 & GP9
         # print(i2c_bus.scan())  # Get the address (nb 41=0x29, 82=0x52)
@@ -40,8 +40,7 @@ class DistanceSensor:
         # self.vl53l0.stop()
 
     def mm(self):
-        """TODO: return distance in mm, or None if the read fails or the reading means
-        'nothing in range' (the driver returns ~8190 then). Wrap in try/except."""
+        """return distance in mm, or None if the read fails. a value of  ~8190 means nothing in range"""
         try:
             distance = self.vl53l0.read() - 25
             print(f"Distance = {distance}mm")
@@ -52,21 +51,21 @@ class DistanceSensor:
             return None
 
     def package_near(self):
-        """TODO: True if mm() is not None an.d below PACKAGE_NEAR_MM."""
-        if self.mm() != None and self.mm() < PACKAGE_NEAR_MM:
-            return True
-        elif self.mm() != None:
-            return False
-        else:
+        """True if mm() is not None and below PACKAGE_NEAR_MM."""
+        if self.mm() == None:
             return None
+        elif self.mm() < PACKAGE_NEAR_MM:
+            return True
+        else:
+            return False
 
     def package_there(self):
-        """TODO: True if mm() is not None an.d below PACKAGE_THERE_MM."""
-        if self.mm() != None and self.mm() < PACKAGE_THERE_MM:
-            return True
-        elif self.mm() != None:
-            return False
-        else:
+        """True if mm() is not None an.d below PACKAGE_THERE_MM."""
+        if self.mm() == None:
             return None
+        elif self.mm() < PACKAGE_THERE_MM:
+            return True
+        else:
+            return False
 
 

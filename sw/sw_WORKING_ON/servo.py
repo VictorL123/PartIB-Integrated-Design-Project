@@ -28,10 +28,10 @@ class Servo:
     MIN_ADC = 2000       # Raw ADC reading at 0 degrees
     MAX_ADC = 63500      # Raw ADC reading at 270 degrees - need to test and update these!
     
-    def __init__(self, ServoPin, adc_pin):
+    def __init__(self, ServoPin):
         self.servo = PWM(ServoPin)
         self.servo.freq(50)  # 50 Hz for servo
-        self.servo.adc = ADC(Pin(adc_pin, mode=Pin.IN))
+        # self.servo.adc = ADC(Pin(adc_pin, mode=Pin.IN))
  
     # Convert angle (0–270) to duty
     def set_angle(self, angle):
@@ -60,26 +60,18 @@ class Servo:
 
 # Test Code
 servo1 = Servo(Pin(15)) # Connected to Servo 1
+servo2 = Servo(Pin(13))
   
 def test_positions():
-   while True:
-       print("Move to 0°")
-       servo1.set_angle(0)
-       print(servo1.read())
-       time.sleep(2)
-       print(servo1.read())
- 
-       print("Move to 135° (centre)")
-       servo1.set_angle(135)
-       print(servo1.read())
-       time.sleep(2)
-       print(servo1.read())
- 
-       print("Move to 270°")
-       servo1.set_angle(270)
-       print(servo1.read())
-       time.sleep(2)
-       print(servo1.read())
+   #while True:
+    print("Move 1")
+    servo1.set_angle(10)
+    servo2.set_angle(0)
+    # time.sleep(2)
+
+    # print("Move to 135° (centre)")
+    # servo1.set_angle(95)
+    # time.sleep(4)
  
 # Run test
 test_positions()

@@ -11,28 +11,27 @@ from servo import Servo
 
 class Grabber:
     def __init__(self):
-        """TODO: Servo on SERVO_PIN (course Servo class), actuator on ACTUATOR_DIR/PWM."""
+        """Servos on SERVO_HORIZONTAL_PIN and SERVO_VERTICAL_PIN"""
         self.horizontal_servo = Servo(SERVO_HORIZONTAL_PIN)
         self.servo_vertical = Servo(SERVO_VERTICAL_PIN)
         
     def open(self):
-        """TODO: servo to the open angle."""
-        self.horizontal_servo.set_angle(130)
+        """servo to the open angle."""
+        self.horizontal_servo.set_angle(95)
 
     def close(self):
-        """TODO: servo to the closed angle (find an angle that grips without crushing)."""
-        self.horizontal_servo.set_angle(60)
+        """TODO: Servo to the closed angle - test angle that grips without crushing."""
+        self.horizontal_servo.set_angle(10)
         
     def raise_to(self, level):
-        # sets height of grabber for collection
-        """TODO: level = "low" or "top". """
+        """ TODO: sets height of grabber for collection - needs calibrating"""
         if level == "top":
             self.servo_vertical.set_angle(30)
         elif level == "low":
             self.servo_vertical.set_angle(0)
 
     def pick_up(self):
-        # pick up height
+        """TODO: sets carry height - needs calibrating"""
         self.servo_vertical.set_angle(40)
 
     def lower_to_ground(self):
@@ -40,4 +39,4 @@ class Grabber:
         self.servo_vertical.set_angle(0)
 
     def package_present(self):
-        """TODO: use DistanceSensor.package_near()."""
+        """TODO: use DistanceSensor.package_near() or servo feedback??? distance sensor not acurate within distance of box"""
