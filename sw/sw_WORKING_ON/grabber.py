@@ -25,12 +25,11 @@ class Grabber:
         
     def raise_to(self, level):
         # sets height of grabber for collection
-        """TODO: level = "CARRY", "LOW_RACK" or "UPPER_RACK". Drive the actuator for a
-        measured time, then stop. Always stop the actuator afterwards."""
-        if level == "UPPER_RACK":
-            self.servo_vertical.set_angle(0)
-        elif level == "LOWER_RACK":
+        """TODO: level = "low" or "top". """
+        if level == "top":
             self.servo_vertical.set_angle(30)
+        elif level == "low":
+            self.servo_vertical.set_angle(0)
 
     def pick_up(self):
         # pick up height

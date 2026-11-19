@@ -219,6 +219,8 @@ def run():
                 while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
                     robot.follower.step(EXTRA_SLOW_SPEED)
                 robot.drive.stop()
+                
+                # Check polarity of box
                 polarity = read_polarity()
                 
                 # If polarity is either "N" or "S"
@@ -232,6 +234,16 @@ def run():
                         robot.follower.reverse(EXTRA_SLOW_SPEED)
                     while robot.sensors.at_junction() == False:
                         robot.follower.reverse(BASE_SPEED)
+                        
+                    # Turn back into straight
+                    if robot.navigate.location == "rack_L_low":
+                        robot.follower.turn("LEFT", SPIN_SPEED)
+                    elif robot.navigate.location == "rack_R_low":
+                        robot.follower.turn("RIGHT", SPIN_SPEED)
+                    elif robot.navigate.location == "rack_L_top":
+                        robot.follower.turn("RIGHT", SPIN_SPEED)
+                    elif robot.navigate.location == "rack_R_top":
+                        robot.follower.turn("LEFT", SPIN_SPEED)
                     state = "SEARCH"
 
                 
@@ -241,7 +253,34 @@ def run():
             # (haven't coded anything for what the closest depo is)
 
             # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
-            pass
+            
+            robot.grabber.close()
+            level = robot.navigate.location[-3:]
+            robot.grabber.raise_to(level)
+            
+            # May not need to read again because we read in approach package
+            polarity = read_polarity()
+            robot.lights.show_polarity(polarity)
+            
+            while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
+                robot.follower.reverse(EXTRA_SLOW_SPEED)
+            
+            while robot.sensors.at_junction() == False:
+                robot.follower.reverse(BASE_SPEED)
+            
+            # Turn back into straight
+            if robot.navigate.location == "rack_L_low":
+                robot.follower.turn("RIGHT", SPIN_SPEED)
+            elif robot.navigate.location == "rack_R_low":
+                robot.follower.turn("LEFT", SPIN_SPEED)
+            elif robot.navigate.location == "rack_L_top":
+                robot.follower.turn("LEFT", SPIN_SPEED)
+            elif robot.navigate.location == "rack_R_top":
+                robot.follower.turn("RIGHT", SPIN_SPEED)
+                
+            # Get to the first bay
+            
+            
             
         elif state == "DELIVER":
             # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
@@ -250,10 +289,16 @@ def run():
                 robot.follower.step(BASE_SPEED)
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_DELIVER:
                 robot.follower.step(EXTRA_SLOW_SPEED) 
+                
             #deposit box
-            robot.carrying = False
-            Lights.red_off()
-            Lights.green_off()
+            robot.grabber.lower_to_ground()
+            robot.grabber.open()
+            
+            # Turn off polarity lights
+            robot.lights.red_off()
+            robot.lights.green_off()
+            
+            # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
                 robot.follower.reverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
