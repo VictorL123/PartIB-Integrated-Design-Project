@@ -24,8 +24,8 @@ LINE_SENSOR_WEIGHTS = None   # None = auto: 3 sensors -> (-2,0,2), 4 -> (-3,-1,1
 LINE_ON_VALUE = 1            # what a sensor reads when it is over the line (check!)
 LINE_SENSOR_PULL = None      # None, "UP" or "DOWN": depends on the sensor board output
 
-HALL_PIN = 16                            # magnetic field sensor (digital or ADC?)
-IR_PIN = 17                              # IR receiver for the traffic light
+HALL_PIN = None                            # magnetic field sensor (digital or ADC?)
+IR_PIN = 26                             # IR receiver for the traffic light
 AMBER_PIN = 8                           # -> optical isolator -> LED
 RED_PIN = 10
 GREEN_PIN = 9
@@ -66,6 +66,8 @@ LIFT_TIME_MS = 0          # actuator has no feedback: time the carry height by t
 RUN_TIME_MS = 5 * 60 * 1000
 HEAD_HOME_MARGIN_MS = 30 * 1000   # start returning home this long before time is up
 LOST_LINE_TIMEOUT_MS = 1500       # give up (and stop) if the line is lost this long
+
+IR_THREASHOLD = 2
 
 # ---------------- bench-test options (line_test.py only) ----------------
 TEST_STOP_AFTER_JUNCTIONS = None  # e.g. 2 = stop after crossing 2 junctions
