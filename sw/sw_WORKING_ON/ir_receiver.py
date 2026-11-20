@@ -16,20 +16,27 @@ def wait_for_green(timeout_ms=5):
     IR_sensor = ADC(Pin(IR_PIN))
     input_value = IR_sensor.read_u16()
     robot = Robot()
+    v_total = 0
 
-    #Convert from the raw input into voltage
-    v_out = input_value * (3.3 / 65535) 
+    #For 20 readings convert to a voltage then sum them 
+    for readings in range(20):
+        reading = IR_sensor.read_u16()
+        v_out = reading * (3.3 / 65535)
+        v_total += v_out
+        sleep_ms(20)
 
-    if v_out < IR_THREASHOLD:
+    v_average = v_total / 20
+
+    if v_average < IR_THREASHOLD:
         #If it sees the green light pulse, then it returns true and breaks the loop and flashes green to show me for testing
         robot.lights.green_on()
-        sleep_ms(100)
+        sleep_ms(1000)
         robot.lights.green_off()
         return True
 
     else:
         #If the light is still red, then loop inside this function by going back and getting a new reading
         sleep_ms(timeout_ms)
-        wait_for_green()
+        return False
 
 

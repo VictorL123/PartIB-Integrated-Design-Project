@@ -79,6 +79,12 @@ def run():
                         print("calling about turn")
                         robot.follower.turn("180", SPIN_SPEED)
 
+                    elif robot.navigate.peek_next_move() == "WAIT_LIGHTS":
+                        #Now we have arrived at the start and want to head up the ramp....
+                        robot.navigate.next_move()
+                        while result == False:
+                            result = wait_for_green()
+
                     elif robot.navigate.peek_next_move() == "RIGHTTURNINTOBAY":
                         robot.navigate.next_move()
                         print("calling right turn into bay")
@@ -363,7 +369,8 @@ def main():
     """Check if button pressed"""
     stop_button = Pin(START_BUTTON_PIN, Pin.IN, Pin.PULL_DOWN) 
     start = 1
-    wait_for_green()
+    while result == False:
+        result = wait_for_green()
     while start == 1:
         # Poll the value
         start = stop_button.value()
