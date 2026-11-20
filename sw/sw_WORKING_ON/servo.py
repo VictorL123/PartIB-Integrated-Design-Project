@@ -66,22 +66,33 @@ servo2 = Servo(Pin(13))
 def test_positions():
    #while True:
     print("Move 1")
-    angle = 70
-    for i in range(10):
+
+    # sleep_ms(1000)
+
+    #This code starts the lifting servo in rest and then lifts it up and back down again
+    angle = 250
+    for i in range(45):
         servo1.set_angle(angle)
-        angle +=10
-        sleep_ms(500)
+        angle -=2
+        sleep_ms(75)
+    for i in range(45):
+        servo1.set_angle(angle)
+        angle += 2
+        sleep_ms(75)
 
-
-    
-    servo1.set_angle(70)
-    time.sleep(2)
-
-    print("Move to 135° (centre)")
-    servo1.set_angle(95)
-    time.sleep(4)
-
-    servo2.set_angle(0)
+    angle = 0
+    for i in range(45):
+        servo2.set_angle(angle)
+        angle +=2
+        sleep_ms(75)
+    for i in range(90):
+        servo2.set_angle(angle)
+        angle -=2
+        sleep_ms(75)
+    for i in range(45):
+        servo2.set_angle(angle)
+        angle += 2
+        sleep_ms(75)
  
 # Run test
 test_positions()
