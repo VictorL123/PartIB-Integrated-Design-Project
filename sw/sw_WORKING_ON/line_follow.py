@@ -2,7 +2,6 @@
 from config import KP, KD, KI, DT, TURN_LEFT_90_MS, TURN_RIGHT_90_MS, SPIN_SPEED, STRAIGHT_BEFORE_TURN, STRAIGHT_BEFORE_HALFSPIN, TURN_180_MS
 from utime import sleep_ms
 from magnet import read_polarity
-from navigation import Route
 # what is a control step? where does the line counting happen? what is drive? can drivetrain accommodate changing one wheel?
 
 class LineFollower:

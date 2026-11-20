@@ -16,6 +16,7 @@ def run():
     t_start = 0
     reversing = False
     bay_count = 0
+    GRABTEST = True
 
     while True:
         # --- safety first, every loop ---
@@ -139,11 +140,22 @@ def run():
                 """when not for the linefollower, this just means that have reached end of route
                 TODO: need to load either next route or next state"""
                 robot.drive.stop()
+                
                 #decide on next state by location
                 if robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
                     state = "SEARCH"
+
                 elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
                     state = "DELIVER"
+
+                elif robot.navigate.location == "START":
+                    if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
+                        robot.navigate.plan_to(robot.navigate.nextlocation)
+                        robot.navigate.nextlocation = "None"
+                        state = "TRAVEL"
+                    else: 
+                        state = "DONE"
+
 
         elif state == "SEARCH":
             # TODO: go through rack; turn; follow line to make sure pointing in right direction; package_there() -> search next or APPROACH_PACKAGE
@@ -196,6 +208,7 @@ def run():
                 
                 # If polarity is either "N" or "S"
                 if polarity != None:
+                    no_box_in_rack = False
                     state = "GRAB"
                     
                 # If box has no polarity then search next bay
@@ -205,16 +218,14 @@ def run():
                         robot.follower.reverse(EXTRA_SLOW_SPEED)
                     while robot.sensors.at_junction() == False:
                         robot.follower.reverse(BASE_SPEED)
-                        
+
                     # Turn back into straight
-                    if robot.navigate.location == "rack_L_low":
-                        robot.follower.turn("LEFT", SPIN_SPEED)
-                    elif robot.navigate.location == "rack_R_low":
-                        robot.follower.turn("RIGHT", SPIN_SPEED)
-                    elif robot.navigate.location == "rack_L_top":
-                        robot.follower.turn("RIGHT", SPIN_SPEED)
-                    elif robot.navigate.location == "rack_R_top":
-                        robot.follower.turn("LEFT", SPIN_SPEED)
+                    robot.follower.step(BASE_SPEED)
+                    if robot.navigate.location in ("rack_L_low", "rack_R_top"):
+                        robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
+                    elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
+                        robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
+                    
                     state = "SEARCH"
 
                 
@@ -238,14 +249,10 @@ def run():
                 robot.follower.reverse(BASE_SPEED)
             
             # Turn back into straight
-            if robot.navigate.location == "rack_L_low":
+            if robot.navigate.location in ("rack_L_low", "rack_R_top"):
                 robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
-            elif robot.navigate.location == "rack_R_low":
+            elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
                 robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
-            elif robot.navigate.location == "rack_L_top":
-                robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
-            elif robot.navigate.location == "rack_R_top":
-                robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
                 
             # Get to the first bay
             state = "TOFIRSTBAY"
@@ -286,7 +293,10 @@ def run():
                                 table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
                                 robot.navigate.plan_to("rack_L_top")
                             
-                            planned = False                        
+                            planned = False   
+
+                    # else: 
+                        # TODO: plan to take box to right deposit                     
                     
                     state = "TRAVEL"
             else:
@@ -312,6 +322,8 @@ def run():
                 robot.follower.reverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
                 robot.follower.reverse(BASE_SPEED)
+
+            state = "TRAVEL"
 
             #TODO: Hard code journey home just for grabber test
             robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)

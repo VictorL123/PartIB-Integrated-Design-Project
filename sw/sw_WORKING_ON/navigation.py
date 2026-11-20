@@ -43,19 +43,18 @@ class Route:
     def __init__(self):
         self.location = "START"
         self.lastlocation = "START"
+        self.nextlocation = "None"
         # for the line follower test, this will not change (since the movements are prescribed, it doesn't need to)
         self._plan = []
 
 
     def plan_to(self, destination):
-        """TODO: load ROUTES[(self.location, destination)] into self._plan."""
         if destination == "LINE_FOLLOWER_TEST": 
             # Prescribed circuit for line follower
             self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
-            self._plan.extend(["RIGHTTURNINTOBAY"]) # includes getting back to beginning of L low rack
-            self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) #
-            # self._plan.extend(["LEFTTURNINTODEPOSIT", "REVERSE", "REVERSERIGHTTURN"]) # trying to do the reverse, then forwards turn
-            self._plan.extend(["LEFTTURNINTODEPOSIT"]) # Right turn out of deposit now included in DELIVER state
+            self._plan.extend(["RIGHTTURNINTOBAY"]) # back to beginning of L low rack
+            self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) 
+            self._plan.extend(["LEFTTURNINTODEPOSIT"])
             self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
@@ -91,8 +90,14 @@ class Route:
                     self._plan.extend(["LEFTTURN"])
 
 
-               
-            self._plan.append(ROUTES[(self.location, destination)])
+            if (self.location, destination) in ROUTES.keys():
+                print(f"planning route to {destination}")
+                self._plan.append(ROUTES[(self.location, destination)])
+            else:
+                self.nextlocation = destination
+                print("planning route to START first")
+                self._plan.append(ROUTES[(self.location, "START")])
+
 
     def peek_next_move(self):
         return self._plan[0]
