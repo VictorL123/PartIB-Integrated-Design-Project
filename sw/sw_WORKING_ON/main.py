@@ -9,6 +9,7 @@ from distance import DistanceSensor
 from machine import Pin
 from magnet import read_polarity
 from lights import Lights
+from ir_receiver import wait_for_green
 import time
 from map import table
 
@@ -355,6 +356,7 @@ def main():
     """Check if button pressed"""
     stop_button = Pin(START_BUTTON_PIN, Pin.IN, Pin.PULL_DOWN) 
     start = 1
+    wait_for_green()
     while start == 1:
         # Poll the value
         start = stop_button.value()
