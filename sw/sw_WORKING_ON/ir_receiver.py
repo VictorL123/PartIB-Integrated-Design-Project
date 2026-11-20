@@ -26,6 +26,7 @@ def wait_for_green(timeout_ms=5):
         sleep_ms(20)
 
     v_average = v_total / 20
+    print(v_average)
 
     if v_average < IR_THREASHOLD:
         #If it sees the green light pulse, then it returns true and breaks the loop and flashes green to show me for testing
@@ -37,6 +38,7 @@ def wait_for_green(timeout_ms=5):
     else:
         #If the light is still red, then loop inside this function by going back and getting a new reading
         sleep_ms(timeout_ms)
+        print("redddd")
         return False
 
 

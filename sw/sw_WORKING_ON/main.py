@@ -84,6 +84,8 @@ def run():
                         robot.navigate.next_move()
                         while result == False:
                             result = wait_for_green()
+                        print("lights out and away we go!")
+                        
 
                     elif robot.navigate.peek_next_move() == "RIGHTTURNINTOBAY":
                         robot.navigate.next_move()
