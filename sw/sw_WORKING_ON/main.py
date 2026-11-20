@@ -237,12 +237,18 @@ def run():
             # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
             print("In state Grabbing")
             
+            robot.drive.stop()
+            
+            sleep_ms(300)
             robot.grabber.close()
+            sleep_ms(300)
             robot.grabber.pick_up()
             
             # May not need to read again because we read in approach package
             polarity = read_polarity_grabber_test()
             robot.lights.show_polarity(polarity)
+            
+            sleep_ms(300)
             
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
                 robot.follower.reverse(EXTRA_SLOW_SPEED)
@@ -310,9 +316,14 @@ def run():
             while robot.sensors.at_junction() == False:
                 robot.follower.step(BASE_SPEED) 
                 
+            robot.drive.stop()
+            sleep_ms(300)    
+            
             #deposit box
             robot.grabber.lower_to_ground()
+            sleep_ms(400)
             robot.grabber.open()
+            sleep_ms(400)
             
             # Turn off polarity lights
             robot.lights.red_off()
