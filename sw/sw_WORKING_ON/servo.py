@@ -80,6 +80,7 @@ def test_positions():
         angle += 2
         sleep_ms(75)
 
+    #And this trys to move the grabbing horizontally
     angle = 0
     for i in range(45):
         servo2.set_angle(angle)
