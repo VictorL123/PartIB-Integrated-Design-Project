@@ -6,6 +6,7 @@ from utime import ticks_ms, sleep_ms, ticks_diff
 from config import *
 from robot import Robot
 from machine import Pin
+from ir_receiver import wait_for_green
 from magnet import read_polarity, read_polarity_grabber_test
 from map import table
 
@@ -17,6 +18,7 @@ def run():
     reversing = False
     bay_count = 0
     GRABTEST = True
+    no_box_in_rack = False
 
     while True:
         # --- safety first, every loop ---
@@ -79,6 +81,15 @@ def run():
                         print("calling about turn")
                         robot.follower.turn("180", SPIN_SPEED)
 
+                    elif robot.navigate.peek_next_move() == "WAIT_LIGHTS":
+                        #Now we have arrived at the start and want to head up the ramp....
+                        robot.navigate.next_move()
+                        result = False
+                        while result == False:
+                            result = wait_for_green()
+                        print("lights out and away we go!")
+
+
                     elif robot.navigate.peek_next_move() == "RIGHTTURNINTOBAY":
                         robot.navigate.next_move()
                         print("calling right turn into bay")
@@ -94,16 +105,17 @@ def run():
                         
                         # TODO: REMOVE THIS CODE AFTER GRABBER TEST
                         bay_count = 1
+                        robot.navigate.location = "rack_L_low"
                         robot.drive.stop()
                         state = "GRAB"
                         
-                        print("SHOULD NOT BE PRINTING THIS FROM TRAVEL")
+                        # print("SHOULD NOT BE PRINTING THIS FROM TRAVEL")
                         
-                        t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
-                            print("waiting 2s in bay")
-                            robot.drive.stop()
-                        reversing = True
+                        # t0 = ticks_ms()
+                        # while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
+                        #     #print("waiting 2s in bay")
+                        #     robot.drive.stop()
+                        # reversing = True
 
                     # TODO: This is again just for the grabber test    
                     elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
@@ -234,13 +246,20 @@ def run():
             # (haven't coded anything for what the closest depo is)
 
             # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
+            print("In state Grabbing")
             
+            robot.drive.stop()
+            
+            sleep_ms(300)
             robot.grabber.close()
+            sleep_ms(300)
             robot.grabber.pick_up()
             
             # May not need to read again because we read in approach package
             polarity = read_polarity_grabber_test()
             robot.lights.show_polarity(polarity)
+            
+            sleep_ms(300)
             
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
                 robot.follower.reverse(EXTRA_SLOW_SPEED)
@@ -249,9 +268,14 @@ def run():
                 robot.follower.reverse(BASE_SPEED)
             
             # Turn back into straight
-            if robot.navigate.location in ("rack_L_low", "rack_R_top"):
+            if robot.navigate.location == "rack_L_low":
+                print("Turning right after bay")
+                robot.follower.step(BASE_SPEED)
                 robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
+
             elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
+                print("Turning left after bay")
+                robot.follower.step(BASE_SPEED)
                 robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
                 
             # Get to the first bay
@@ -259,6 +283,7 @@ def run():
             
         elif state == "TOFIRSTBAY":
             """This gets to the first bay"""
+            print("In state TOFIRSTBAY")
             if robot.sensors.at_junction():
                 if bay_count > 1:
                     bay_count -= 1
@@ -270,10 +295,6 @@ def run():
                     print("end of rack")
                     bay_count -= 1
                     
-                    # Must get over the junction
-                    print("calling straight")
-                    robot.follower.step(BASE_SPEED)
-                    sleep_ms(250)
                     
                     if no_box_in_rack == True:
                         #need to load route for next rack
@@ -305,20 +326,26 @@ def run():
             
         elif state == "DELIVER":
             # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
-            t0 = ticks_ms()
-            while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_DELIVER:
+            while robot.sensors.at_junction() == False:
                 robot.follower.step(BASE_SPEED) 
                 
+            robot.drive.stop()
+            sleep_ms(300)    
+            
             #deposit box
             robot.grabber.lower_to_ground()
+            sleep_ms(400)
             robot.grabber.open()
+            sleep_ms(400)
             
             # Turn off polarity lights
             robot.lights.red_off()
             robot.lights.green_off()
             
+            t0 = ticks_ms()
             # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
+                print("reveresing out of depot")
                 robot.follower.reverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
                 robot.follower.reverse(BASE_SPEED)
@@ -326,28 +353,32 @@ def run():
             state = "TRAVEL"
 
             #TODO: Hard code journey home just for grabber test
+            robot.follower.step(BASE_SPEED)
             robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
-            state = "TRAVEL"
+            grab_test = True
 
-            print("SHOULD NOT BE PRINTING THIS")
-            #need to load route for next rack
-            for i in range(4, 8):
-                # cycle through the first dictionary entries for racks
-                # not looking at where is next closest!!
-                val = list(table.values())[i]
-                if val == "UNSEARCHED":
-                    robot.navigate.plan_to(list(table)[i])
-                    planned = True
-                    break
+            if grab_test == True:
+                state = "TRAVEL"
+            else:
+                print("SHOULD NOT BE PRINTING THIS")
+                #need to load route for next rack
+                for i in range(4, 8):
+                    # cycle through the first dictionary entries for racks
+                    # not looking at where is next closest!!
+                    val = list(table.values())[i]
+                    if val == "UNSEARCHED":
+                        robot.navigate.plan_to(list(table)[i])
+                        planned = True
+                        break
 
-            # if here then all racks are recorded as searched
-            if planned == False:
-                # have to use planned variable as some routes (eg from top left rack to top right) are empty
-                print("error, all racks searched")
-                table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
-                robot.navigate.plan_to("rack_L_top")
-        
-            planned = False
+                # if here then all racks are recorded as searched
+                if planned == False:
+                    # have to use planned variable as some routes (eg from top left rack to top right) are empty
+                    print("error, all racks searched")
+                    table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
+                    robot.navigate.plan_to("rack_L_top")
+            
+                planned = False
             state = "TRAVEL"
             
         
