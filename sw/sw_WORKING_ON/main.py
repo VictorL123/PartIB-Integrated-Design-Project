@@ -5,12 +5,9 @@ Each state does one job and names the next state. No pin numbers, no maths in he
 from utime import ticks_ms, sleep_ms, ticks_diff
 from config import *
 from robot import Robot
-from distance import DistanceSensor
 from machine import Pin
-from magnet import read_polarity
-from lights import Lights
 from ir_receiver import wait_for_green
-import time
+from magnet import read_polarity, read_polarity_grabber_test
 from map import table
 
 
@@ -44,7 +41,6 @@ def run():
             #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
-            robot.lights.red_green_test(elapsed) #Tests the red and green LEDs have been soldered correctly lmao
 
             if robot.navigate.arrived() == False:
                 if robot.sensors.at_junction():
@@ -87,30 +83,33 @@ def run():
                         robot.navigate.next_move()
                         print("calling right turn into bay")
                         robot.follower.turn("RIGHT", SPIN_SPEED)
+                        
+                        level = robot.navigate.location[-3:]
+                        robot.grabber.raise_before_grab(level)
+                        
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY:
                             robot.follower.step(BASE_SPEED)
                         print("stopping")
+                        
+                        # TODO: REMOVE THIS CODE AFTER GRABBER TEST
+                        bay_count = 1
+                        robot.drive.stop()
+                        state = "GRAB"
+                        
+                        print("SHOULD NOT BE PRINTING THIS FROM TRAVEL")
+                        
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
                             print("waiting 2s in bay")
                             robot.drive.stop()
                         reversing = True
 
-                        
+                    # TODO: This is again just for the grabber test    
                     elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
                         robot.navigate.next_move()
-                        print("calling left turn into depo")
-                        t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_DEPOT:
-                            robot.follower.step(BASE_SPEED)
-                        t0 = ticks_ms()
-                        print("waiting 2s in deposit")
-                        while ticks_diff(ticks_ms(), t0) < WAIT_TIME:
-                            robot.drive.stop()
-                        reversing = True
-                        #robot.follower.stepreverse(BASE_SPEED) 
-                        #sleep_ms(250)
+                        state = "DELIVER"
+
                         
                     elif robot.navigate.peek_next_move() == "REVERSERIGHTTURN":
                         robot.navigate.next_move()
@@ -161,6 +160,7 @@ def run():
                     robot.drive.stop()
                     if robot.distance.package_there():
                         print("package there")
+                        no_box_in_rack = False
                         state = "APPROACH_PACKAGE"
                     else:
                         print("package not there")
@@ -226,11 +226,10 @@ def run():
             # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
             
             robot.grabber.close()
-            level = robot.navigate.location[-3:]
-            robot.grabber.raise_to(level)
+            robot.grabber.pick_up()
             
             # May not need to read again because we read in approach package
-            polarity = read_polarity()
+            polarity = read_polarity_grabber_test()
             robot.lights.show_polarity(polarity)
             
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
@@ -241,13 +240,13 @@ def run():
             
             # Turn back into straight
             if robot.navigate.location == "rack_L_low":
-                robot.follower.turn("RIGHT", SPIN_SPEED)
+                robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
             elif robot.navigate.location == "rack_R_low":
-                robot.follower.turn("LEFT", SPIN_SPEED)
+                robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
             elif robot.navigate.location == "rack_L_top":
-                robot.follower.turn("LEFT", SPIN_SPEED)
+                robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
             elif robot.navigate.location == "rack_R_top":
-                robot.follower.turn("RIGHT", SPIN_SPEED)
+                robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
                 
             # Get to the first bay
             state = "TOFIRSTBAY"
@@ -264,6 +263,11 @@ def run():
                     # reached last bay
                     print("end of rack")
                     bay_count -= 1
+                    
+                    # Must get over the junction
+                    print("calling straight")
+                    robot.follower.step(BASE_SPEED)
+                    sleep_ms(250)
                     
                     if no_box_in_rack == True:
                         #need to load route for next rack
@@ -293,10 +297,8 @@ def run():
         elif state == "DELIVER":
             # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
             t0 = ticks_ms()
-            while robot.sensors.at_junction() == False:
-                robot.follower.step(BASE_SPEED)
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_DELIVER:
-                robot.follower.step(EXTRA_SLOW_SPEED) 
+                robot.follower.step(BASE_SPEED) 
                 
             #deposit box
             robot.grabber.lower_to_ground()
@@ -312,6 +314,11 @@ def run():
             while robot.sensors.at_junction() == False:
                 robot.follower.reverse(BASE_SPEED)
 
+            #TODO: Hard code journey home just for grabber test
+            robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
+            state = "TRAVEL"
+
+            print("SHOULD NOT BE PRINTING THIS")
             #need to load route for next rack
             for i in range(4, 8):
                 # cycle through the first dictionary entries for racks

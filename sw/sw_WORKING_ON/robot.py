@@ -19,5 +19,5 @@ class Robot:
         self.follower = LineFollower(self.drive,self.sensors)
         self.lights = Lights()
         self.navigate = Route()
-        #self.distance = DistanceSensor()
+        self.distance = DistanceSensor()
         self.grabber = Grabber()

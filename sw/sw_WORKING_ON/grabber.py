@@ -23,12 +23,12 @@ class Grabber:
         """TODO: Servo to the closed angle - test angle that grips without crushing."""
         self.horizontal_servo.set_angle(10)
         
-    def raise_to(self, level):
+    def raise_before_grab(self, level):
         """ TODO: sets height of grabber for collection - needs calibrating"""
         if level == "top":
-            self.servo_vertical.set_angle(30)
-        elif level == "low":
             self.servo_vertical.set_angle(0)
+        elif level == "low":
+            self.servo_vertical.set_angle(30)
 
     def pick_up(self):
         """TODO: sets carry height - needs calibrating"""
