@@ -67,7 +67,7 @@ RUN_TIME_MS = 5 * 60 * 1000
 HEAD_HOME_MARGIN_MS = 30 * 1000   # start returning home this long before time is up
 LOST_LINE_TIMEOUT_MS = 1500       # give up (and stop) if the line is lost this long
 
-IR_THREASHOLD = 2
+IR_THREASHOLD = 1
 HALL_LOWER_THREASHOLD = 1.6
 HALL_UPPER_THREASHOLD = 1.9 #Threasholds for the analogue inputs in voltages
 
