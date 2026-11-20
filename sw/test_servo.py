@@ -1,6 +1,7 @@
 from machine import Pin, PWM
 import time
 
+
 class Servo:
     # 6.4V to servo
 

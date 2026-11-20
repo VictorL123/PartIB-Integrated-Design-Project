@@ -1,5 +1,6 @@
 from machine import Pin, PWM, ADC
 import time
+from utime import sleep_ms
 
 class Servo:
     # 6.4V to servo
@@ -65,14 +66,23 @@ servo2 = Servo(Pin(13))
 def test_positions():
    #while True:
     print("Move 1")
-    servo1.set_angle(10)
-    servo2.set_angle(0)
-    # time.sleep(2)
+    angle = 70
+    for i in range(10):
+        servo1.set_angle(angle)
+        angle +=10
+        sleep_ms(500)
 
-    # print("Move to 135° (centre)")
-    # servo1.set_angle(95)
-    # time.sleep(4)
+
+    
+    servo1.set_angle(70)
+    time.sleep(2)
+
+    print("Move to 135° (centre)")
+    servo1.set_angle(95)
+    time.sleep(4)
+
+    servo2.set_angle(0)
  
 # Run test
-#test_positions()
+test_positions()
  
