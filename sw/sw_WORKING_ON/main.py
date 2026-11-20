@@ -17,6 +17,7 @@ def run():
     t_start = 0
     reversing = False
     bay_count = 0
+    no_box_in_rack = False
 
     while True:
         # --- safety first, every loop ---
@@ -103,16 +104,17 @@ def run():
                         
                         # TODO: REMOVE THIS CODE AFTER GRABBER TEST
                         bay_count = 1
+                        robot.navigate.location = "rack_L_low"
                         robot.drive.stop()
                         state = "GRAB"
                         
-                        print("SHOULD NOT BE PRINTING THIS FROM TRAVEL")
+                        # print("SHOULD NOT BE PRINTING THIS FROM TRAVEL")
                         
-                        t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
-                            print("waiting 2s in bay")
-                            robot.drive.stop()
-                        reversing = True
+                        # t0 = ticks_ms()
+                        # while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
+                        #     #print("waiting 2s in bay")
+                        #     robot.drive.stop()
+                        # reversing = True
 
                     # TODO: This is again just for the grabber test    
                     elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
@@ -233,6 +235,7 @@ def run():
             # (haven't coded anything for what the closest depo is)
 
             # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
+            print("In state Grabbing")
             
             robot.grabber.close()
             robot.grabber.pick_up()
@@ -249,6 +252,8 @@ def run():
             
             # Turn back into straight
             if robot.navigate.location == "rack_L_low":
+                print("Turning right after bay")
+                robot.follower.step(BASE_SPEED)
                 robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
             elif robot.navigate.location == "rack_R_low":
                 robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
@@ -262,6 +267,7 @@ def run():
             
         elif state == "TOFIRSTBAY":
             """This gets to the first bay"""
+            print("In state TOFIRSTBAY")
             if robot.sensors.at_junction():
                 if bay_count > 1:
                     bay_count -= 1
@@ -273,10 +279,6 @@ def run():
                     print("end of rack")
                     bay_count -= 1
                     
-                    # Must get over the junction
-                    print("calling straight")
-                    robot.follower.step(BASE_SPEED)
-                    sleep_ms(250)
                     
                     if no_box_in_rack == True:
                         #need to load route for next rack
@@ -305,8 +307,7 @@ def run():
             
         elif state == "DELIVER":
             # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
-            t0 = ticks_ms()
-            while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_DELIVER:
+            while robot.sensors.at_junction() == False:
                 robot.follower.step(BASE_SPEED) 
                 
             #deposit box
@@ -317,35 +318,41 @@ def run():
             robot.lights.red_off()
             robot.lights.green_off()
             
+            t0 = ticks_ms()
             # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
+                print("reveresing out of depot")
                 robot.follower.reverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
                 robot.follower.reverse(BASE_SPEED)
 
             #TODO: Hard code journey home just for grabber test
+            robot.follower.step(BASE_SPEED)
             robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
-            state = "TRAVEL"
+            grab_test = True
 
-            print("SHOULD NOT BE PRINTING THIS")
-            #need to load route for next rack
-            for i in range(4, 8):
-                # cycle through the first dictionary entries for racks
-                # not looking at where is next closest!!
-                val = list(table.values())[i]
-                if val == "UNSEARCHED":
-                    robot.navigate.plan_to(list(table)[i])
-                    planned = True
-                    break
+            if grab_test == True:
+                state = "TRAVEL"
+            else:
+                print("SHOULD NOT BE PRINTING THIS")
+                #need to load route for next rack
+                for i in range(4, 8):
+                    # cycle through the first dictionary entries for racks
+                    # not looking at where is next closest!!
+                    val = list(table.values())[i]
+                    if val == "UNSEARCHED":
+                        robot.navigate.plan_to(list(table)[i])
+                        planned = True
+                        break
 
-            # if here then all racks are recorded as searched
-            if planned == False:
-                # have to use planned variable as some routes (eg from top left rack to top right) are empty
-                print("error, all racks searched")
-                table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
-                robot.navigate.plan_to("rack_L_top")
-        
-            planned = False
+                # if here then all racks are recorded as searched
+                if planned == False:
+                    # have to use planned variable as some routes (eg from top left rack to top right) are empty
+                    print("error, all racks searched")
+                    table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
+                    robot.navigate.plan_to("rack_L_top")
+            
+                planned = False
             state = "TRAVEL"
             
         
