@@ -6,7 +6,7 @@ This file deliberately imports nothing from `machine`, so it is plain data.
 """
 
 # ---------------- KNOWN (course examples) ----------------
-I2C_ID, I2C_SDA, I2C_SCL = 0, 12, 14      # VL53L0X / TCS3472 on I2C0 0,12,14
+I2C_ID, I2C_SDA, I2C_SCL = 1, 14, 11     # VL53L0X / TCS3472 on I2C0 0,12,14
 SERVO_HORIZONTAL_PIN = 15                             # "Servo 1", 50 Hz, 0-270 deg
 SERVO_VERTICAL_PIN = 13
 ACTUATOR_DIR, ACTUATOR_PWM = 0, 1          # linear actuator on Motor Driv1 #1

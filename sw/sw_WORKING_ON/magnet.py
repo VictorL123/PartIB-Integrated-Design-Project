@@ -34,3 +34,6 @@ def read_polarity():
     else: 
         return None
 
+def read_polarity_grabber_test():
+    """ONLY FOR THE GRABBER TEST"""
+    return "N"
