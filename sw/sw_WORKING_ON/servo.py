@@ -58,6 +58,24 @@ class Servo:
         angle = (av - self.MIN_ADC) * 270.0 / (self.MAX_ADC - self.MIN_ADC)
         return angle
 
+# Creating a new class called Slow servo which allows for slow movement built in
+class SlowServo(Servo):
+    def __init__(self, pin, start_angle):
+        super().__init__(pin)
+        self.angle = start_angle
+        self.set_angle(start_angle)
+
+    def move_to(self, target, deg_per_s, step_ms=20):
+        """Move to `target` degrees at roughly deg_per_s."""
+        step = deg_per_s * step_ms / 1000          # degrees to move each step
+        while abs(target - self.angle) > step:
+            self.angle += step if target > self.angle else -step
+            self.set_angle(self.angle)
+            sleep_ms(step_ms)
+        self.angle = target
+        self.set_angle(target)                     # land exactly on the target
+
+
 
 # Test Code
 servo1 = Servo(Pin(15)) # Connected to Servo 1

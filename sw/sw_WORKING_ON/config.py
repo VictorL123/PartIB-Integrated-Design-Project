@@ -7,8 +7,8 @@ This file deliberately imports nothing from `machine`, so it is plain data.
 
 # ---------------- KNOWN (course examples) ----------------
 I2C_ID, I2C_SDA, I2C_SCL = 1, 14, 11     # VL53L0X / TCS3472 on I2C0 0,12,14
-SERVO_HORIZONTAL_PIN = 15                             # "Servo 1", 50 Hz, 0-270 deg
-SERVO_VERTICAL_PIN = 13
+SERVO_HORIZONTAL_PIN = 13                             # "Servo 1", 50 Hz, 0-270 deg
+SERVO_VERTICAL_PIN = 15
 ACTUATOR_DIR, ACTUATOR_PWM = 0, 1          # linear actuator on Motor Driv1 #1
 START_BUTTON_PIN = 22                      # Pin.IN with PULL_DOWN in the example
 # Motor convention in the course Motor class: dir 0 = forward, 1 = reverse
@@ -34,15 +34,21 @@ LED_OFF_VALUE = 0
 
 # ---------------- TUNING ----------------
 DT = 1.5
+KP = 12                   # steer harder the further the line is off-centre
+KD = 5                    # damps oscillation; raise after KP is tuned
+KI = 0
+
 BASE_SPEED = 60           # 0-100
 SLOW_SPEED = 30           # approaching packages / ramp
 EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
+
 LEFT_MOTOR_CORRECTION = 0.98
 TURN_LEFT_90_MS = 1300
 TURN_RIGHT_90_MS = 1350
 TURN_180_MS = 2800
+
 STRAIGHT_BEFORE_TURN = 1000
 STRAIGHT_BEFORE_HALFSPIN = 0 # for now
 STRAIGHT_TIME_DEPOT = 1100
@@ -52,9 +58,17 @@ WAIT_TIME = 3000
 FORWARD_BEFORE_GRAB = 150
 FORWARD_BEFORE_DELIVER = 1200
 BACK_AFTER_DELIVER = 1000
-KP = 12                   # steer harder the further the line is off-centre
-KD = 5                    # damps oscillation; raise after KP is tuned
-KI = 0
+
+SERVO_HOR_START_ANGLE = 0
+SERVO_VER_START_ANGLE = 250
+
+VER_BOTTOM_RACK_ANGLE = 200 # TODO: NEEDS CALIBRATING
+VER_TOP_ANGLE = 162
+
+HOR_OPEN_ANGLE = 0
+HOR_CLOSED_ANGLE = 90
+SPEED_DEG_S = 20
+
 JUNCTION_CONFIRM = 3      # consecutive readings before we believe a junction
 JUNCTION_CROSS_MS = 300   # drive straight this long to get past a junction (tune!)
 DEBOUNCE_MS = 25          # button debounce
