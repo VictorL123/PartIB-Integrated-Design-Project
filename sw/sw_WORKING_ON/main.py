@@ -205,6 +205,9 @@ def run():
             
         elif state == "APPROACH_PACKAGE":
             # TODO: follow line slowly until package_near(); stop; read_polarity -> "GRAB"
+            elapsed = ticks_diff(ticks_ms(),t_start)
+            robot.lights.amber_flash(elapsed)
+            
             if robot.distance.package_near() != True:
                 robot.follower.step(SLOW_SPEED)
                 
@@ -246,6 +249,7 @@ def run():
             # (haven't coded anything for what the closest depo is)
 
             # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
+            
             print("In state Grabbing")
             
             robot.drive.stop()
@@ -284,6 +288,9 @@ def run():
         elif state == "TOFIRSTBAY":
             """This gets to the first bay"""
             print("In state TOFIRSTBAY")
+            elapsed = ticks_diff(ticks_ms(),t_start)
+            robot.lights.amber_flash(elapsed)
+            
             if robot.sensors.at_junction():
                 if bay_count > 1:
                     bay_count -= 1
@@ -326,6 +333,9 @@ def run():
             
         elif state == "DELIVER":
             # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
+            elapsed = ticks_diff(ticks_ms(),t_start)
+            robot.lights.amber_flash(elapsed)
+            
             while robot.sensors.at_junction() == False:
                 robot.follower.step(BASE_SPEED) 
                 
