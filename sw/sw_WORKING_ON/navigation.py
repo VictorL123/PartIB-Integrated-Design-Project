@@ -5,7 +5,8 @@ Fill ROUTES by walking the table and counting junctions on the line.
 """
 
 # TODO: fill in from the real table layout
-# assume routes starting from START and depos will start off in the right direction
+# assume routes from START will start off in the right direction
+# assume routes from depos start in right direction
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
@@ -76,7 +77,7 @@ class Route:
                     elif destination in ("rack_R_low", "deposit_R1", "deposit_R2"):
                         self._plan.extend(["LEFTTURN"])
 
-            #orientation is variable at depos
+            # orientation is variable at depos
             if self.location in ("deposit_L1", "deposit_L2"):
                 if destination == "rack_L_low":
                     self._plan.extend(["LEFTTURN"])
@@ -89,14 +90,21 @@ class Route:
                 else:
                     self._plan.extend(["LEFTTURN"])
 
-
+            # not all routes are in the dictionary so:
             if (self.location, destination) in ROUTES.keys():
+                self.nextlocation = "None" # so when arrived == TRUE, have actually arrived
                 print(f"planning route to {destination}")
                 self._plan.append(ROUTES[(self.location, destination)])
+                # ahead of time -> TODO: this may be buggy, some code may rely on this being the correct current info
+                self.lastlocation = self.location
+                self.location = destination
             else:
                 self.nextlocation = destination
                 print("planning route to START first")
                 self._plan.append(ROUTES[(self.location, "START")])
+                # ahead of time
+                self.lastlocation = self.location
+                self.location = "START"
 
 
     def peek_next_move(self):
@@ -106,10 +114,8 @@ class Route:
         self._plan.pop(0)
 
     def arrived(self):
-        """TODO: True when the plan is empty."""
-        if len(self._plan) < 1:
-            self.lastlocation = self.location
-            #self.location = destination
+        """True when the plan is empty."""
+        if len(self._plan) == 0:
             return True
         elif len(self._plan) > 0:
             return False
