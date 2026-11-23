@@ -77,9 +77,6 @@ class SlowServo(Servo):
 
 
 
-# Test Code
-servo1 = Servo(Pin(15)) # Connected to Servo 1
-servo2 = Servo(Pin(13))
   
 def test_positions():
    #while True:
@@ -114,5 +111,6 @@ def test_positions():
         sleep_ms(75)
  
 # Run test
-test_positions()
+#test_positions()
+#servo1.set_angle(250)
  

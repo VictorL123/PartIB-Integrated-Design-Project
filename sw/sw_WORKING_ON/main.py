@@ -96,7 +96,10 @@ def run():
                         robot.follower.turn("RIGHT", SPIN_SPEED)
                         
                         level = robot.navigate.location[-3:]
-                        robot.grabber.raise_before_grab(level)
+                        #robot.grabber.raise_before_grab(level)
+                        
+                        robot.drive.stop()
+                        robot.grabber.open()
                         
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY:
@@ -142,31 +145,32 @@ def run():
                         while ticks_diff(ticks_ms(), t0) < 200:
                             robot.follower.step(BASE_SPEED)
                         robot.drive.stop()
+                        state = "DONE"
 
                 if reversing == True:
                     robot.follower.reverse(BASE_SPEED) #using step reverse - haven't seen this work yet?
                 else:
                     robot.follower.step(BASE_SPEED)
 
-            if robot.navigate.arrived() == True:
-                """when not for the linefollower, this just means that have reached end of route
-                TODO: need to load either next route or next state"""
-                robot.drive.stop()
+            # if robot.navigate.arrived() == True:
+            #     """when not for the linefollower, this just means that have reached end of route
+            #     TODO: need to load either next route or next state"""
+            #     robot.drive.stop()
                 
-                #decide on next state by location
-                if robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
-                    state = "SEARCH"
+            #     #decide on next state by location
+            #     if robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
+            #         state = "SEARCH"
 
-                elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
-                    state = "DELIVER"
+            #     elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
+            #         state = "DELIVER"
 
-                elif robot.navigate.location == "START":
-                    if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
-                        robot.navigate.plan_to(robot.navigate.nextlocation)
-                        robot.navigate.nextlocation = "None"
-                        state = "TRAVEL"
-                    else: 
-                        state = "DONE"
+            #     elif robot.navigate.location == "START":
+            #         if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
+            #             robot.navigate.plan_to(robot.navigate.nextlocation)
+            #             robot.navigate.nextlocation = "None"
+            #             state = "TRAVEL"
+            #         else: 
+            #             state = "DONE"
 
 
         elif state == "SEARCH":
@@ -257,7 +261,7 @@ def run():
             sleep_ms(300)
             robot.grabber.close()
             sleep_ms(300)
-            robot.grabber.pick_up()
+            #robot.grabber.pick_up()
             
             # May not need to read again because we read in approach package
             polarity = read_polarity_grabber_test()
@@ -343,7 +347,7 @@ def run():
             sleep_ms(300)    
             
             #deposit box
-            robot.grabber.lower_to_ground()
+            #robot.grabber.lower_to_ground()
             sleep_ms(400)
             robot.grabber.open()
             sleep_ms(400)
@@ -356,7 +360,7 @@ def run():
             # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
                 print("reveresing out of depot")
-                robot.follower.reverse(EXTRA_SLOW_SPEED) 
+                robot.follower.reverse(BASE_SPEED) 
             while robot.sensors.at_junction() == False:
                 robot.follower.reverse(BASE_SPEED)
 
@@ -401,7 +405,7 @@ def run():
             pass
 
         elif state == "DONE":
-            pass
+            robot.drive.stop()
 
         sleep_ms(5)
         t0 = ticks_ms()
