@@ -44,6 +44,7 @@ SLOW_SPEED = 30           # approaching packages / ramp
 EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
+SPEED_DEG_S = 0 # TODO: DONT MAKE THIS ZERO LOL
 
 LEFT_MOTOR_CORRECTION = 0.98
 TURN_LEFT_90_MS = 1400
@@ -59,7 +60,7 @@ WAIT_TIME = 3000
 FORWARD_BEFORE_GRAB = 150
 FORWARD_BEFORE_DELIVER = 1200
 BACK_AFTER_DELIVER = 1000
-RAMP_CLOCK = 6500 # TODO: needs calibration freddy....
+RAMP_CLOCK = 9000 # TODO: needs calibration freddy....
 
 SERVO_HOR_START_ANGLE = 0
 SERVO_VER_START_ANGLE = 250

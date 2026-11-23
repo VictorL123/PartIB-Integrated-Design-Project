@@ -99,6 +99,21 @@ def run():
                             result = wait_for_green()
                         print("lights out and away we go!")
 
+                    elif robot.navigate.peek_next_move() == "LEFTTURNINTOBAY":
+                        robot.navigate.next_move()
+                        print("calling left turn into bay")
+                        robot.follower.turn("LEFT", SPIN_SPEED)
+                        
+                        #level = robot.navigate.location[-3:]
+                        #robot.grabber.raise_before_grab(level)
+                        
+                        robot.drive.stop()
+                        robot.grabber.open()
+                        
+                        t0 = ticks_ms()
+                        while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY:
+                            robot.follower.step(BASE_SPEED)
+                        print("stopping")
 
                     elif robot.navigate.peek_next_move() == "RIGHTTURNINTOBAY":
                         robot.navigate.next_move()
