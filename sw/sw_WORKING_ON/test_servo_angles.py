@@ -134,5 +134,5 @@ def run():
 if __name__ == "__main__":
     run()
 
-servo1 = SlowServo(SERVO_VERTICAL_PIN, 0)
-servo1.set_angle(0)
+test_vertical()
+test_horizontal()
