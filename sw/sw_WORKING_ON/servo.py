@@ -85,30 +85,26 @@ def test_positions():
     # sleep_ms(1000)
 
     #This code starts the lifting servo in rest and then lifts it up and back down again
-    angle = 250
-    for i in range(45):
-        servo1.set_angle(angle)
-        angle -=2
-        sleep_ms(75)
-    for i in range(45):
-        servo1.set_angle(angle)
-        angle += 2
-        sleep_ms(75)
+    # angle = 250
+    # for i in range(45):
+    #     servo1.set_angle(angle)
+    #     angle -=2
+    #     sleep_ms(55)
+    # for i in range(45):
+    #     servo1.set_angle(angle)
+    #     angle += 2
+    #     sleep_ms(55)
 
     #And this trys to move the grabbing horizontally
     angle = 0
-    for i in range(45):
+    for i in range(40):
         servo2.set_angle(angle)
         angle +=2
-        sleep_ms(75)
-    for i in range(90):
+        sleep_ms(35)
+    for i in range(37):
         servo2.set_angle(angle)
         angle -=2
-        sleep_ms(75)
-    for i in range(45):
-        servo2.set_angle(angle)
-        angle += 2
-        sleep_ms(75)
+        sleep_ms(35)
  
 # Run test
 #test_positions()
