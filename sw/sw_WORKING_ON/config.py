@@ -44,7 +44,7 @@ SLOW_SPEED = 30           # approaching packages / ramp
 EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
-SPEED_DEG_S = 0 # TODO: DONT MAKE THIS ZERO LOL
+SPEED_DEG_S = 20 # TODO: DONT MAKE THIS ZERO LOL
 
 LEFT_MOTOR_CORRECTION = 0.98
 TURN_LEFT_90_MS = 1400

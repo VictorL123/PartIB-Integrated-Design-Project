@@ -75,7 +75,8 @@ class SlowServo(Servo):
         self.angle = target
         self.set_angle(target)                     # land exactly on the target
 
-
+servo1 = Servo(Pin(13))
+servo2 = Servo(Pin(15))
 
   
 def test_positions():
@@ -85,15 +86,15 @@ def test_positions():
     # sleep_ms(1000)
 
     #This code starts the lifting servo in rest and then lifts it up and back down again
-    # angle = 250
-    # for i in range(45):
-    #     servo1.set_angle(angle)
-    #     angle -=2
-    #     sleep_ms(55)
-    # for i in range(45):
-    #     servo1.set_angle(angle)
-    #     angle += 2
-    #     sleep_ms(55)
+    angle = 250
+    for i in range(45):
+        servo1.set_angle(angle)
+        angle -=2
+        sleep_ms(55)
+    for i in range(45):
+        servo1.set_angle(angle)
+        angle += 2
+        sleep_ms(55)
 
     #And this trys to move the grabbing horizontally
     angle = 0
@@ -107,6 +108,6 @@ def test_positions():
         sleep_ms(35)
  
 # Run test
-#test_positions()
-#servo1.set_angle(250)
+test_positions()
+
  
