@@ -39,6 +39,7 @@ KD = 5                    # damps oscillation; raise after KP is tuned
 KI = 0
 
 BASE_SPEED = 60           # 0-100
+RAMP_SPEED = 90           #Bonus speed to get up the damn ramp
 SLOW_SPEED = 30           # approaching packages / ramp
 EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
@@ -58,6 +59,7 @@ WAIT_TIME = 3000
 FORWARD_BEFORE_GRAB = 150
 FORWARD_BEFORE_DELIVER = 1200
 BACK_AFTER_DELIVER = 1000
+RAMP_CLOCK = 6500 # TODO: needs calibration freddy....
 
 SERVO_HOR_START_ANGLE = 0
 SERVO_VER_START_ANGLE = 250

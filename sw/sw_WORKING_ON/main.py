@@ -53,6 +53,16 @@ def run():
                         robot.follower.step(BASE_SPEED)
                         sleep_ms(250)
 
+                    elif robot.navigate.peek_next_move() == "STRAIGHT_RAMP":
+                        #This is trying to eliminate the issue of the line sensors getting too close or far from the ground
+                        #on the ramp by forcing it to drive for a set time RAMP_CLOCK
+                        robot.navigate.next_move()
+                        print("up the ramp we go hehe")
+                        t0 = ticks_ms()
+                        while ticks_diff(ticks_ms(), t0) < RAMP_CLOCK:
+                            robot.follower.step(RAMP_SPEED)
+                        print("ramp complete :)")
+
                     elif robot.navigate.peek_next_move() == "STRAIGHT1S":
                         robot.navigate.next_move()
                         print("calling straight for straight_time_bay")
