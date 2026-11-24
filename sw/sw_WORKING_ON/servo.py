@@ -1,6 +1,8 @@
 from machine import Pin, PWM, ADC
 import time
 from utime import sleep_ms
+from config import SERVO_HORIZONTAL_PIN, SERVO_VERTICAL_PIN, SERVO_HOR_START_ANGLE, SERVO_VER_START_ANGLE, VER_TOP_ANGLE, HOR_CLOSED_ANGLE, HOR_OPEN_ANGLE, HOR_SPEED_DEG_S, VER_SPEED_DEG_S, VER_BOTTOM_RACK_ANGLE
+
 
 class Servo:
     # 6.4V to servo
@@ -77,3 +79,9 @@ class SlowServo(Servo):
 
 
  
+def test_servo():
+    horizontal_servo = SlowServo(SERVO_HORIZONTAL_PIN, SERVO_HOR_START_ANGLE)
+    servo_vertical = SlowServo(SERVO_VERTICAL_PIN, SERVO_VER_START_ANGLE)
+    
+    horizontal_servo.move_to(angle, HOR_SPEED_DEG_S)
+    servo_vertical.move_to(angle,VER_SPEED_DEG_S)
