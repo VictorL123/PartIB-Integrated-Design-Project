@@ -40,3 +40,17 @@ class Grabber:
 
     def package_present(self):
         """TODO: use DistanceSensor.package_near() or servo feedback??? distance sensor not acurate within distance of box"""
+
+
+def test_grabber():
+    grabber = Grabber()
+    grabber.open()
+    grabber.close()
+    grabber.raise_before_grab("top")
+    grabber.pick_up()
+    grabber.lower_to_ground()
+    
+    
+# Uncomment to run
+    
+#test_grabber()

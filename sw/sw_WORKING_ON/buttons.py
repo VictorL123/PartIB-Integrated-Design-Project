@@ -17,4 +17,7 @@ def start_pressed(stop_button):
 def stop_pressed(stop_button):
     """TODO: the stop must work from ANY state."""
     if stop_button.value() == 0:
+        print(stop_button.value())
         return True
+    else:
+        return False
