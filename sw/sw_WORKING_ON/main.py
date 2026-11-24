@@ -27,20 +27,24 @@ def run():
         if stop_pressed(stop_button):
             state = "DONE"
 
-        if ticks_diff(ticks_ms(), t_start) < 10000: # if less than 10s left + not mid deliver, just go home
+        # TODO: Check time to go home
+        # If its been 4:50 since start, go home
+        if ticks_diff(ticks_ms(), t_start) > 290000: # if less than 10s left + not mid deliver, just go home
             timeup = True
 
         # distance sensor safety check here? - change state to recover if state is not already grab or approach package
 
         if state == "WAIT_START":
             """ set all the lights off, choose a navigation scheme, and finally record start time before travel begins """
+            
+            # Ensure all the lights are off at the start
             robot.lights.amber_off()
             robot.lights.red_off()
-            robot.lights.green_off() #Turn all the lights off at the start
-            #robot.lights.amber_on()
-            sleep_ms(2000)
-            robot.navigate.plan_to("LINE_FOLLOWER_TEST")
-            #robot.navigate.plan_to("rack_L_low")
+            robot.lights.green_off() 
+            sleep_ms(1000)
+            
+            # Set the route to Left rack low
+            robot.navigate.plan_to("rack_L_low")
             t_start = ticks_ms()
             state = "TRAVEL"
 
@@ -114,59 +118,7 @@ def run():
                         while result == False:
                             result = wait_for_green()
                         print("lights out and away we go!")
-
-                    elif robot.navigate.peek_next_move() == "LEFTTURNINTOBAY":
-                        robot.navigate.next_move()
-                        print("calling left turn into bay")
-                        robot.follower.turn("LEFT", SPIN_SPEED)
-                        
-                        #level = robot.navigate.location[-3:]
-                        #robot.grabber.raise_before_grab(level)
-                        
-                        robot.drive.stop()
-                        robot.grabber.open()
-                        
-                        t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY:
-                            robot.follower.step(BASE_SPEED)
-                        print("stopping")
-
-                    elif robot.navigate.peek_next_move() == "RIGHTTURNINTOBAY":
-                        robot.navigate.next_move()
-                        print("calling right turn into bay")
-                        robot.follower.turn("RIGHT", SPIN_SPEED)
-                        
-                        level = robot.navigate.location[-3:]
-                        #robot.grabber.raise_before_grab(level)
-                        
-                        robot.drive.stop()
-                        robot.grabber.open()
-                        
-                        t0 = ticks_ms()
-                        while ticks_diff(ticks_ms(),t0) < STRAIGHT_TIME_BAY:
-                            robot.follower.step(BASE_SPEED)
-                        print("stopping")
-                        
-                        # TODO: REMOVE THIS CODE AFTER GRABBER TEST
-                        bay_count = 1
-                        robot.navigate.location = "rack_L_low"
-                        robot.drive.stop()
-                        state = "GRAB"
-                        
-                        # print("SHOULD NOT BE PRINTING THIS FROM TRAVEL")
-                        
-                        # t0 = ticks_ms()
-                        # while ticks_diff(ticks_ms(),t0) < WAIT_TIME:
-                        #     #print("waiting 2s in bay")
-                        #     robot.drive.stop()
-                        # reversing = True
-
-                    # TODO: This is again just for the grabber test    
-                    elif robot.navigate.peek_next_move() == "LEFTTURNINTODEPOSIT":
-                        robot.navigate.next_move()
-                        state = "DELIVER"
-
-                        
+                       
                     elif robot.navigate.peek_next_move() == "REVERSERIGHTTURN":
                         robot.navigate.next_move()
                         print("calling turn from main")
@@ -235,9 +187,9 @@ def run():
                 # Turn into first bay
                 robot.follower.turn(turnin, SPIN_SPEED)
                 print(f"calling {turnin} turn")
-                t0 = ticks_ms()
                 
                 # Drive until should detect package
+                t0 = ticks_ms()
                 while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_SEARCH:
                     robot.follower.step(BASE_SPEED)
                 robot.drive.stop()
@@ -429,14 +381,10 @@ def run():
             while robot.sensors.at_junction() == False:
                 robot.follower.stepreverse(BASE_SPEED)
 
-            # # Hard code journey home just for grabber test
-            # robot.follower.step(BASE_SPEED)
-            # robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
-            # grab_test = True
+
             if timeup:
                 state = "RETURN"
-            # if grab_test == True:
-            #     state = "TRAVEL"
+
             else:
                 print("SHOULD NOT BE PRINTING THIS")
                 #need to load route for next rack
