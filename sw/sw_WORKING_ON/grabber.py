@@ -20,18 +20,18 @@ class Grabber:
         self.horizontal_servo.move_to(HOR_OPEN_ANGLE, HOR_SPEED_DEG_S)
 
     def close(self):
-        """TODO: Servo to the closed angle - test angle that grips without crushing."""
+        """Servo to the closed angle - test angle that grips without crushing."""
         self.horizontal_servo.move_to(HOR_CLOSED_ANGLE, HOR_SPEED_DEG_S)
         
     def raise_before_grab(self, level):
-        """ TODO: sets height of grabber for collection - needs calibrating"""
+        """ sets height of grabber for collection - needs calibrating"""
         if level == "top":
             self.servo_vertical.move_to(SERVO_VER_START_ANGLE, VER_SPEED_DEG_S)
         elif level == "low":
             self.servo_vertical.move_to(VER_BOTTOM_RACK_ANGLE, VER_SPEED_DEG_S)
 
     def pick_up(self):
-        """TODO: sets carry height - needs calibrating"""
+        """sets carry height - needs calibrating"""
         self.servo_vertical.move_to(VER_TOP_ANGLE, VER_SPEED_DEG_S)
 
     def lower_to_ground(self):
