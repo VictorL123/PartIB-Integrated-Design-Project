@@ -79,9 +79,10 @@ class SlowServo(Servo):
 
 
  
-def test_servo():
+def test_servo(angle):
     horizontal_servo = SlowServo(SERVO_HORIZONTAL_PIN, SERVO_HOR_START_ANGLE)
     servo_vertical = SlowServo(SERVO_VERTICAL_PIN, SERVO_VER_START_ANGLE)
     
     horizontal_servo.move_to(angle, HOR_SPEED_DEG_S)
     servo_vertical.move_to(angle,VER_SPEED_DEG_S)
+
