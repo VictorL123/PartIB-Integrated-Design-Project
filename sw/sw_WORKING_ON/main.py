@@ -223,6 +223,7 @@ def run():
 
 
         elif state == "SEARCH": 
+            
             # set up symmetric directions
             if robot.navigate.location in ("rack_L_low", "rack_R_top"):
                 turnin = "RIGHT"
@@ -230,22 +231,30 @@ def run():
             elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
                 turnin = "LEFT"
                 turnout = "RIGHT"
+                
             # same code for both sides
             if robot.sensors.at_junction():
                 bay_count += 1
                 print(bay_count)
+                
+                # Turn into first bay
                 robot.follower.turn(turnin, SPIN_SPEED)
                 print(f"calling {turnin} turn")
                 t0 = ticks_ms()
+                
+                # Drive until should detect package
                 while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_SEARCH:
                     robot.follower.step(BASE_SPEED)
                 robot.drive.stop()
+                
                 if robot.distance.package_there():
                     print("package there")
                     no_box_in_rack = False
                     state = "APPROACH_PACKAGE"
                 else:
                     print("package not there")
+                    
+                    # Reverse until at the line
                     while robot.sensors.at_junction == False:
                         robot.follower.stepreverse(BASE_SPEED)
                     if timeup:
