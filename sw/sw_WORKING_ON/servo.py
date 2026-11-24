@@ -109,6 +109,6 @@ def test_positions():
         sleep_ms(35)
  
 # Run test
-#test_positions()
-#servo1.set_angle(250)
+test_positions()
+
  

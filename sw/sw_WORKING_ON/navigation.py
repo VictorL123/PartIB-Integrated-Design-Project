@@ -10,8 +10,8 @@ Fill ROUTES by walking the table and counting junctions on the line.
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_L_top"): ["WAIT_LIGHTS"],
-    ("START", "rack_R_top"): ["WAIT_LIGHTS"],
+    ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP",],
+    ("START", "rack_R_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
     # ("START", "deposit_L1"):["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
     # ("START", "deposit_L2"):["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
     # ("START", "deposit_R1"):["STRAIGHT", "LEFTTURN", "LEFTTURN"],
@@ -22,11 +22,12 @@ ROUTES = {
     # ("rack_R_low", "deposit_R1"): ["STRAIGHT", "RIGHTTURN"],
     # ("rack_R_low", "deposit_R2"): ["RIGHTTURN"],
     # ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT"],
-    # ("rack_L_top", "START"): ["STRAIGHT"],
+    ("rack_L_top", "START"): ["STRAIGHT"],
+    ("rack_L_top", "deposit_L1"): ["LEFTTURN"],
     # ("rack_R_top", "START"): ["STRAIGHT"],
     # ("rack_R_top", "rack_L_top"): [],
     # ("rack_L_top", "rack_R_top"): [],
-    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT"],
+     ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT"],
     # ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
     # ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
     # ("deposit_L2", "rack_L_low"): ["RIGHTTURN"],
@@ -52,11 +53,13 @@ class Route:
     def plan_to(self, destination):
         if destination == "LINE_FOLLOWER_TEST": 
             # Prescribed circuit for line follower
-            self._plan.extend(ROUTES[(self.location, "rack_L_low")]) # takes to start of left lower rack
-            self._plan.extend(["STRAIGHT","RIGHTTURNINTOBAY"]) # back to beginning of L low rack
-            self._plan.extend(ROUTES[("rack_L_low", "deposit_L1")]) 
-            self._plan.extend(["LEFTTURNINTODEPOSIT"])
-            self._plan.extend(ROUTES[("deposit_L1", "START")])
+            self._plan.extend(ROUTES[(self.location, "rack_L_top")]) # takes to start of left lower rack
+            self._plan.extend("ABOUTTURN")
+            self._plan.extend("STRAIGHT")
+            #self._plan.extend(["LEFTTURNINTOBAY"]) # back to beginning of L low rack
+            # self._plan.extend(ROUTES[("rack_L_top", "deposit_L1")]) 
+            # self._plan.extend(["LEFTTURNINTODEPOSIT"])
+            # self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
         else:
