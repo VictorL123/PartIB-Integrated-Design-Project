@@ -139,6 +139,3 @@ class Route:
     #     """TODO: track which depos have been filled."""
 
 
-def turn(drive, sensors, direction, timeout_ms=3000):
-    """TODO: drive forward a little so the wheels are over the junction, then spin until
-    the centre sensor finds the line again (sensor-based, with a timeout, not a fixed time)."""
