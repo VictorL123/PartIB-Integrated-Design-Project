@@ -26,8 +26,8 @@ def run():
         # --- safety first, every loop ---
         # TODO: if stop_pressed(): stop motors, lights off, state = "WAIT_START"
         
-        if stop_pressed(stop_button):
-            state = "DONE"
+        #if stop_pressed(stop_button):
+         #   state = "DONE"
         
         # TODO: if time is nearly up and state is not RETURN/DONE: plan_to("START"), state = "RETURN"
 
@@ -482,6 +482,7 @@ def run():
             robot.navigate.plan_to("START")
 
         elif state == "DONE":
+            print("State is DONE")
             robot.drive.stop()
             robot.lights.amber_off()
             robot.lights.red_off()
@@ -499,6 +500,7 @@ def run():
 def main():
     """Check if button pressed"""
     if start_pressed(stop_button):
+        print("Starting")
         run()
 
 main()
