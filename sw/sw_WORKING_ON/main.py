@@ -56,6 +56,7 @@ def run():
 
             if robot.navigate.arrived() == False:
                 if robot.sensors.at_junction():
+                    print("junction......")
                     reversing = False
                     if robot.navigate.peek_next_move() == "STRAIGHT":
                         robot.navigate.next_move()

@@ -54,8 +54,8 @@ class Route:
         if destination == "LINE_FOLLOWER_TEST": 
             # Prescribed circuit for line follower
             self._plan.extend(ROUTES[(self.location, "rack_L_top")]) # takes to start of left lower rack
-            self._plan.extend("ABOUTTURN")
-            self._plan.extend("DOWN_RAMP")
+            self._plan.extend(["STRAIGHT", "STRAIGHT", "ABOUTTURN"])
+            self._plan.extend(["STRAIGHT", "STRAIGHT","DOWN_RAMP"])
             #self._plan.extend(["LEFTTURNINTOBAY"]) # back to beginning of L low rack
             # self._plan.extend(ROUTES[("rack_L_top", "deposit_L1")]) 
             # self._plan.extend(["LEFTTURNINTODEPOSIT"])
@@ -67,6 +67,7 @@ class Route:
             if self.location == "START":
                 if self.lastlocation in ("rack_L_low", "deposit_L1", "deposit_L2"):
                     if destination in ("rack_L_top", "rack_R_top"):
+                        print("right start")
                         self._plan.extend(["RIGHTTURN"])
 
                 elif self.lastlocation in ("rack_R_low", "deposit_R1", "deposit_R2"):
@@ -75,6 +76,7 @@ class Route:
                 
                 elif self.lastlocation in ("rack_L_top", "rack_R_top"):
                     if destination in ("rack_L_low", "deposit_L1", "deposit_L2"):
+                        print("right start")
                         self._plan.extend(["RIGHTTURN"])
 
                     elif destination in ("rack_R_low", "deposit_R1", "deposit_R2"):
