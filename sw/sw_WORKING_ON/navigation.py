@@ -4,7 +4,6 @@ The route is DATA: for each trip, the list of actions to take at successive junc
 Fill ROUTES by walking the table and counting junctions on the line.
 """
 
-# TODO: fill in from the real table layout
 # assume routes from START will start off in the right direction
 # assume routes from depos start in right direction
 ROUTES = {
@@ -43,10 +42,9 @@ ROUTES = {
 
 class Route:
     def __init__(self):
-        self.location = "START"
-        self.lastlocation = "START"
-        self.nextlocation = "None"
-        # for the line follower test, this will not change (since the movements are prescribed, it doesn't need to)
+        self.location = "START" # this is only called when IN the location talked about
+        self.lastlocation = "START" # this is only called when deciding what orientation to take at start/ depos
+        self.nextlocation = "None" # this is only called for a route split up by "START"
         self._plan = []
 
 
@@ -82,7 +80,7 @@ class Route:
                     elif destination in ("rack_R_low", "deposit_R1", "deposit_R2"):
                         self._plan.extend(["LEFTTURN"])
 
-            # orientation is variable at depos
+            # orientation is variable at depos (reversing out)
             if self.location in ("deposit_L1", "deposit_L2"):
                 if destination == "rack_L_low":
                     self._plan.extend(["LEFTTURN"])
@@ -95,8 +93,9 @@ class Route:
                 else:
                     self._plan.extend(["LEFTTURN"])
 
-            # not all routes are in the dictionary so:
-            if (self.location, destination) in ROUTES.keys():
+
+            # actually adding route to plan
+            if (self.location, destination) in ROUTES.keys(): # not all routes are in the dictionary so
                 self.nextlocation = "None" # so when arrived == TRUE, have actually arrived
                 print(f"planning route to {destination}")
                 self._plan.append(ROUTES[(self.location, destination)])
@@ -104,7 +103,7 @@ class Route:
                 self.lastlocation = self.location
                 self.location = destination
             else:
-                self.nextlocation = destination
+                self.nextlocation = destination # this is used at end of state = "TRAVEL" to check if there's more to go
                 print("planning route to START first")
                 self._plan.append(ROUTES[(self.location, "START")])
                 # ahead of time
@@ -125,15 +124,17 @@ class Route:
         elif len(self._plan) > 0:
             return False
 
-    def packages_remaining(self):
-        # 0 = not investigated
-        # 1 = magnetic box present, taken
-        # 2 = box present, not magnetic
-        """TODO: track which racks have been emptied."""
-        #return edited tuple of 4 lists with 0s, 1s, and 2s: updated as bays searched
+    # these functions are replaced by dictionary "table"
+    
+    # def packages_remaining(self):
+    #     # 0 = not investigated
+    #     # 1 = magnetic box present, taken
+    #     # 2 = box present, not magnetic
+    #     """TODO: track which racks have been emptied."""
+    #     #return edited tuple of 4 lists with 0s, 1s, and 2s: updated as bays searched
 
-    def depos_remaining(self):
-        """TODO: track which depos have been filled."""
+    # def depos_remaining(self):
+    #     """TODO: track which depos have been filled."""
 
 
 def turn(drive, sensors, direction, timeout_ms=3000):
