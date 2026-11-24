@@ -73,6 +73,15 @@ def run():
                             robot.follower.step(RAMP_SPEED)
                         print("ramp complete :)")
 
+                    elif robot.navigate.peek_next_move() == "DOWN_RAMP":
+                        #This is a similar move to above, but ajusted for the effects of gravity. It forces drive for a set time
+                        robot.navigate.next_move()
+                        print("we goin down lol")
+                        t0 = ticks_ms()
+                        while ticks_diff(ticks_ms(), t0) < RAMP_CLOCK_DOWN:
+                            robot.follower.step(BASE_SPEED)
+                        print("back at the bottom now hehe")
+
                     elif robot.navigate.peek_next_move() == "STRAIGHT1S":
                         robot.navigate.next_move()
                         print("calling straight for straight_time_bay")

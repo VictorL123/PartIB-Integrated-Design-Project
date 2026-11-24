@@ -55,7 +55,7 @@ class Route:
             # Prescribed circuit for line follower
             self._plan.extend(ROUTES[(self.location, "rack_L_top")]) # takes to start of left lower rack
             self._plan.extend("ABOUTTURN")
-            self._plan.extend("STRAIGHT")
+            self._plan.extend("DOWN_RAMP")
             #self._plan.extend(["LEFTTURNINTOBAY"]) # back to beginning of L low rack
             # self._plan.extend(ROUTES[("rack_L_top", "deposit_L1")]) 
             # self._plan.extend(["LEFTTURNINTODEPOSIT"])

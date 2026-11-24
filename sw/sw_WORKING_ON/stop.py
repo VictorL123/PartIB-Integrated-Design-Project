@@ -2,6 +2,7 @@ from config import (LEFT_MOTOR_DIR, LEFT_MOTOR_PWM, RIGHT_MOTOR_DIR, RIGHT_MOTOR
                     LEFT_MOTOR_INVERT, RIGHT_MOTOR_INVERT, require)
 from motors import Motor, Drivetrain
 from robot import Robot
+from servo import SlowServo
 
 
 def stop():
@@ -21,7 +22,6 @@ def stop():
 
     #Stop the servos and reset them back to normal position
     """ ADD SERVO STOP CODE HERE """
-    
     print("stopped")
 
 
