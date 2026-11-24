@@ -17,13 +17,17 @@ def run():
     t_start = 0
     reversing = False
     bay_count = 0
-    GRABTEST = True
+    timeup = False
     no_box_in_rack = False
 
     while True:
         # --- safety first, every loop ---
         # TODO: if stop_pressed(): stop motors, lights off, state = "WAIT_START"
         # TODO: if time is nearly up and state is not RETURN/DONE: plan_to("START"), state = "RETURN"
+
+        if ticks_diff(ticks_ms(), t_start) < 10000: # if less than 10s left + not mid deliver, just go home
+            timeup = True
+
         # distance sensor safety check here? - change state to recover if state is not already grab or approach package
 
         if state == "WAIT_START":
@@ -72,6 +76,7 @@ def run():
                         robot.follower.turn("180", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "LEFTTURN":
+                        # TODO: check that halfspin works
                         # steps so must be going forward
                         robot.follower.step(BASE_SPEED)
                         print("calling left turn")
@@ -92,7 +97,7 @@ def run():
                         robot.follower.turn("180", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "WAIT_LIGHTS":
-                        #Now we have arrived at the start and want to head up the ramp....
+                        # Now we have arrived at the start and want to head up the ramp....
                         robot.navigate.next_move()
                         result = False
                         while result == False:
@@ -173,67 +178,77 @@ def run():
                         state = "DONE"
 
                 if reversing == True:
-                    robot.follower.reverse(BASE_SPEED) #using step reverse - haven't seen this work yet?
+                    robot.follower.reverse(BASE_SPEED) # not using step reverse - haven't seen this work yet?
                 else:
                     robot.follower.step(BASE_SPEED)
 
-            # if robot.navigate.arrived() == True:
-            #     """when not for the linefollower, this just means that have reached end of route
-            #     TODO: need to load either next route or next state"""
-            #     robot.drive.stop()
-                
-            #     #decide on next state by location
-            #     if robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
-            #         state = "SEARCH"
+            if robot.navigate.arrived() == True:
+                """when not for the linefollower, this just means that have reached end of route
+                TODO: need to load either next route or next state"""
+                robot.drive.stop()
 
-            #     elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
-            #         state = "DELIVER"
+                if timeup:
+                    state = "RETURN"
 
-            #     elif robot.navigate.location == "START":
-            #         if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
-            #             robot.navigate.plan_to(robot.navigate.nextlocation)
-            #             robot.navigate.nextlocation = "None"
-            #             state = "TRAVEL"
-            #         else: 
-            #             state = "DONE"
+                # decide on next state by location
+                elif robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
+                    state = "SEARCH"
+
+                elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
+                    state = "DELIVER"
+
+                elif robot.navigate.location == "START":
+                    if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
+                        robot.navigate.plan_to(robot.navigate.nextlocation)
+                        robot.navigate.nextlocation = "None"
+                        state = "TRAVEL"
+                    else: 
+                        state = "DONE"
 
 
-        elif state == "SEARCH":
-            # TODO: go through rack; turn; follow line to make sure pointing in right direction; package_there() -> search next or APPROACH_PACKAGE
-            if robot.navigate.location in ("rack_L_low", "rack_L_top"):
-                if robot.sensors.at_junction():
-                    bay_count += 1
-                    print(bay_count)
-                    robot.follower.turn("RIGHT", SPIN_SPEED)
-                    print("calling right turn")
-                    t0 = ticks_ms()
-                    while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_SEARCH:
-                        robot.follower.step(BASE_SPEED)
-                    robot.drive.stop()
-                    if robot.distance.package_there():
-                        print("package there")
-                        no_box_in_rack = False
-                        state = "APPROACH_PACKAGE"
-                    else:
-                        print("package not there")
-                        while robot.sensors.at_junction == False:
-                            robot.follower.reverse(BASE_SPEED)
-                        if bay_count < 6:
-                            #keep going to search next bay
-                            robot.follower.turn("LEFT", SPIN_SPEED)
-                        else: 
-                            #give up, go to next rack. raise error
-                            print("Error: no magnet found in rack")
-                            robot.follower.turn("RIGHT", SPIN_SPEED)
-                            
-                            no_box_in_rack = True
-                            state = "TOFIRSTBAY"                                
+        elif state == "SEARCH": 
+            # set up symmetric directions
+            if robot.navigate.location in ("rack_L_low", "rack_R_top"):
+                turnin = "RIGHT"
+                turnout = "LEFT"
+            elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
+                turnin = "LEFT"
+                turnout = "RIGHT"
+            # now can use same code for both sides
+            if robot.sensors.at_junction():
+                bay_count += 1
+                print(bay_count)
+                robot.follower.turn(turnin, SPIN_SPEED)
+                print(f"calling {turnin} turn")
+                t0 = ticks_ms()
+                while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_SEARCH:
+                    robot.follower.step(BASE_SPEED)
+                robot.drive.stop()
+                if robot.distance.package_there():
+                    print("package there")
+                    no_box_in_rack = False
+                    state = "APPROACH_PACKAGE"
+                else:
+                    print("package not there")
+                    while robot.sensors.at_junction == False:
+                        robot.follower.reverse(BASE_SPEED)
+                    if timeup:
+                        state = "RETURN"
+                    if bay_count < 6:
+                        #keep going to search next bay
+                        robot.follower.turn(turnout, SPIN_SPEED)
+                    else: 
+                        #give up, go to next rack. raise error
+                        print("Error: no magnet found in rack")
+                        robot.follower.turn(turnin, SPIN_SPEED)
+                        
+                        no_box_in_rack = True
+                        state = "TOFIRSTBAY"                                
 
                 robot.follower.step(BASE_SPEED)
                   
             
         elif state == "APPROACH_PACKAGE":
-            # TODO: follow line slowly until package_near(); stop; read_polarity -> "GRAB"
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
             
@@ -273,20 +288,18 @@ def run():
                     state = "SEARCH"
 
                 
-        elif state == "GRAB":
-            # TODO: 
-            # (haven't coded anything for what the closest depo is)
+        elif state == "GRAB": 
 
-            # need to assign current rack as "SEARCHED" -> still not sure of the best way to save these values
-            
             print("In state Grabbing")
+
+            # recording this rack as searched
+            table[robot.navigate.location] = "SEARCHED"
             
             robot.drive.stop()
-            
             sleep_ms(300)
             robot.grabber.close()
             sleep_ms(300)
-            #robot.grabber.pick_up()
+            robot.grabber.pick_up()
             
             # May not need to read again because we read in approach package
             polarity = read_polarity_grabber_test()
@@ -315,7 +328,7 @@ def run():
             state = "TOFIRSTBAY"
             
         elif state == "TOFIRSTBAY":
-            """This gets to the first bay"""
+            """This gets back to the first bay"""
             print("In state TOFIRSTBAY")
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
@@ -330,11 +343,13 @@ def run():
                     # reached last bay
                     print("end of rack")
                     bay_count -= 1
-                    
+
+                    if timeup:
+                        state = "RETURN"
                     
                     if no_box_in_rack == True:
                         #need to load route for next rack
-                        for i in range(4, 8):
+                        for i in range(5, 9):
                             # cycle through the first dictionary entries for racks
                             # not looking at where is next closest!!
                             val = list(table.values())[i]
@@ -348,12 +363,14 @@ def run():
                                 # have to use planned variable as some routes (eg from top left rack to top right) are empty
                                 print("error, all racks searched")
                                 table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
+                                table["cycles"] += 1
                                 robot.navigate.plan_to("rack_L_top")
                             
                             planned = False   
 
                     # else: 
-                        # TODO: plan to take box to right deposit                     
+                        # TODO: plan to take box to right deposit
+                                         
                     
                     state = "TRAVEL"
             else:
@@ -364,6 +381,9 @@ def run():
             # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
+
+            # record deposit as full
+            table[robot.navigate.location] = "FULL"
             
             while robot.sensors.at_junction() == False:
                 robot.follower.step(BASE_SPEED) 
@@ -372,7 +392,7 @@ def run():
             sleep_ms(300)    
             
             #deposit box
-            #robot.grabber.lower_to_ground()
+            robot.grabber.lower_to_ground()
             sleep_ms(400)
             robot.grabber.open()
             sleep_ms(400)
@@ -384,24 +404,23 @@ def run():
             t0 = ticks_ms()
             # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
-                print("reveresing out of depot")
-                robot.follower.reverse(BASE_SPEED) 
+                print("reversing out of depot")
+                robot.follower.reverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
                 robot.follower.reverse(BASE_SPEED)
 
-            state = "TRAVEL"
-
-            #TODO: Hard code journey home just for grabber test
-            robot.follower.step(BASE_SPEED)
-            robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
-            grab_test = True
-
-            if grab_test == True:
-                state = "TRAVEL"
+            # # Hard code journey home just for grabber test
+            # robot.follower.step(BASE_SPEED)
+            # robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
+            # grab_test = True
+            if timeup:
+                state = "RETURN"
+            # if grab_test == True:
+            #     state = "TRAVEL"
             else:
                 print("SHOULD NOT BE PRINTING THIS")
                 #need to load route for next rack
-                for i in range(4, 8):
+                for i in range(5, 9):
                     # cycle through the first dictionary entries for racks
                     # not looking at where is next closest!!
                     val = list(table.values())[i]
@@ -411,10 +430,11 @@ def run():
                         break
 
                 # if here then all racks are recorded as searched
-                if planned == False:
+                if planned == False: 
                     # have to use planned variable as some routes (eg from top left rack to top right) are empty
                     print("error, all racks searched")
                     table["rack_L_low"], table["rack_L_top"], table["rack_R_low"], table["rack_R_top"] = "UNSEARCHED"
+                    table["cycles"] += 1
                     robot.navigate.plan_to("rack_L_top")
             
                 planned = False
@@ -427,7 +447,24 @@ def run():
         
         elif state == "RETURN":
             # TODO: travel to START, park inside the box, amber off, -> "DONE"
-            pass
+            print("RETURNING HOME")
+        
+            if bay_count > 0:
+                elapsed = ticks_diff(ticks_ms(),t_start)
+                robot.lights.amber_flash(elapsed)
+                
+                if robot.sensors.at_junction():
+                    if bay_count > 1:
+                        bay_count -= 1
+                        print("calling straight")
+                        robot.follower.step(BASE_SPEED)
+                        sleep_ms(250)
+                    else:
+                        # reached last bay
+                        print("end of rack")
+                        bay_count -= 1
+
+            robot.navigate.plan_to("START")
 
         elif state == "DONE":
             robot.drive.stop()
