@@ -50,10 +50,16 @@ def run():
             robot.lights.amber_flash(elapsed)
 
             if robot.navigate.arrived() == False:
+                #For the case where there is still more to do...
+
                 if robot.sensors.at_junction():
+                    #And if the robot has detected it is at a junction
                     print("junction......")
                     reversing = False
+
+                    #Now we look at the next move and execute it in one of the elif ladder below
                     if robot.navigate.peek_next_move() == "STRAIGHT":
+                        #If next job is goign forward then begin going forward for at least 250 ms or until junction
                         robot.navigate.next_move()
                         print("calling straight")
                         robot.follower.step(BASE_SPEED)
@@ -79,6 +85,7 @@ def run():
                         print("back at the bottom now hehe")
 
                     elif robot.navigate.peek_next_move() == "STRAIGHT1S":
+                        #This gets the robot from the bay junction to position to begin executing a grab
                         robot.navigate.next_move()
                         print("calling straight for straight_time_bay")
                         t0 = ticks_ms()
@@ -87,15 +94,14 @@ def run():
                         robot.follower.turn("180", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "LEFTTURN":
-                        # TODO: check that halfspin works
-                        # steps so must be going forward
+                        #Turn forward to the left 90 degrees; steps so must be going forward
                         robot.follower.step(BASE_SPEED)
                         print("calling left turn")
                         robot.navigate.next_move()
                         robot.follower.turn("LEFT", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "RIGHTTURN":
-                        # steps so must be going forward
+                        #Turn forward to the right 90 degrees; steps so must be going forward
                         robot.follower.step(BASE_SPEED)
                         reversing = False
                         print("calling turn from main")
@@ -103,6 +109,7 @@ def run():
                         robot.follower.turn("RIGHT", SPIN_SPEED)
 
                     elif robot.navigate.peek_next_move() == "ABOUTTURN":
+                        #Turn the robot fully around, sleeping it so it doesnt detect any white lines it passes over as it turns
                         robot.navigate.next_move()
                         print("calling about turn")
                         robot.follower.turn("180", SPIN_SPEED)
@@ -194,7 +201,7 @@ def run():
                     robot.follower.step(BASE_SPEED)
 
             if robot.navigate.arrived() == True:
-                """when not for the linefollower, this just means that have reached end of route
+                """when not for the line follower, this just means that have reached end of route
                 TODO: need to load either next route or next state"""
                 robot.drive.stop()
 
