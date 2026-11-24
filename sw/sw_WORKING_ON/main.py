@@ -23,13 +23,9 @@ def run():
     no_box_in_rack = False
 
     while True:
-        # --- safety first, every loop ---
-        # TODO: if stop_pressed(): stop motors, lights off, state = "WAIT_START"
-        
+        #Check 
         if stop_pressed(stop_button):
             state = "DONE"
-        
-        # TODO: if time is nearly up and state is not RETURN/DONE: plan_to("START"), state = "RETURN"
 
         if ticks_diff(ticks_ms(), t_start) < 10000: # if less than 10s left + not mid deliver, just go home
             timeup = True
@@ -37,10 +33,10 @@ def run():
         # distance sensor safety check here? - change state to recover if state is not already grab or approach package
 
         if state == "WAIT_START":
+            """ set all the lights off, choose a navigation scheme, and finally record start time before travel begins """
             robot.lights.amber_off()
             robot.lights.red_off()
             robot.lights.green_off() #Turn all the lights off at the start
-            # TODO: wait for start_pressed(); record t_start; amber flash on; plan first trip
             #robot.lights.amber_on()
             sleep_ms(2000)
             robot.navigate.plan_to("LINE_FOLLOWER_TEST")
@@ -49,8 +45,7 @@ def run():
             state = "TRAVEL"
 
         elif state == "TRAVEL":
-            # TODO: follower.step(); on junction -> route.next_move() -> turn() or wait_for_green()
-            #       if line lost too long -> "RECOVER"; if route.arrived() -> next state
+            """ this is the main state, in which the robot is trying to move from one place to the next by following a route specified in navigation """
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
 
@@ -511,7 +506,7 @@ def run():
 
 
 def main():
-    """Check if button pressed"""
+    """Check if button pressed and then if it is pressed begin the running of the pico routes"""
     if start_pressed(stop_button):
         print("Starting")
         run()

@@ -49,6 +49,8 @@ class Route:
 
 
     def plan_to(self, destination):
+        """This function allows you to specially hardcode a route for testing and can be called by setting destination to LINE_FOLLOWER_TEST in run()"""
+
         if destination == "LINE_FOLLOWER_TEST": 
             # Prescribed circuit for line follower
             self._plan.extend(ROUTES[(self.location, "rack_L_top")]) # takes to start of left lower rack
