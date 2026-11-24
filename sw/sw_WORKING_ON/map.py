@@ -1,4 +1,5 @@
 table = {
+    "cycles": 0,
     "deposit_L1": "EMPTY",
     "deposit_L2": "EMPTY",
     "deposit_R1": "EMPTY",

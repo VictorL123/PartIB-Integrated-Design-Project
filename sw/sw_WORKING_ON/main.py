@@ -56,6 +56,7 @@ def run():
 
             if robot.navigate.arrived() == False:
                 if robot.sensors.at_junction():
+                    print("junction......")
                     reversing = False
                     if robot.navigate.peek_next_move() == "STRAIGHT":
                         robot.navigate.next_move()
@@ -179,7 +180,7 @@ def run():
                     elif robot.navigate.peek_next_move() == "REVERSE":
                         print("reversing!!!")
                         reversing = True
-                        robot.follower.reverse(BASE_SPEED) # using reverse not step reverse - unsure
+                        robot.follower.stepreverse(BASE_SPEED) # using stepreverse not reverse - unsure
                         sleep_ms(250)
                         robot.navigate.next_move()
 
@@ -193,7 +194,7 @@ def run():
                         state = "DONE"
 
                 if reversing == True:
-                    robot.follower.reverse(BASE_SPEED) # not using step reverse - haven't seen this work yet?
+                    robot.follower.stepreverse(BASE_SPEED) # not using step reverse - haven't seen this work yet?
                 else:
                     robot.follower.step(BASE_SPEED)
 
@@ -229,7 +230,7 @@ def run():
             elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
                 turnin = "LEFT"
                 turnout = "RIGHT"
-            # now can use same code for both sides
+            # same code for both sides
             if robot.sensors.at_junction():
                 bay_count += 1
                 print(bay_count)
@@ -246,14 +247,14 @@ def run():
                 else:
                     print("package not there")
                     while robot.sensors.at_junction == False:
-                        robot.follower.reverse(BASE_SPEED)
+                        robot.follower.stepreverse(BASE_SPEED)
                     if timeup:
                         state = "RETURN"
                     if bay_count < 6:
-                        #keep going to search next bay
+                        # keep going to search next bay
                         robot.follower.turn(turnout, SPIN_SPEED)
                     else: 
-                        #give up, go to next rack. raise error
+                        # give up, go to next rack. raise error
                         print("Error: no magnet found in rack")
                         robot.follower.turn(turnin, SPIN_SPEED)
                         
@@ -289,9 +290,9 @@ def run():
                 elif polarity == None:
                     t0 = ticks_ms()
                     while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
-                        robot.follower.reverse(EXTRA_SLOW_SPEED)
+                        robot.follower.stepreverse(EXTRA_SLOW_SPEED)
                     while robot.sensors.at_junction() == False:
-                        robot.follower.reverse(BASE_SPEED)
+                        robot.follower.stepreverse(BASE_SPEED)
 
                     # Turn back into straight
                     robot.follower.step(BASE_SPEED)
@@ -323,10 +324,10 @@ def run():
             sleep_ms(300)
             
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
-                robot.follower.reverse(EXTRA_SLOW_SPEED)
+                robot.follower.stepreverse(EXTRA_SLOW_SPEED)
             
             while robot.sensors.at_junction() == False:
-                robot.follower.reverse(BASE_SPEED)
+                robot.follower.stepreverse(BASE_SPEED)
             
             # Turn back into straight
             if robot.navigate.location == "rack_L_low":
@@ -393,7 +394,7 @@ def run():
                     
             
         elif state == "DELIVER":
-            # TODO: lower, open, polarity lights off, back off, -> next rack or RETURN
+
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
 
@@ -420,9 +421,9 @@ def run():
             # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
                 print("reversing out of depot")
-                robot.follower.reverse(EXTRA_SLOW_SPEED) 
+                robot.follower.stepreverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
-                robot.follower.reverse(BASE_SPEED)
+                robot.follower.stepreverse(BASE_SPEED)
 
             # # Hard code journey home just for grabber test
             # robot.follower.step(BASE_SPEED)
@@ -480,6 +481,7 @@ def run():
                         bay_count -= 1
 
             robot.navigate.plan_to("START")
+            state = "TRAVEL"
 
         elif state == "DONE":
             print("State is DONE")
