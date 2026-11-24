@@ -9,7 +9,9 @@ from machine import Pin
 from ir_receiver import wait_for_green
 from magnet import read_polarity, read_polarity_grabber_test
 from map import table
+from buttons import start_pressed, stop_pressed
 
+stop_button = Pin(START_BUTTON_PIN, Pin.IN, Pin.PULL_DOWN) 
 
 def run():
     robot = Robot()
@@ -23,6 +25,10 @@ def run():
     while True:
         # --- safety first, every loop ---
         # TODO: if stop_pressed(): stop motors, lights off, state = "WAIT_START"
+        
+        if stop_pressed(stop_button):
+            state = "DONE"
+        
         # TODO: if time is nearly up and state is not RETURN/DONE: plan_to("START"), state = "RETURN"
 
         if ticks_diff(ticks_ms(), t_start) < 10000: # if less than 10s left + not mid deliver, just go home
@@ -443,6 +449,10 @@ def run():
 
         elif state == "DONE":
             robot.drive.stop()
+            robot.lights.amber_off()
+            robot.lights.red_off()
+            robot.lights.green_off()
+            
 
         sleep_ms(5)
         t0 = ticks_ms()
@@ -454,12 +464,7 @@ def run():
 
 def main():
     """Check if button pressed"""
-    stop_button = Pin(START_BUTTON_PIN, Pin.IN, Pin.PULL_DOWN) 
-    start = 1
-    while start == 1:
-        # Poll the value
-        start = stop_button.value()
-    print("Starting")
-    run()
+    if start_pressed(stop_button):
+        run()
 
 main()
