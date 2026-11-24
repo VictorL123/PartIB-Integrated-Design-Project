@@ -17,7 +17,7 @@ from utime import sleep_ms, ticks_ms, ticks_diff
 from config import (SERVO_HORIZONTAL_PIN, SERVO_VERTICAL_PIN,
                     SERVO_HOR_START_ANGLE, SERVO_VER_START_ANGLE,
                     VER_BOTTOM_RACK_ANGLE, VER_TOP_ANGLE,
-                    HOR_OPEN_ANGLE, HOR_CLOSED_ANGLE, SPEED_DEG_S)
+                    HOR_OPEN_ANGLE, HOR_CLOSED_ANGLE, HOR_SPEED_DEG_S, VER_SPEED_DEG_S)
 from servo import SlowServo
 
 PAUSE_MS = 2000          # time to look at the robot between moves
@@ -45,14 +45,14 @@ def check_angles():
         if not 0 <= value <= 270:
             print("BAD:", name, "=", value, "is outside 0-270")
             ok = False
-    if SPEED_DEG_S <= 0:
+    if HOR_SPEED_DEG_S <= 0:
         print("BAD: SPEED_DEG_S must be above 0 (a speed of 0 would hang move_to)")
         ok = False
     results.append(("config values in range", ok))
     return ok
 
 
-def timed_move(name, servo, target, speed=SPEED_DEG_S):
+def timed_move(name, servo, target, speed=HOR_SPEED_DEG_S):
     """Move and report: final angle correct? duration close to distance / speed?"""
     start = servo.angle
     expected_ms = abs(target - start) / speed * 1000
