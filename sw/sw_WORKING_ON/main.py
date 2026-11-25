@@ -74,6 +74,8 @@ def run():
                         print("up the ramp we go hehe")
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(), t0) < RAMP_CLOCK_UP:
+                            #Flash LEDs on while in the loop
+                            robot.lights.amber_flash(ticks_ms())
                             robot.follower.step(RAMP_SPEED)
                         print("ramp complete :)")
 
@@ -83,6 +85,8 @@ def run():
                         print("we goin down lol")
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(), t0) < RAMP_CLOCK_DOWN:
+                            #Flash LEDs on while in the loop
+                            robot.lights.amber_flash(ticks_ms())
                             robot.follower.step(BASE_SPEED)
                         print("back at the bottom now hehe")
 
@@ -92,6 +96,8 @@ def run():
                         print("calling straight for straight_time_bay")
                         t0 = ticks_ms()
                         while ticks_diff(ticks_ms(), t0) < STRAIGHT_TIME_BAY:
+                            #Flash LEDs on while in the loop
+                            robot.lights.amber_flash(ticks_ms())
                             robot.follower.step(BASE_SPEED)
                         robot.follower.turn("180", SPIN_SPEED)
 
@@ -121,6 +127,8 @@ def run():
                         robot.navigate.next_move()
                         result = False
                         while result == False:
+                            #Flash LEDs on while in the loop
+                            robot.lights.amber_flash(ticks_ms())
                             result = wait_for_green()
                         print("lights out and away we go!")
                        

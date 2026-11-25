@@ -86,3 +86,4 @@ def test_servo(angle):
     horizontal_servo.move_to(angle, HOR_SPEED_DEG_S)
     servo_vertical.move_to(angle,VER_SPEED_DEG_S)
 
+test_servo(180)

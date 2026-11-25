@@ -46,7 +46,7 @@ SLOW_SPEED = 30           # approaching packages / ramp
 EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
-SPEED_DEG_S = 20 # TODO: DONT MAKE THIS ZERO LOL
+SPEED_DEG_S = 20 # DONT MAKE THIS ZERO LOL
 
 # ---------------- TIMINGS FOR; ----------------
 
@@ -63,7 +63,7 @@ STRAIGHT_TIME_DEPOT = 1100
 STRAIGHT_TIME_BAY = 3500
 STRAIGHT_TIME_SEARCH = 1700
 RAMP_CLOCK_UP = 9000 
-RAMP_CLOCK_DOWN = 9000 # TODO: needs calibration freddy.... 
+RAMP_CLOCK_DOWN = 9000 
 
 #Grabbing times
 WAIT_TIME = 3000
@@ -81,7 +81,7 @@ LOST_LINE_TIMEOUT_MS = 1500       # give up (and stop) if the line is lost this 
 SERVO_HOR_START_ANGLE = 6
 SERVO_VER_START_ANGLE = 180
 
-VER_BOTTOM_RACK_ANGLE = 150 # TODO: NEEDS CALIBRATING
+VER_BOTTOM_RACK_ANGLE = 150 
 VER_TOP_ANGLE = 80
 
 HOR_OPEN_ANGLE = 75
