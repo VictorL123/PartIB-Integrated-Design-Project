@@ -57,6 +57,8 @@ def run():
                 if robot.navigate.arrived() == False:
                     print("junction......")
                     reversing = False
+                    
+                    print(robot.navigate.peek_next_move())
 
                     #Now we look at the next move and execute it in one of the elif ladder below
                     if robot.navigate.peek_next_move() == "STRAIGHT":
@@ -250,6 +252,7 @@ def run():
                 
                 # If polarity is either "N" or "S"
                 if polarity != None:
+                    robot.grabber.open()
                     state = "GRAB"
                     
                 # If box has no polarity then search next bay

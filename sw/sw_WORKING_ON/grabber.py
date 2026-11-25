@@ -7,6 +7,7 @@ timed moves or limit-switch based. Rule from the brief: carried packages must be
 
 from config import SERVO_HORIZONTAL_PIN, SERVO_VERTICAL_PIN, SERVO_HOR_START_ANGLE, SERVO_VER_START_ANGLE, VER_TOP_ANGLE, HOR_CLOSED_ANGLE, HOR_OPEN_ANGLE, HOR_SPEED_DEG_S, VER_SPEED_DEG_S, VER_BOTTOM_RACK_ANGLE
 from servo import Servo, SlowServo
+from time import sleep_ms
 
 
 class Grabber:
@@ -44,10 +45,12 @@ class Grabber:
 
 def test_grabber():
     grabber = Grabber()
+    grabber.pick_up()
+    #grabber.raise_before_grab("low")
     grabber.open()
     grabber.close()
-    grabber.raise_before_grab("top")
-    grabber.pick_up()
+    sleep_ms(1000)
+
     grabber.lower_to_ground()
     
     
