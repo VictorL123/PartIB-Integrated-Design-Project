@@ -16,10 +16,11 @@ stop_button = Pin(START_BUTTON_PIN, Pin.IN, Pin.PULL_DOWN)
 def run():
     robot = Robot()
     state = "WAIT_START"
-    t_start = 0
+    t_start = ticks_ms()
     reversing = False # used in linefollow turn to check if it needs to clear the junction before turning or not (if just reversed on, -thickness for forward movement)
     bay_count = 0
-    timeup = False
+    timeup, time_deliver_up = False
+
     # no_box_in_rack = False # USING CHECK POLARITY INSTEAD?
 
     while True:
@@ -28,9 +29,13 @@ def run():
             state = "DONE"
 
         # TODO: Check time to go home
-        # If its been 4:50 since start, go home
-        if ticks_diff(ticks_ms(), t_start) > 290000: # if less than 10s left + not mid deliver, just go home
+        # If its been 4:35 since start, go home
+        if ticks_diff(ticks_ms(), t_start) > 275000: # if less than 25s left + not mid deliver, just go home
+            # currently, this is only checked after making one TRAVEL, after making one SEARCH , after getting to the end of a bay and after delivering
             timeup = True
+        if ticks_diff(ticks_ms(), t_start) > 255000: # if less than 45s left before delivering, try to put in closest depo, or just go home
+            # this checks after getting to end of first bay before delivering
+            time_deliver_up = True
 
         # distance sensor safety check here? - change state to recover if state is not already grab or approach package
 
@@ -159,21 +164,26 @@ def run():
                     robot.drive.stop()
 
                     if timeup:
+                        print("state = RETURN")
                         state = "RETURN"
 
                     # decide on next state by location
                     elif robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
+                        print("state = SEARCH")
                         state = "SEARCH"
 
                     elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
+                        print("state = DELIVER")
                         state = "DELIVER"
 
                     elif robot.navigate.location == "START":
                         if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
                             robot.navigate.plan_to(robot.navigate.nextlocation)
+                            print(f"routing to {robot.navigate.nextlocation}")
                             robot.navigate.nextlocation = "None"
                             state = "TRAVEL"
                         else: 
+                            print("done")
                             state = "DONE"
 
             if reversing == True:
@@ -196,6 +206,7 @@ def run():
             if robot.sensors.at_junction():
                 # TODO: (check that) this is assuming each time AGV turns, it ends up on the next junction (if it ends up beyond, that's an issue)
                 bay_count += 1
+                print(f"at bay {bay_count}")
                 print(bay_count)
                 
                 # Turn into first bay
@@ -218,13 +229,14 @@ def run():
                     while robot.sensors.at_junction == False:
                         robot.follower.stepreverse(BASE_SPEED)
                     if timeup:
+                        print("state = RETURN")
                         state = "RETURN"
                     if bay_count < 6:
                         # keep going to search next bay
                         robot.follower.turn(turnout, SPIN_SPEED)
                     else: 
                         # give up, go to next rack. raise error
-                        print("Error: no magnet found in rack")
+                        print("Error: no magnet found in rack, back to first bay")
                         robot.follower.turn(turnin, SPIN_SPEED)
                         state = "TOFIRSTBAY"                                
 
@@ -250,6 +262,7 @@ def run():
                 
                 # If polarity is either "N" or "S"
                 if polarity != None:
+                    print("state = GRAB")
                     state = "GRAB"
                     
                 # If box has no polarity then search next bay
@@ -266,14 +279,12 @@ def run():
                         robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
                     elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
                         robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
-                    
+
+                    print("back to state = SEARCH")
                     state = "SEARCH"
 
                 
         elif state == "GRAB": 
-
-            print("In state Grabbing")
-
             # recording this rack as searched
             table[robot.navigate.location] = "SEARCHED"
             
@@ -307,11 +318,11 @@ def run():
                 robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
                 
             # Get to the first bay
+            print("state = TOFIRSTBAY")
             state = "TOFIRSTBAY"
             
         elif state == "TOFIRSTBAY":
             """This gets back to the first bay"""
-            print("In state TOFIRSTBAY")
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
             
@@ -327,6 +338,7 @@ def run():
                     bay_count -= 1
 
                     if timeup:
+                        print("state = RETURN")
                         state = "RETURN"
                     
                     if polarity == None: # if not holding box
@@ -337,6 +349,7 @@ def run():
                             val = list(table.values())[i]
                             if val == "UNSEARCHED":
                                 robot.navigate.plan_to(list(table)[i])
+                                print(f"planning route to {list(table)[i]}")
                                 planned = True # to signal a rack has been chosen and routed to
                                 break
 
@@ -353,17 +366,46 @@ def run():
                     else: # so it is carrying a box
                         # assuming there will only be 2 boxes of the same polarity on the table at any time
                         if polarity == "N":
-                            if table["deposit_L2"] == "EMPTY":
-                                robot.navigate.plan_to("deposit_L2")
-                            else:
-                                robot.navigate.plan_to("deposit_L1")
+                            if robot.navigate.location != "rack_L_low" and time_deliver_up: # giving it 45s to deliver and get back
+                                if robot.navigate.location == "rack_R_low": # just worth putting in wrong box, and getting back to home
+                                    if table["deposit_R2"] == "EMPTY":
+                                        print("maximise points: planning to deposit_R2")
+                                        robot.navigate.plan_to("deposit_R2")
+                                    elif table["deposit_R1"] == "EMPTY":
+                                        print("planning to deposit_R1")
+                                        robot.navigate.plan_to("deposit_R1")
+                                else:
+                                    state = "RETURN" # only if no closest good depot
+
+                            else: # enough time left to do properly
+                                if table["deposit_L2"] == "EMPTY":
+                                    print("planning to deposit_L2")
+                                    robot.navigate.plan_to("deposit_L2")
+                                else:
+                                    print("planning to deposit_L1")
+                                    robot.navigate.plan_to("deposit_L1")
 
                         if polarity == "S":
-                            if table["deposit_R2"] == "EMPTY":
-                                robot.navigate.plan_to("deposit_R2")
-                            else:
-                                robot.navigate.plan_to("deposit_R1")
-                    
+                            if robot.navigate.location != "rack_R_low" and time_deliver_up:
+                                if robot.navigate.location == "rack_L_low": # just worth putting in wrong box, and getting back to home
+                                    if table["deposit_L2"] == "EMPTY":
+                                        print("maximise points: planning to deposit_L2")
+                                        robot.navigate.plan_to("deposit_L2")
+                                    elif table["deposit_L1"] == "EMPTY":
+                                        print("planning to deposit_L1")
+                                        robot.navigate.plan_to("deposit_L1")
+                                else:
+                                    state = "RETURN"
+
+                            else: # do properly
+                                if table["deposit_R2"] == "EMPTY":
+                                    print("planning to deposit_R2")
+                                    robot.navigate.plan_to("deposit_R2")
+                                else:
+                                    print("planning to deposit_R1")
+                                    robot.navigate.plan_to("deposit_R1")
+
+                    print("state = TRAVEL")
                     state = "TRAVEL"
             else:
                 robot.follower.step(BASE_SPEED)
