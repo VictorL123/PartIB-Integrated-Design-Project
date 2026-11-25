@@ -429,7 +429,8 @@ def run():
             state = "TRAVEL"
             
         
-        elif state == "RECOVER": # my hypothesised most likely scenarios: hasn't turned far enough, or has driven off some line
+        elif state == "RECOVER": 
+                #So we have 3 plans we try in order, then if all else fails a manual reset it is...
                 plan = 1 
 
                 if plan == 1:

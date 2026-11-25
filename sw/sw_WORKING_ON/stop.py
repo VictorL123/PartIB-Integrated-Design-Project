@@ -22,6 +22,7 @@ def stop():
 
     #Stop the servos and reset them back to normal position
     """ ADD SERVO STOP CODE HERE """
+    
     print("stopped")
 
 
