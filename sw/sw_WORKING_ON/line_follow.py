@@ -1,7 +1,7 @@
 """line_follow.py - the PD controller. One call = one control step."""
 from config import KP, KD, KI, DT, TURN_LEFT_90_MS, TURN_RIGHT_90_MS, SPIN_SPEED, STRAIGHT_BEFORE_TURN, STRAIGHT_BEFORE_HALFSPIN, TURN_180_MS
 from utime import sleep_ms
-from magnet import read_polarity
+# from magnet import read_polarity # for testing, just input polarity
 # what is a control step? where does the line counting happen? what is drive? can drivetrain accommodate changing one wheel?
 
 class LineFollower:
@@ -47,7 +47,7 @@ class LineFollower:
         self.drive.drive(-base_speed, -base_speed)
 
 
-    def turn(self, direction, spin_speed=SPIN_SPEED, reversing=False):
+    def turn(self, direction, spin_speed=SPIN_SPEED, polarity=None, reversing=False):
         """turn left, right or 180 TODO: needs a bit of tidying"""
         print("In turn function")
         if direction == "LEFT":
@@ -65,7 +65,8 @@ class LineFollower:
             print("BROKEN")
             return
         
-        if read_polarity() == None:
+        # if read_polarity() == None:
+        if polarity == None:
             if direction != "180" and reversing == False:
                 sleep_ms(STRAIGHT_BEFORE_TURN)
                 print("after going straight")
@@ -78,7 +79,7 @@ class LineFollower:
             self.drive.stop()                # without this the robot never stops turning
         else:
             if direction != "180":
-                sleep_ms(STRAIGHT_BEFORE_HALFSPIN)
+                sleep_ms(STRAIGHT_BEFORE_HALFSPIN) # 0 s straight before turn for now # TODO: calibrate
             print("turning halfspin")
             self.drive.halfspin(direction, spin_speed)
             sleep_ms(duration)
