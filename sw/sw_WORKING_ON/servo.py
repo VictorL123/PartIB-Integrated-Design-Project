@@ -86,9 +86,10 @@ def test_servo(angle):
     horizontal_servo.move_to(angle, HOR_SPEED_DEG_S)
     servo_vertical.move_to(angle,VER_SPEED_DEG_S)
 
+
+#Servo testing a resetting in prep for being added to board
 servo1 = Servo(Pin(13))
 servo2 = Servo(Pin(15))
-
 
 """ IF SOMEONE DELETES THIS CODE SO HELP ME I WILL FIND YOU..... """
 def test_positions():
