@@ -100,23 +100,25 @@ class Route:
             if (self.location, destination) in ROUTES.keys(): # not all routes are in the dictionary so
                 self.nextlocation = "None" # so when arrived == TRUE, have actually arrived
                 print(f"planning route to {destination}")
-                self._plan.append(ROUTES[(self.location, destination)])
+                self._plan.extend(ROUTES[(self.location, destination)])
                 # ahead of time -> TODO: this may be buggy, some code may rely on this being the correct current info
                 self.lastlocation = self.location
                 self.location = destination
             else:
                 self.nextlocation = destination # this is used at end of state = "TRAVEL" to check if there's more to go
                 print("planning route to START first")
-                self._plan.append(ROUTES[(self.location, "START")])
+                self._plan.extend(ROUTES[(self.location, "START")])
                 # ahead of time
                 self.lastlocation = self.location
                 self.location = "START"
 
 
     def peek_next_move(self):
+        """returns move in position 0 of plan"""
         return self._plan[0]
 
     def next_move(self):
+        """popping the first move in plan to get the next move in position 0"""
         self._plan.pop(0)
 
     def arrived(self):
