@@ -524,8 +524,8 @@ def run():
             robot.lights.amber_off()
             robot.lights.red_off()
             robot.lights.green_off()
-            #robot.grabber.lower_to_ground()
-            robot.grabber.close()
+            robot.grabber.lower_to_ground()
+            robot.grabber.open()
             
 
         sleep_ms(5)
