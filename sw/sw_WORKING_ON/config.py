@@ -101,8 +101,8 @@ PACKAGE_THERE_MM = 200    # distance reading that means "block exists in the bay
 LIFT_TIME_MS = 0          # actuator has no feedback: time the carry height by testing
 
 IR_THREASHOLD = 1
-HALL_LOWER_THREASHOLD = 1.6
-HALL_UPPER_THREASHOLD = 1.9 #Threasholds for the analogue inputs in voltages
+HALL_LOWER_THREASHOLD = 1.75
+HALL_UPPER_THREASHOLD = 2.25 #Threasholds for the analogue inputs in voltages
 
 # ---------------- SPECIFIC TEST OPTIONS ----------------
 TEST_STOP_AFTER_JUNCTIONS = None  # e.g. 2 = stop after crossing 2 junctions

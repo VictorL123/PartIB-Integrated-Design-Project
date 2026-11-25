@@ -7,12 +7,12 @@ gives N or S. Print raw values with real blocks before writing the thresholds.
 from config import HALL_PIN, HALL_LOWER_THREASHOLD, HALL_UPPER_THREASHOLD
 from machine import Pin, ADC
 from utime import sleep_ms
+from robot import Robot
 
 
 def read_polarity():
     """Returns "N", "S" or None (no clear field). Averaged over a few samples. CHECK THE DAMN THRESHOLDS!!!!!!!!"""
     #Define the hall effect sensors' input pin 
-    return None
     magnet_sensor = ADC(Pin(HALL_PIN))
     v_total = 0
 
@@ -25,15 +25,23 @@ def read_polarity():
 
     #Average those readings and check those
     v_average = v_total / 20
+    print(v_average)
 
     #Now we check the v_average againt our threasholds
     if v_average > HALL_UPPER_THREASHOLD:
-        return "N"
-    elif v_average < HALL_LOWER_THREASHOLD:
         return "S"
+    elif v_average < HALL_LOWER_THREASHOLD:
+        return "N"
     else: 
         return None
 
-def read_polarity_grabber_test():
-    """ONLY FOR THE GRABBER TEST"""
-    return "N"
+def test_hall_effect():
+    #Read the polarity and find the robot
+    polarity = read_polarity()
+    robot = Robot()
+
+    #Print out what the polarity was and light up the lights (test this too)
+    print(polarity)
+    robot.lights.show_polarity(polarity)
+
+# test_hall_effect()
