@@ -40,18 +40,17 @@ KI = 0
 
 # ---------------- SPEEDS FOR THE MOTOR AND SERVO ----------------
 
-BASE_SPEED = 60           # 0-100
+BASE_SPEED = 80           # 0-100
 RAMP_SPEED = 90           #Bonus speed to get up the damn ramp
 SLOW_SPEED = 30           # approaching packages / ramp
 EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
-SPEED_DEG_S = 20 # DONT MAKE THIS ZERO LOL
 
 # ---------------- TIMINGS FOR; ----------------
 
 #Turning
-LEFT_MOTOR_CORRECTION = 0.98
+LEFT_MOTOR_CORRECTION = 1
 TURN_LEFT_90_MS = 1400
 TURN_RIGHT_90_MS = 1450
 TURN_180_MS = 4000
@@ -61,7 +60,7 @@ STRAIGHT_BEFORE_TURN = 1000
 STRAIGHT_BEFORE_HALFSPIN = 0 # for now
 STRAIGHT_TIME_DEPOT = 1100
 STRAIGHT_TIME_BAY = 3500
-STRAIGHT_TIME_SEARCH = 1700
+STRAIGHT_TIME_SEARCH = 1400
 RAMP_CLOCK_UP = 9000 
 RAMP_CLOCK_DOWN = 9000 
 
@@ -81,14 +80,14 @@ LOST_LINE_TIMEOUT_MS = 1500       # give up (and stop) if the line is lost this 
 SERVO_HOR_START_ANGLE = 6
 SERVO_VER_START_ANGLE = 180
 
-VER_BOTTOM_RACK_ANGLE = 150 
-VER_TOP_ANGLE = 80
+VER_BOTTOM_RACK_ANGLE = 120 
+VER_TOP_ANGLE = 75
 
 HOR_OPEN_ANGLE = 75
-HOR_CLOSED_ANGLE = 6
+HOR_CLOSED_ANGLE = 30
 
 HOR_SPEED_DEG_S = 20
-VER_SPEED_DEG_S = 40
+VER_SPEED_DEG_S = 20
 
 # ---------------- CONSTANTS FOR INTERFACING WITH SENSOR DATA ----------------
 
@@ -97,13 +96,13 @@ JUNCTION_CROSS_MS = 300   # drive straight this long to get past a junction (tun
 DEBOUNCE_MS = 25          # button debounce
 FLASH_HZ = 2              # amber FLASH rate (on/off cycles per second). Keep it under
                           # 3 Hz and check what the brief's H&S rule wants.
-PACKAGE_NEAR_MM = 60      # distance reading that means "block is in the gripper"
+PACKAGE_NEAR_MM = 100      # distance reading that means "block is in the gripper"
 PACKAGE_THERE_MM = 200    # distance reading that means "block exists in the bay"
 LIFT_TIME_MS = 0          # actuator has no feedback: time the carry height by testing
 
 IR_THREASHOLD = 1
-HALL_LOWER_THREASHOLD = 1.6
-HALL_UPPER_THREASHOLD = 1.9 #Threasholds for the analogue inputs in voltages
+HALL_LOWER_THREASHOLD = 1.75
+HALL_UPPER_THREASHOLD = 2.25 #Threasholds for the analogue inputs in voltages
 
 # ---------------- SPECIFIC TEST OPTIONS ----------------
 TEST_STOP_AFTER_JUNCTIONS = None  # e.g. 2 = stop after crossing 2 junctions

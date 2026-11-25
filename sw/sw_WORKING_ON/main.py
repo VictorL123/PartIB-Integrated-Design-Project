@@ -62,6 +62,8 @@ def run():
                 if robot.navigate.arrived() == False:
                     print("junction......")
                     reversing = False
+                    
+                    print(robot.navigate.peek_next_move())
 
                     #Now we look at the next move and execute it in one of the elif ladder below
                     if robot.navigate.peek_next_move() == "STRAIGHT":
@@ -191,7 +193,6 @@ def run():
             else:
                 robot.follower.step(BASE_SPEED)
 
-
         elif state == "SEARCH": 
             
             # set up symmetric directions
@@ -240,8 +241,7 @@ def run():
                         robot.follower.turn(turnin, SPIN_SPEED)
                         state = "TOFIRSTBAY"                                
 
-                robot.follower.step(BASE_SPEED)
-                  
+                robot.follower.step(BASE_SPEED)                
             
         elif state == "APPROACH_PACKAGE":
             elapsed = ticks_diff(ticks_ms(),t_start)
@@ -262,6 +262,7 @@ def run():
                 
                 # If polarity is either "N" or "S"
                 if polarity != None:
+                    robot.grabber.open()
                     print("state = GRAB")
                     state = "GRAB"
                     
@@ -282,8 +283,7 @@ def run():
 
                     print("back to state = SEARCH")
                     state = "SEARCH"
-
-                
+           
         elif state == "GRAB": 
             # recording this rack as searched
             table[robot.navigate.location] = "SEARCHED"
@@ -409,8 +409,7 @@ def run():
                     state = "TRAVEL"
             else:
                 robot.follower.step(BASE_SPEED)
-                    
-            
+                        
         elif state == "DELIVER":
 
             elapsed = ticks_diff(ticks_ms(),t_start)
@@ -469,8 +468,7 @@ def run():
             
                 planned = False
             state = "TRAVEL"
-            
-        
+              
         elif state == "RECOVER": 
                 #So we have 3 plans we try in order, then if all else fails a manual reset it is...
                 plan = 1 
@@ -498,8 +496,7 @@ def run():
                     robot.follower.step(EXTRA_SLOW_SPEED)
                     sleep_ms(250)
                     pass
-
-        
+      
         elif state == "RETURN": 
             print("RETURNING HOME")
         
@@ -527,8 +524,8 @@ def run():
             robot.lights.amber_off()
             robot.lights.red_off()
             robot.lights.green_off()
-            #robot.grabber.lower_to_ground()
-            robot.grabber.close()
+            robot.grabber.lower_to_ground()
+            robot.grabber.open()
             
 
         sleep_ms(5)
