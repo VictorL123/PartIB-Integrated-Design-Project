@@ -430,11 +430,6 @@ def run():
             
         
         elif state == "RECOVER": # my hypothesised most likely scenarios: hasn't turned far enough, or has driven off some line
-            # TODO: stop, search for the line; decide how to give up safely
-            # if last move was a turn, keep turning.. after 1s give up?
-            # if last move was a step, reverse a bit
-            # if last move was a reverse, step a bit
-            # else:
                 plan = 1 
 
                 if plan == 1:

@@ -86,4 +86,38 @@ def test_servo(angle):
     horizontal_servo.move_to(angle, HOR_SPEED_DEG_S)
     servo_vertical.move_to(angle,VER_SPEED_DEG_S)
 
-test_servo(180)
+servo1 = Servo(Pin(13))
+servo2 = Servo(Pin(15))
+
+
+""" IF SOMEONE DELETES THIS CODE SO HELP ME I WILL FIND YOU..... """
+def test_positions():
+   #while True:
+    print("Move 1")
+
+    # sleep_ms(1000)
+
+    #This code starts the lifting servo in rest and then lifts it up and back down again
+    angle = SERVO_VER_START_ANGLE
+    for i in range(45):
+        servo1.set_angle(angle)
+        angle -=2
+        sleep_ms(55)
+    for i in range(45):
+        servo1.set_angle(angle)
+        angle += 2
+        sleep_ms(55)
+
+    #And this trys to move the grabbing horizontally
+    angle = SERVO_HOR_START_ANGLE
+    for i in range(40):
+        servo2.set_angle(angle)
+        angle +=2
+        sleep_ms(35)
+    for i in range(40):
+        servo2.set_angle(angle)
+        angle -=2
+        sleep_ms(35)
+ 
+# Run test
+test_positions()
