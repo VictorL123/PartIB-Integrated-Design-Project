@@ -28,7 +28,7 @@ class LineSensors:
     
 
     def error(self):
-        """TODO: weighted position of the line. 
+        """weighted position of the line. 
         Negative = line is left (speed up right), positive = line is right (speed up left).
         Return None if no sensor sees the line (lost)."""
         # read sensors
@@ -62,8 +62,8 @@ class LineSensors:
 
 
     def at_junction(self):
-        """TODO: True only after the outer sensors have seen the line JUNCTION_CONFIRM
-        readings IN A ROW. Reset the counter when they don't."""
+        """True only after the outer sensors have seen the line JUNCTION_CONFIRM
+        readings 3 IN A ROW. Reset the counter when they don't."""
         # read values
         values = self.read()
         # this may not work for corners that are not t junctions of the robot does not enter on line

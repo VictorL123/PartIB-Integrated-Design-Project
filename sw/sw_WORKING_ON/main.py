@@ -17,10 +17,10 @@ def run():
     robot = Robot()
     state = "WAIT_START"
     t_start = 0
-    reversing = False
+    reversing = False # used in linefollow turn to check if it needs to clear the junction before turning or not (if just reversed on, -thickness for forward movement)
     bay_count = 0
     timeup = False
-    no_box_in_rack = False
+    # no_box_in_rack = False # USING CHECK POLARITY INSTEAD?
 
     while True:
         #Check 
@@ -52,12 +52,9 @@ def run():
             """ this is the main state, in which the robot is trying to move from one place to the next by following a route specified in navigation """
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
-
-            if robot.navigate.arrived() == False:
-                #For the case where there is still more to do...
-
-                if robot.sensors.at_junction():
-                    #And if the robot has detected it is at a junction
+            
+            if robot.sensors.at_junction(): 
+                if robot.navigate.arrived() == False:
                     print("junction......")
                     reversing = False
 
@@ -70,8 +67,9 @@ def run():
                         sleep_ms(250)
 
                     elif robot.navigate.peek_next_move() == "STRAIGHT_RAMP":
-                        #This is trying to eliminate the issue of the line sensors getting too close or far from the ground
-                        #on the UP PART OF THE RAMP by forcing it to drive for a set time RAMP_CLOCK_UP
+                        # This is trying to eliminate the issue of the line sensors getting too close or far from the ground
+                        # on the UP PART OF THE RAMP by forcing it to drive for a set time RAMP_CLOCK_UP
+                        # TODO: beware of long while loops... no lights
                         robot.navigate.next_move()
                         print("up the ramp we go hehe")
                         t0 = ticks_ms()
@@ -80,7 +78,7 @@ def run():
                         print("ramp complete :)")
 
                     elif robot.navigate.peek_next_move() == "DOWN_RAMP":
-                        #This is a similar move to above, but ajusted for the effects of gravity. It forces drive for a set time
+                        #This is a similar move to above, but adjusted for the effects of gravity. It forces drive for a set time
                         robot.navigate.next_move()
                         print("we goin down lol")
                         t0 = ticks_ms()
@@ -147,33 +145,33 @@ def run():
                         robot.drive.stop()
                         state = "DONE"
 
-                if reversing == True:
-                    robot.follower.stepreverse(BASE_SPEED) # not using step reverse - haven't seen this work yet?
-                else:
-                    robot.follower.step(BASE_SPEED)
 
-            if robot.navigate.arrived() == True:
-                """when not for the line follower, this just means that have reached end of route
-                TODO: need to load either next route or next state"""
-                robot.drive.stop()
+                if robot.navigate.arrived() == True:
+                    """when not for the linefollower, this just means that have reached end of route"""
+                    robot.drive.stop()
 
-                if timeup:
-                    state = "RETURN"
+                    if timeup:
+                        state = "RETURN"
 
-                # decide on next state by location
-                elif robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
-                    state = "SEARCH"
+                    # decide on next state by location
+                    elif robot.navigate.location in ("rack_L_low", "rack_R_low", "rack_L_top", "rack_R_top"):
+                        state = "SEARCH"
 
-                elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
-                    state = "DELIVER"
+                    elif robot.navigate.location in ("deposit_L1", "deposit_L2", "deposit_R1", "deposit_R2"):
+                        state = "DELIVER"
 
-                elif robot.navigate.location == "START":
-                    if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
-                        robot.navigate.plan_to(robot.navigate.nextlocation)
-                        robot.navigate.nextlocation = "None"
-                        state = "TRAVEL"
-                    else: 
-                        state = "DONE"
+                    elif robot.navigate.location == "START":
+                        if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
+                            robot.navigate.plan_to(robot.navigate.nextlocation)
+                            robot.navigate.nextlocation = "None"
+                            state = "TRAVEL"
+                        else: 
+                            state = "DONE"
+
+            if reversing == True:
+                robot.follower.stepreverse(BASE_SPEED) # not using step reverse - haven't seen this work yet?
+            else:
+                robot.follower.step(BASE_SPEED)
 
 
         elif state == "SEARCH": 
@@ -188,6 +186,7 @@ def run():
                 
             # same code for both sides
             if robot.sensors.at_junction():
+                # TODO: (check that) this is assuming each time AGV turns, it ends up on the next junction (if it ends up beyond, that's an issue)
                 bay_count += 1
                 print(bay_count)
                 
@@ -203,7 +202,6 @@ def run():
                 
                 if robot.distance.package_there():
                     print("package there")
-                    no_box_in_rack = False
                     state = "APPROACH_PACKAGE"
                 else:
                     print("package not there")
@@ -220,8 +218,6 @@ def run():
                         # give up, go to next rack. raise error
                         print("Error: no magnet found in rack")
                         robot.follower.turn(turnin, SPIN_SPEED)
-                        
-                        no_box_in_rack = True
                         state = "TOFIRSTBAY"                                
 
                 robot.follower.step(BASE_SPEED)
@@ -246,7 +242,6 @@ def run():
                 
                 # If polarity is either "N" or "S"
                 if polarity != None:
-                    no_box_in_rack = False
                     state = "GRAB"
                     
                 # If box has no polarity then search next bay
@@ -326,7 +321,7 @@ def run():
                     if timeup:
                         state = "RETURN"
                     
-                    if no_box_in_rack == True:
+                    if polarity == None: # if not holding box
                         #need to load route for next rack
                         for i in range(5, 9):
                             # cycle through the first dictionary entries for racks
@@ -334,7 +329,7 @@ def run():
                             val = list(table.values())[i]
                             if val == "UNSEARCHED":
                                 robot.navigate.plan_to(list(table)[i])
-                                planned = True
+                                planned = True # to signal a rack has been chosen and routed to
                                 break
 
                             # if here then all racks are recorded as searched
@@ -345,11 +340,21 @@ def run():
                                 table["cycles"] += 1
                                 robot.navigate.plan_to("rack_L_top")
                             
-                            planned = False   
+                            planned = False # to reset
 
-                    # else: 
-                        # TODO: plan to take box to right deposit
-                                         
+                    else: # so it is carrying a box
+                        # assuming there will only be 2 boxes of the same polarity on the table at any time
+                        if polarity == "N":
+                            if table["deposit_L2"] == "EMPTY":
+                                robot.navigate.plan_to("deposit_L2")
+                            else:
+                                robot.navigate.plan_to("deposit_L1")
+
+                        if polarity == "S":
+                            if table["deposit_R2"] == "EMPTY":
+                                robot.navigate.plan_to("deposit_R2")
+                            else:
+                                robot.navigate.plan_to("deposit_R1")
                     
                     state = "TRAVEL"
             else:
@@ -416,12 +421,26 @@ def run():
             state = "TRAVEL"
             
         
-        elif state == "RECOVER":
+        elif state == "RECOVER": # my hypothesised most likely scenarios: hasn't turned far enough, or has driven off some line
             # TODO: stop, search for the line; decide how to give up safely
-            pass
+            # if last move was a turn, keep turning.. after 1s give up?
+            # if last move was a step, reverse a bit
+            # if last move was a reverse, step a bit
+            # else:
+                count = 0
+                for i in range(1,5):
+                    val = list(table.values())[i]
+                    if val == "Full":
+                        count += 1
+                
+                if count > 1: # have done enough to be able to get back to start
+                    # TODO: what's the best way to get back to start?
+                    pass
+                else: # slowly crash
+                    pass
+
         
-        elif state == "RETURN":
-            # TODO: travel to START, park inside the box, amber off, -> "DONE"
+        elif state == "RETURN": 
             print("RETURNING HOME")
         
             if bay_count > 0:
