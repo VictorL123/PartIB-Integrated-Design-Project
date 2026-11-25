@@ -435,16 +435,30 @@ def run():
             # if last move was a step, reverse a bit
             # if last move was a reverse, step a bit
             # else:
-                count = 0
-                for i in range(1,5):
-                    val = list(table.values())[i]
-                    if val == "Full":
-                        count += 1
+                plan = 1 
+
+                if plan == 1:
+                    #Try in ten small blocks to go back a bit and see if the sensor error goes away
+                    for attempt in range (10):
+                        robot.lights.amber_flash(ticks_ms())
+                        robot.follower.reverse(SLOW_SPEED)
+                        sleep_ms(150)
+                        robot.drive.stop()
+                        sleep_ms(150)
+                        if robot.sensors.error() != None:
+                            return
+                    plan += 1
+
+                if plan == 2:
+                    #Look around you 90 degrees each way and see if you see anything
+                    robot.follower.turn("LEFT")
+                    robot.follower.turn("180")
+                    plan += 1
                 
-                if count > 1: # have done enough to be able to get back to start
-                    # TODO: what's the best way to get back to start?
-                    pass
-                else: # slowly crash
+                if plan == 3:
+                    #Go forward with caution, letting us intervene if needed
+                    robot.follower.step(EXTRA_SLOW_SPEED)
+                    sleep_ms(250)
                     pass
 
         
