@@ -120,4 +120,4 @@ def test_positions():
         sleep_ms(35)
  
 # Run test
-test_positions()
+#test_positions()
