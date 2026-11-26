@@ -13,7 +13,7 @@ from time import sleep_ms
 class Grabber:
     def __init__(self):
         """Servos on SERVO_HORIZONTAL_PIN and SERVO_VERTICAL_PIN"""
-        self.horizontal_servo = SlowServo(SERVO_HORIZONTAL_PIN, SERVO_HOR_START_ANGLE)
+        self.horizontal_servo = SlowServo(SERVO_HORIZONTAL_PIN, HOR_CLOSED_ANGLE)
         self.servo_vertical = SlowServo(SERVO_VERTICAL_PIN, SERVO_VER_START_ANGLE)
         
     def open(self):
@@ -45,13 +45,13 @@ class Grabber:
 
 def test_grabber():
     grabber = Grabber()
-    grabber.pick_up()
+    #grabber.pick_up()
     #grabber.raise_before_grab("low")
     grabber.open()
-    grabber.close()
+    #grabber.close()
     sleep_ms(1000)
 
-    grabber.lower_to_ground()
+    #grabber.lower_to_ground()
     
     
 # Uncomment to run

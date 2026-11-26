@@ -81,11 +81,13 @@ class SlowServo(Servo):
  
 def test_servo(angle):
     horizontal_servo = SlowServo(SERVO_HORIZONTAL_PIN, SERVO_HOR_START_ANGLE)
-    servo_vertical = SlowServo(SERVO_VERTICAL_PIN, SERVO_VER_START_ANGLE)
+    servo_vertical = SlowServo(SERVO_VERTICAL_PIN, VER_TOP_ANGLE)
     
-    horizontal_servo.move_to(angle, HOR_SPEED_DEG_S)
+    #horizontal_servo.move_to(angle, HOR_SPEED_DEG_S)
     servo_vertical.move_to(angle,VER_SPEED_DEG_S)
 
+
+#test_servo(SERVO_VER_START_ANGLE)
 
 #Servo testing a resetting in prep for being added to board
 #servo1 = Servo(Pin(13))

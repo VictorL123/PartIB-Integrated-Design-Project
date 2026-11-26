@@ -7,7 +7,7 @@ from config import *
 from robot import Robot
 from machine import Pin
 from ir_receiver import wait_for_green
-from magnet import read_polarity, read_polarity_grabber_test
+from magnet import read_polarity, read_polarity_fake
 from map import table
 from buttons import start_pressed, stop_pressed
 
@@ -19,7 +19,7 @@ def run():
     t_start = ticks_ms()
     reversing = False # used in linefollow turn to check if it needs to clear the junction before turning or not (if just reversed on, -thickness for forward movement)
     bay_count = 0
-    timeup, time_deliver_up = False
+    timeup, time_deliver_up = False, False
 
     # no_box_in_rack = False # USING CHECK POLARITY INSTEAD?
 
@@ -59,6 +59,8 @@ def run():
             robot.lights.amber_flash(elapsed)
             
             if robot.sensors.at_junction(): 
+                
+                
                 if robot.navigate.arrived() == False:
                     print("junction......")
                     reversing = False
@@ -71,7 +73,7 @@ def run():
                         robot.navigate.next_move()
                         print("calling straight")
                         robot.follower.step(BASE_SPEED)
-                        sleep_ms(250)
+                        sleep_ms(400)
 
                     elif robot.navigate.peek_next_move() == "STRAIGHT_RAMP":
                         # This is trying to eliminate the issue of the line sensors getting too close or far from the ground
@@ -161,7 +163,7 @@ def run():
                         state = "DONE"
 
 
-                if robot.navigate.arrived() == True:
+                elif robot.navigate.arrived() == True:
                     """when not for the linefollower, this just means that have reached end of route"""
                     robot.drive.stop()
 
@@ -203,6 +205,11 @@ def run():
                 turnin = "LEFT"
                 turnout = "RIGHT"
                 
+            if bay_count > 0:
+                if robot.sensors.at_junction() != True:
+                    robot.follower.stepreverse(BASE_SPEED)
+                sleep_ms(250)
+                    
             # same code for both sides
             if robot.sensors.at_junction():
                 # TODO: (check that) this is assuming each time AGV turns, it ends up on the next junction (if it ends up beyond, that's an issue)
@@ -213,6 +220,12 @@ def run():
                 # Turn into first bay
                 robot.follower.turn(turnin, SPIN_SPEED)
                 print(f"calling {turnin} turn")
+                
+                # Raise grabber to correct level
+                robot.drive.stop()
+                level = robot.navigate.location[-3:]
+                robot.grabber.raise_before_grab(level)
+                robot.grabber.open()
                 
                 # Drive until should detect package
                 t0 = ticks_ms()
@@ -252,23 +265,24 @@ def run():
                 
             elif robot.distance.package_near():
                 # Drive forward for a given amount
+                print("Driving towards package")
                 t0 = ticks_ms()
                 while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
                     robot.follower.step(EXTRA_SLOW_SPEED)
                 robot.drive.stop()
                 
                 # Check polarity of box
-                polarity = read_polarity()
+                polarity = read_polarity_fake()
                 
                 # If polarity is either "N" or "S"
                 if polarity != None:
-                    robot.grabber.open()
                     print("state = GRAB")
                     state = "GRAB"
                     
                 # If box has no polarity then search next bay
                 elif polarity == None:
                     t0 = ticks_ms()
+                    print("Polarity is nothing")
                     while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
                         robot.follower.stepreverse(EXTRA_SLOW_SPEED)
                     while robot.sensors.at_junction() == False:
@@ -289,22 +303,24 @@ def run():
             table[robot.navigate.location] = "SEARCHED"
             
             robot.drive.stop()
+            #robot.grabber.pick_up()
             sleep_ms(300)
             robot.grabber.close()
             sleep_ms(300)
             robot.grabber.pick_up()
+            sleep_ms(300)
             
             # May not need to read again because we read in approach package
-            polarity = read_polarity_grabber_test()
+            polarity = read_polarity_fake()
             robot.lights.show_polarity(polarity)
             
             sleep_ms(300)
             
             while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
-                robot.follower.stepreverse(EXTRA_SLOW_SPEED)
+                robot.follower.reverse(EXTRA_SLOW_SPEED)
             
             while robot.sensors.at_junction() == False:
-                robot.follower.stepreverse(BASE_SPEED)
+                robot.follower.reverse(BASE_SPEED)
             
             # Turn back into straight
             if robot.navigate.location == "rack_L_low":
@@ -438,9 +454,9 @@ def run():
             # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
                 print("reversing out of depot")
-                robot.follower.stepreverse(EXTRA_SLOW_SPEED) 
+                robot.follower.reverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
-                robot.follower.stepreverse(BASE_SPEED)
+                robot.follower.reverse(BASE_SPEED)
 
 
             if timeup:
@@ -519,13 +535,13 @@ def run():
             state = "TRAVEL"
 
         elif state == "DONE":
-            print("State is DONE")
+            #print("State is DONE")
             robot.drive.stop()
             robot.lights.amber_off()
             robot.lights.red_off()
             robot.lights.green_off()
             robot.grabber.lower_to_ground()
-            robot.grabber.open()
+            robot.grabber.close()
             
 
         sleep_ms(5)

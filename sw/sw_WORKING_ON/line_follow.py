@@ -37,7 +37,7 @@ class LineFollower:
         derivative = (error - self.last_error)/DT
         mdelta = KD * derivative + KP * error + KI * self.integral
         # TODO: check this works? would then be worth using
-        self.drive.drive(-(base_speed - mdelta), -(base_speed + mdelta))
+        self.drive.drive(-(base_speed + mdelta), -(base_speed - mdelta))
         self.last_error = error
 
         return True

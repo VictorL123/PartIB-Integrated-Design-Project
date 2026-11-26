@@ -17,7 +17,7 @@ ROUTES = {
     # ("START", "deposit_R2"):["STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
     ("START", "START"): [],
     ("rack_L_low", "deposit_L1"): ["STRAIGHT", "LEFTTURN"],
-    # ("rack_L_low", "deposit_L2"): ["LEFTTURN"],
+    ("rack_L_low", "deposit_L2"): ["LEFTTURN"],
     # ("rack_L_low", "START"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
     # ("rack_R_low", "deposit_R1"): ["STRAIGHT", "RIGHTTURN"],
     # ("rack_R_low", "deposit_R2"): ["RIGHTTURN"],

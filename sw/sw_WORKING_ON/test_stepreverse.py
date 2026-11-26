@@ -6,7 +6,7 @@ def test_drive():
     robot = Robot()
     t0 = ticks_ms()
     print("reversing")
-    while ticks_diff(ticks_ms(), t0) < 10000: 
+    while ticks_diff(ticks_ms(), t0) < 5000: 
         robot.follower.stepreverse(BASE_SPEED)
     sleep_ms(1000)
     while robot.sensors.at_junction() == False:

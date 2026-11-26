@@ -35,6 +35,9 @@ def read_polarity():
     else: 
         return None
 
+def read_polarity_fake():
+    return "N"
+
 def test_hall_effect():
     #Read the polarity and find the robot
     polarity = read_polarity()
