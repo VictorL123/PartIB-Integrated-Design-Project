@@ -92,3 +92,10 @@ class LineSensors:
         else:
             self.online_count = 0
         return self.online_count >= JUNCTION_CONFIRM
+
+    def off_line(self):
+        values = self.read()
+        if values == [0,0,0,0]:
+            return True
+        else:
+            return False

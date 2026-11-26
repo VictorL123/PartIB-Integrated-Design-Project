@@ -260,43 +260,43 @@ def run():
             elapsed = ticks_diff(ticks_ms(),t_start)
             robot.lights.amber_flash(elapsed)
             
-            if robot.distance.package_near() != True:
-                robot.follower.step(SLOW_SPEED)
+            # if robot.distance.package_near() != True:
+            #     robot.follower.step(SLOW_SPEED)
                 
-            elif robot.distance.package_near():
-                # Drive forward for a given amount
-                print("Driving towards package")
+            # elif robot.distance.package_near():
+            #     # Drive forward for a given amount
+            #     print("Driving towards package")
+            #     t0 = ticks_ms()
+            while robot.sensors.off_line() == False:
+                robot.follower.step(EXTRA_SLOW_SPEED)
+            robot.drive.stop()
+            
+            # Check polarity of box
+            polarity = read_polarity()
+            
+            # If polarity is either "N" or "S"
+            if polarity != None:
+                print("state = GRAB")
+                state = "GRAB"
+                
+            # If box has no polarity then search next bay
+            elif polarity == None:
                 t0 = ticks_ms()
+                print("Polarity is nothing")
                 while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
-                    robot.follower.step(EXTRA_SLOW_SPEED)
-                robot.drive.stop()
-                
-                # Check polarity of box
-                polarity = read_polarity_fake()
-                
-                # If polarity is either "N" or "S"
-                if polarity != None:
-                    print("state = GRAB")
-                    state = "GRAB"
-                    
-                # If box has no polarity then search next bay
-                elif polarity == None:
-                    t0 = ticks_ms()
-                    print("Polarity is nothing")
-                    while ticks_diff(ticks_ms(), t0) < FORWARD_BEFORE_GRAB:
-                        robot.follower.stepreverse(EXTRA_SLOW_SPEED)
-                    while robot.sensors.at_junction() == False:
-                        robot.follower.stepreverse(BASE_SPEED)
+                    robot.follower.reverse(EXTRA_SLOW_SPEED)
+                while robot.sensors.at_junction() == False:
+                    robot.follower.reverse(BASE_SPEED)
 
-                    # Turn back into straight
-                    robot.follower.step(BASE_SPEED)
-                    if robot.navigate.location in ("rack_L_low", "rack_R_top"):
-                        robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
-                    elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
-                        robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
+                # Turn back into straight
+                robot.follower.step(BASE_SPEED)
+                if robot.navigate.location in ("rack_L_low", "rack_R_top"):
+                    robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
+                elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
+                    robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
 
-                    print("back to state = SEARCH")
-                    state = "SEARCH"
+                print("back to state = SEARCH")
+                state = "SEARCH"
            
         elif state == "GRAB": 
             # recording this rack as searched
@@ -311,7 +311,7 @@ def run():
             sleep_ms(300)
             
             # May not need to read again because we read in approach package
-            polarity = read_polarity_fake()
+            polarity = read_polarity()
             robot.lights.show_polarity(polarity)
             
             sleep_ms(300)

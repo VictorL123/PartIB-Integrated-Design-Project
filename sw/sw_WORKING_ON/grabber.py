@@ -56,4 +56,4 @@ def test_grabber():
     
 # Uncomment to run
     
-#test_grabber()
+test_grabber()

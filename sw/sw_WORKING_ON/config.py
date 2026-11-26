@@ -43,7 +43,7 @@ KI = 0
 BASE_SPEED = 80           # 0-100
 RAMP_SPEED = 90           #Bonus speed to get up the damn ramp
 SLOW_SPEED = 30           # approaching packages / ramp
-EXTRA_SLOW_SPEED = 50     # Reversing away from / going right up to packages  
+EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
 
@@ -66,7 +66,7 @@ RAMP_CLOCK_DOWN = 9000
 
 #Grabbing times
 WAIT_TIME = 3000
-FORWARD_BEFORE_GRAB = 900
+FORWARD_BEFORE_GRAB = 1400
 FORWARD_BEFORE_DELIVER = 1200
 BACK_AFTER_DELIVER = 1000
 
@@ -84,7 +84,7 @@ VER_BOTTOM_RACK_ANGLE = 120
 VER_TOP_ANGLE = 75
 
 HOR_OPEN_ANGLE = 75
-HOR_CLOSED_ANGLE = 10
+HOR_CLOSED_ANGLE = 6
 
 HOR_SPEED_DEG_S = 20
 VER_SPEED_DEG_S = 20

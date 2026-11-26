@@ -19,7 +19,7 @@ def read_polarity():
     #For 20 readings convert to a voltage then sum them 
     for readings in range(20):
         reading = magnet_sensor.read_u16()
-        v_out = reading * (3.3 / 65535)
+        v_out = reading * (3/ 65535)
         v_total += v_out
         sleep_ms(20)
 
@@ -29,9 +29,9 @@ def read_polarity():
 
     #Now we check the v_average againt our threasholds
     if v_average > HALL_UPPER_THREASHOLD:
-        return "S"
-    elif v_average < HALL_LOWER_THREASHOLD:
         return "N"
+    elif v_average < HALL_LOWER_THREASHOLD:
+        return "S"
     else: 
         return None
 
@@ -40,11 +40,18 @@ def read_polarity_fake():
 
 def test_hall_effect():
     #Read the polarity and find the robot
-    polarity = read_polarity()
-    robot = Robot()
+    while True:
+        polarity = read_polarity()
+    #robot = Robot()
 
     #Print out what the polarity was and light up the lights (test this too)
-    print(polarity)
-    robot.lights.show_polarity(polarity)
+    #robot.grabber.raise_before_grab("low")
+    #robot.grabber.open()
+        print(polarity)
+    #robot.lights.show_polarity(polarity)
 
-# test_hall_effect()
+        sleep_ms(300)
+    #robot.grabber.lower_to_ground()
+    #robot.grabber.close()
+
+#test_hall_effect()
