@@ -43,7 +43,7 @@ KI = 0
 BASE_SPEED = 80           # 0-100
 RAMP_SPEED = 90           #Bonus speed to get up the damn ramp
 SLOW_SPEED = 30           # approaching packages / ramp
-EXTRA_SLOW_SPEED = 30     # Reversing away from / going right up to packages  
+EXTRA_SLOW_SPEED = 45     # Reversing away from / going right up to packages  
 SEARCH_SPEED = 30         # pivot speed when the line is lost
 SPIN_SPEED = 50
 
@@ -80,7 +80,7 @@ LOST_LINE_TIMEOUT_MS = 1500       # give up (and stop) if the line is lost this 
 SERVO_HOR_START_ANGLE = 6
 SERVO_VER_START_ANGLE = 180
 
-VER_BOTTOM_RACK_ANGLE = 120 
+VER_BOTTOM_RACK_ANGLE = 90 
 VER_TOP_ANGLE = 75
 
 HOR_OPEN_ANGLE = 75

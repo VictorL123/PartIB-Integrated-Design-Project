@@ -87,7 +87,7 @@ def test_servo(angle):
     servo_vertical.move_to(angle,VER_SPEED_DEG_S)
 
 
-test_servo(SERVO_VER_START_ANGLE)
+#test_servo(SERVO_VER_START_ANGLE)
 
 #Servo testing a resetting in prep for being added to board
 #servo1 = Servo(Pin(13))

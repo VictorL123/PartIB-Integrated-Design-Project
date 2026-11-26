@@ -149,7 +149,7 @@ def run():
                     elif robot.navigate.peek_next_move() == "REVERSE":
                         print("reversing!!!")
                         reversing = True
-                        robot.follower.stepreverse(BASE_SPEED) # using stepreverse not reverse - unsure
+                        robot.follower.reverse(BASE_SPEED) # using stepreverse not reverse - unsure
                         sleep_ms(250)
                         robot.navigate.next_move()
 
@@ -191,7 +191,7 @@ def run():
                             state = "DONE"
 
             if reversing == True:
-                robot.follower.stepreverse(BASE_SPEED) # not using step reverse - haven't seen this work yet?
+                robot.follower.reverse(BASE_SPEED) # not using step reverse - haven't seen this work yet?
             else:
                 robot.follower.step(BASE_SPEED)
 
@@ -205,10 +205,12 @@ def run():
                 turnin = "LEFT"
                 turnout = "RIGHT"
                 
-            if bay_count > 0:
-                if robot.sensors.at_junction() != True:
-                    robot.follower.stepreverse(BASE_SPEED)
-                sleep_ms(250)
+            # It was doing random reverses so i dont think this bit works - not sure tho?    
+                
+            # if bay_count > 0:
+            #     if robot.sensors.at_junction() != True:
+            #         robot.follower.stepreverse(BASE_SPEED)
+            #     sleep_ms(250)
                     
             # same code for both sides
             if robot.sensors.at_junction():
@@ -240,13 +242,16 @@ def run():
                     print("package not there")
                     
                     # Reverse until at the line
-                    while robot.sensors.at_junction == False:
-                        robot.follower.stepreverse(BASE_SPEED)
+                    while robot.sensors.at_junction() == False:
+                        robot.follower.reverse(BASE_SPEED)
+                    print("Reverse finished")
                     if timeup:
                         print("state = RETURN")
                         state = "RETURN"
                     if bay_count < 6:
                         # keep going to search next bay
+                        print("Turning into next bay")
+                        robot.follower.step(BASE_SPEED)
                         robot.follower.turn(turnout, SPIN_SPEED)
                     else: 
                         # give up, go to next rack. raise error
@@ -453,7 +458,6 @@ def run():
             t0 = ticks_ms()
             # Get out of depot
             while ticks_diff(ticks_ms(), t0) < BACK_AFTER_DELIVER:
-                print("reversing out of depot")
                 robot.follower.reverse(EXTRA_SLOW_SPEED) 
             while robot.sensors.at_junction() == False:
                 robot.follower.reverse(BASE_SPEED)
