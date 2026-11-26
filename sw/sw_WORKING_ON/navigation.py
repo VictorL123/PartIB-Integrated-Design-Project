@@ -26,13 +26,13 @@ ROUTES = {
     ("rack_R_top", "START"): ["DOWN_RAMP"],
     ("rack_R_top", "rack_L_top"): [],
     ("rack_L_top", "rack_R_top"): [],
-    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT"],
+    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN"],
     ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
-    ("deposit_L2", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
+    ("deposit_L2", "START"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
     ("deposit_L2", "rack_L_low"): ["RIGHTTURN"],
-    ("deposit_R1", "START"): ["RIGHTTURN", "RIGHTTURN", "STRAIGHT"],
+    ("deposit_R1", "START"): ["RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
     ("deposit_R1", "rack_R_low"): ["LEFTTURN", "STRAIGHT"],
-    ("deposit_R2", "START"): ["RIGHTTURN", "STRAIGHT", "RIGHTTURN", "STRAIGHT"],
+    ("deposit_R2", "START"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
     ("deposit_R2", "rack_R_low"): ["LEFTTURN"]
 
     # need to ensure it stops at the end
@@ -67,12 +67,19 @@ class Route:
             if self.location == "START":
                 if self.lastlocation in ("rack_L_low", "deposit_L1", "deposit_L2"):
                     if destination in ("rack_L_top", "rack_R_top"):
+                        print("try to go up")
+                        #self._plan.extend(["REVERSERIGHTTURN"])
+                    elif destination in ("rack_R_low"):
                         print("right start")
-                        self._plan.extend(["RIGHTTURN"])
+                        self._plan.extend("REVERSERIGHTTURN")
 
                 elif self.lastlocation in ("rack_R_low", "deposit_R1", "deposit_R2"):
                     if destination in ("rack_L_top", "rack_R_top"):
-                        self._plan.extend(["LEFTTURN"])
+                        print("try to go up")
+                        #self._plan.extend(["LEFTTURN"])
+                    elif destination in ("rack_L_low"):
+                        print("left start")
+                        self._plan.extend("REVERSELEFTTURN")
                 
                 elif self.lastlocation in ("rack_L_top", "rack_R_top"):
                     if destination in ("rack_L_low", "deposit_L1", "deposit_L2"):

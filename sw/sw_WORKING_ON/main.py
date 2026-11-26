@@ -145,6 +145,11 @@ def run():
                         robot.navigate.next_move()
                         print("calling turn from main")
                         robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
+
+                    elif robot.navigate.peek_next_move() == "REVERSELEFTTURN":
+                        robot.navigate.next_move()
+                        print("calling turn from main")
+                        robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
                         
                     elif robot.navigate.peek_next_move() == "REVERSE":
                         print("reversing!!!")
