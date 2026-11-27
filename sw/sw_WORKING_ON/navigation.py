@@ -10,12 +10,12 @@ Fill ROUTES by walking the table and counting junctions on the line.
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"], 
-    ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP",], # TODO: will this work... i think it will (after it turns, it won't be on a junction)
+    ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP",], 
     ("START", "rack_R_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
-    ("START", "deposit_L1"):["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
-    ("START", "deposit_L2"):["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
-    ("START", "deposit_R1"):["STRAIGHT", "LEFTTURN", "LEFTTURN"],
-    ("START", "deposit_R2"):["STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
+    ("START", "deposit_L1"): ["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
+    ("START", "deposit_L2"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
+    ("START", "deposit_R1"): ["STRAIGHT", "LEFTTURN", "LEFTTURN"],
+    ("START", "deposit_R2"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
     ("START", "START"): [], # this should be fine because it's already at a junction
 
     ("rack_L_low", "deposit_L1"): ["STRAIGHT", "LEFTTURN"], # TODO: need to make sure at end of TOFIRSTBAY isn't at a junction, this doesn't account for that
@@ -28,7 +28,7 @@ ROUTES = {
     ("rack_R_top", "START"): ["STRAIGHT"],
 
     # is there space for these.. (these will be called if the agv unsuccessfully searches 1 top rack, and decides to search the other top rack next)
-    ("rack_R_top", "rack_L_top"): ["ABOUTTURN", "REVERSE"], # TODO: might need to be 2 reverses, depending on how many junctions its sitting over
+    ("rack_R_top", "rack_L_top"): ["ABOUTTURN", "REVERSE"], 
     ("rack_L_top", "rack_R_top"): ["ABOUTTURN", "REVERSE"], 
 
     # all the routes beginning at deposit will have already been oriented to be in the right direction
@@ -98,15 +98,15 @@ class Route:
             # orientation is variable at depos (reversing out)
             if self.location in ("deposit_L1", "deposit_L2"):
                 if destination == "rack_L_low":
-                    self._plan.extend(["LEFTTURN"])
+                    self._plan.extend(["REVERSELEFTTURN"])
                 else:
-                    self._plan.extend(["RIGHTTURN"])
+                    self._plan.extend(["REVERSERIGHTTURN"])
 
             elif self.location in ("deposit_R1", "deposit_R2"):
                 if destination == "rack_R_low":
-                    self._plan.extend(["RIGHTTTURN"])
+                    self._plan.extend(["REVERSERIGHTTTURN"])
                 else:
-                    self._plan.extend(["LEFTTURN"])
+                    self._plan.extend(["REVERSELEFTTURN"])
 
 
             # actually adding route to plan
