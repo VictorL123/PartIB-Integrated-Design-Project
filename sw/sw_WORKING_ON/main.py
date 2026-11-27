@@ -256,11 +256,11 @@ def run():
                         # keep going to search next bay
                         print("Turning into next bay")
                         # robot.follower.step(BASE_SPEED)
-                        robot.follower.turn(turnout, SPIN_SPEED)
+                        robot.follower.turn(turnout, SPIN_SPEED, reversing=True)
                     else: 
                         # give up, go to next rack. raise error
                         print("Error: no magnet found in rack, back to first bay")
-                        robot.follower.turn(turnin, SPIN_SPEED)
+                        robot.follower.turn(turnin, SPIN_SPEED, reversing=True)
                         state = "TOFIRSTBAY"                                
 
                 robot.follower.step(BASE_SPEED)                
@@ -345,8 +345,7 @@ def run():
             # Get to the first bay
             print("state = TOFIRSTBAY")
             state = "TOFIRSTBAY"
-
-        # TODO: add the changes to search to here    
+    
         elif state == "TOFIRSTBAY":
             """This gets back to the first bay"""
             elapsed = ticks_diff(ticks_ms(),t_start)

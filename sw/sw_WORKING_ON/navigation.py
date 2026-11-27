@@ -58,14 +58,14 @@ class Route:
         """This function allows you to specially hardcode a route for testing and can be called by setting destination to LINE_FOLLOWER_TEST in run()"""
 
         if destination == "LINE_FOLLOWER_TEST": 
-            # Prescribed circuit for line follower
-            self._plan.extend(ROUTES[(self.location, "rack_R_low")]) # takes to start of left lower rack
-            #self._plan.extend(["STRAIGHT", "STRAIGHT", "ABOUTTURN"])
-            #self._plan.extend(["STRAIGHT", "STRAIGHT","DOWN_RAMP"])
-            self._plan.extend(["LEFTTURNINTOBAY"]) # back to beginning of L low rack
-            # self._plan.extend(ROUTES[("rack_L_top", "deposit_L1")]) 
-            self._plan.extend(["LEFTTURNINTODEPOSIT"])
-            self._plan.extend(ROUTES[("deposit_L1", "START")])
+        #     Prescribed circuit for line follower
+        #     self._plan.extend(ROUTES[(self.location, "rack_R_low")]) # takes to start of left lower rack
+        #     self._plan.extend(["STRAIGHT", "STRAIGHT", "ABOUTTURN"])
+        #     self._plan.extend(["STRAIGHT", "STRAIGHT","DOWN_RAMP"])
+        #     self._plan.extend(["LEFTTURNINTOBAY"]) # back to beginning of L low rack
+        #     self._plan.extend(ROUTES[("rack_L_top", "deposit_L1")]) 
+        #     self._plan.extend(["LEFTTURNINTODEPOSIT"])
+        #     self._plan.extend(ROUTES[("deposit_L1", "START")])
             self._plan.extend(["STOP"])
 
         else:

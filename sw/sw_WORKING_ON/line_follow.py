@@ -87,8 +87,6 @@ class LineFollower:
             sleep_ms(duration)
             self.drive.stop() 
 
-        
-
 
     def reset(self):
         self.last_error = 0
