@@ -71,7 +71,7 @@ class Route:
                         #self._plan.extend(["REVERSERIGHTTURN"])
                     elif destination in ("rack_R_low"):
                         print("right start")
-                        self._plan.extend("REVERSERIGHTTURN")
+                        # self._plan.extend("REVERSERIGHTTURN")
 
                 elif self.lastlocation in ("rack_R_low", "deposit_R1", "deposit_R2"):
                     if destination in ("rack_L_top", "rack_R_top"):
@@ -79,7 +79,7 @@ class Route:
                         #self._plan.extend(["LEFTTURN"])
                     elif destination in ("rack_L_low"):
                         print("left start")
-                        self._plan.extend("REVERSELEFTTURN")
+                        #self._plan.extend("REVERSELEFTTURN")
                 
                 elif self.lastlocation in ("rack_L_top", "rack_R_top"):
                     if destination in ("rack_L_low", "deposit_L1", "deposit_L2"):
