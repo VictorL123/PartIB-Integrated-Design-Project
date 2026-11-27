@@ -6,34 +6,40 @@ Fill ROUTES by walking the table and counting junctions on the line.
 
 # assume routes from START will start off in the right direction
 # assume routes from depos start in right direction
+# if not going upwards, i think we need an extra straight?? start off ON middle line (on junction)
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_R_low"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
+    ("START", "rack_R_low"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"], 
+    ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP",], # TODO: will this work... i think it will (after it turns, it won't be on a junction)
     ("START", "rack_R_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
-    ("START", "deposit_L1"):["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
-    ("START", "deposit_L2"):["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
-    ("START", "deposit_R1"):["STRAIGHT", "LEFTTURN", "LEFTTURN"],
-    ("START", "deposit_R2"):["STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
-    ("START", "START"): [],
-    ("rack_L_low", "deposit_L1"): ["STRAIGHT", "LEFTTURN"],
+    ("START", "deposit_L1"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
+    ("START", "deposit_L2"):["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
+    ("START", "deposit_R1"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "LEFTTURN"],
+    ("START", "deposit_R2"):["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
+    ("START", "START"): [], # this should be fine because it's already at a junction
+
+    ("rack_L_low", "deposit_L1"): ["STRAIGHT", "LEFTTURN"], # TODO: need to make sure at end of TOFIRSTBAY isn't at a junction, this doesn't account for that
     ("rack_L_low", "deposit_L2"): ["LEFTTURN"],
     ("rack_L_low", "START"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT"],
     ("rack_R_low", "deposit_R1"): ["STRAIGHT", "RIGHTTURN"],
     ("rack_R_low", "deposit_R2"): ["RIGHTTURN"],
     ("rack_R_low", "START"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT"],
-    ("rack_L_top", "START"): ["DOWN_RAMP"],
+    ("rack_L_top", "START"): ["DOWN_RAMP"], # TODO: where will this finish? we want it to go past outer box line and stop at the centre junction
     ("rack_R_top", "START"): ["DOWN_RAMP"],
-    ("rack_R_top", "rack_L_top"): [],
-    ("rack_L_top", "rack_R_top"): [],
-    ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN"],
-    ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
-    ("deposit_L2", "START"): ["STRAIGHT", "LEFTTURN", "STRAIGHT"], # TODO: change depo routes to be like this one
-    ("deposit_L2", "rack_L_low"): ["RIGHTTURN"],
-    ("deposit_R1", "START"): ["RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
-    ("deposit_R1", "rack_R_low"): ["LEFTTURN", "STRAIGHT"],
-    ("deposit_R2", "START"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
-    ("deposit_R2", "rack_R_low"): ["LEFTTURN"]
+
+    # is there space for these.. (these will be called if the agv unsuccessfully searches 1 top rack, and decides to search the other top rack next)
+    ("rack_R_top", "rack_L_top"): ["ABOUTTURN", "REVERSE"], # TODO: might need to be 2 reverses, depending on how many junctions its sitting over
+    ("rack_L_top", "rack_R_top"): ["ABOUTTURN", "REVERSE"], 
+
+    # all the routes beginning at deposit will have already been oriented to be in the right direction
+    ("deposit_L1", "START"): ["STRAIGHT", "LEFTTURN", "STRAIGHT"],
+    ("deposit_L1", "rack_L_low"): ["STRAIGHT"], # TODO: need to check this works
+    ("deposit_L2", "START"): ["STRAIGHT", "LEFTTURN", "STRAIGHT"],
+    ("deposit_L2", "rack_L_low"): [], # TODO: will this work??? if it does, the other empty ones won't.. need fixing
+    ("deposit_R1", "START"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT"],
+    ("deposit_R1", "rack_R_low"): ["STRAIGHT"],
+    ("deposit_R2", "START"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT"],
+    ("deposit_R2", "rack_R_low"): []
 
     # need to ensure it stops at the end
 

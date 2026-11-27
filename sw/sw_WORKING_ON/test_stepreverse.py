@@ -1,6 +1,6 @@
-from robot import Robot
-from utime import ticks_ms, sleep_ms, ticks_diff
-from config import BASE_SPEED, SPIN_SPEED
+# from robot import Robot
+# from utime import ticks_ms, sleep_ms, ticks_diff
+# from config import BASE_SPEED, SPIN_SPEED
 
 def test_drive():
     robot = Robot()
@@ -41,9 +41,52 @@ def test_drive():
     print("stopped")
 
 
-if __name__ == "__main__":
-    test_drive()
+# if __name__ == "__main__":
+#     test_drive()
 
     
     
+from map import table
+from navigation import Route
+import time
+
+route = Route()
+
+route.location = "rack_L_low"
+route.lastlocation = "rack_L_low"
+
+for i in range(10):
+    if route.arrived() != True:
+        # print(route.peek_next_move())
+        time.sleep(1)
+        route.next_move()
+        print(len(route._plan))
+    else:
+        print("arrived!")
+        print(route.location, route.lastlocation)
+        if route.location == "START":
+            if route.nextlocation != "None": # need to check if there's not more to do:
+                
+                print(f"routing to {route.nextlocation}")
+                route.plan_to(route.nextlocation)
+                route.nextlocation = "None"
+        else: 
+            route.plan_to("deposit_R1")
+        print(route._plan)
+
+
+
+# print("arrived!")
+# print(route.location, route.lastlocation)
+
+
+# for i in range(5, 9):
+#     # cycle through the first dictionary entries for racks
+#     # not looking at where is next closest!!
+#     val = list(table.values())[i]
+#     if val == "UNSEARCHED":
+#         route.plan_to(list(table)[i])
+#         print(route._plan)
+#         planned = True
+#         break
 

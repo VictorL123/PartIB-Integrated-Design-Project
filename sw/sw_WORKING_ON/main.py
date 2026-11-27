@@ -40,7 +40,7 @@ def run():
         # distance sensor safety check here? - change state to recover if state is not already grab or approach package
 
         if state == "WAIT_START":
-            """ set all the lights off, choose a navigation scheme, and finally record start time before travel begins """
+            """ set all the lights off, choose a navigation scheme, and finally travel begins """
             
             # Ensure all the lights are off at the start
             robot.lights.amber_off()
@@ -50,7 +50,6 @@ def run():
             
             # Set the route to Left rack low
             robot.navigate.plan_to("rack_L_low")
-            t_start = ticks_ms()
             state = "TRAVEL"
 
         elif state == "TRAVEL":
@@ -346,7 +345,8 @@ def run():
             # Get to the first bay
             print("state = TOFIRSTBAY")
             state = "TOFIRSTBAY"
-            
+
+        # TODO: add the changes to search to here    
         elif state == "TOFIRSTBAY":
             """This gets back to the first bay"""
             elapsed = ticks_diff(ticks_ms(),t_start)
