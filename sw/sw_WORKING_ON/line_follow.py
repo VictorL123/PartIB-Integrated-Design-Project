@@ -1,5 +1,5 @@
 """line_follow.py - the PD controller. One call = one control step."""
-from config import KP, KD, KI, DT, TURN_LEFT_90_MS, TURN_RIGHT_90_MS, SPIN_SPEED, STRAIGHT_BEFORE_TURN, STRAIGHT_BEFORE_HALFSPIN, TURN_180_MS
+from config import KP, KD, KI, DT, TURN_LEFT_90_MS, TURN_RIGHT_90_MS, SPIN_SPEED, BASE_SPEED, STRAIGHT_BEFORE_TURN, STRAIGHT_BEFORE_HALFSPIN, TURN_180_MS
 from utime import sleep_ms
 # from magnet import read_polarity # for testing, just input polarity
 # what is a control step? where does the line counting happen? what is drive? can drivetrain accommodate changing one wheel?
@@ -68,9 +68,11 @@ class LineFollower:
         # if read_polarity() == None:
         if polarity == None:
             if direction != "180" and reversing == False:
+                # self.drive(BASE_SPEED, BASE_SPEED)
                 sleep_ms(STRAIGHT_BEFORE_TURN)
                 print("after going straight")
             elif direction != "180" and reversing == True:
+                # self.drive(BASE_SPEED, BASE_SPEED)
                 sleep_ms(STRAIGHT_BEFORE_TURN-250)            # TODO: needs calibrating - value is equivalent of thickness of the line
                 print("after going straight")
             print("turning")

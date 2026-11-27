@@ -7,8 +7,8 @@ Fill ROUTES by walking the table and counting junctions on the line.
 # assume routes from START will start off in the right direction
 # assume routes from depos start in right direction
 ROUTES = {
-    ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
+    ("START", "rack_L_low"): ["STRAIGHT", "STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
+    ("START", "rack_R_low"): ["STRAIGHT", "STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
     ("START", "rack_R_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
     ("START", "deposit_L1"):["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
@@ -28,7 +28,7 @@ ROUTES = {
     ("rack_L_top", "rack_R_top"): [],
     ("deposit_L1", "START"): ["LEFTTURN", "STRAIGHT", "LEFTTURN"],
     ("deposit_L1", "rack_L_low"): ["RIGHTTURN", "STRAIGHT"],
-    ("deposit_L2", "START"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "LEFTTURN"],
+    ("deposit_L2", "START"): ["STRAIGHT", "LEFTTURN", "STRAIGHT"], # TODO: change depo routes to be like this one
     ("deposit_L2", "rack_L_low"): ["RIGHTTURN"],
     ("deposit_R1", "START"): ["RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
     ("deposit_R1", "rack_R_low"): ["LEFTTURN", "STRAIGHT"],
@@ -106,7 +106,7 @@ class Route:
             # actually adding route to plan
             if (self.location, destination) in ROUTES.keys(): # not all routes are in the dictionary so
                 self.nextlocation = "None" # so when arrived == TRUE, have actually arrived
-                print(f"planning route to {destination}")
+                print(f"planning route to {destination} by {ROUTES[(self.location, destination)]}")
                 self._plan.extend(ROUTES[(self.location, destination)])
                 # ahead of time -> TODO: this may be buggy, some code may rely on this being the correct current info
                 self.lastlocation = self.location

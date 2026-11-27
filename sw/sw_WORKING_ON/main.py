@@ -187,8 +187,8 @@ def run():
 
                     elif robot.navigate.location == "START":
                         if robot.navigate.nextlocation != "None": # need to check if there's not more to do:
-                            robot.navigate.plan_to(robot.navigate.nextlocation)
                             print(f"routing to {robot.navigate.nextlocation}")
+                            robot.navigate.plan_to(robot.navigate.nextlocation)
                             robot.navigate.nextlocation = "None"
                             state = "TRAVEL"
                         else: 
