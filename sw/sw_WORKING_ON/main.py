@@ -256,7 +256,7 @@ def run():
                     if bay_count < 6:
                         # keep going to search next bay
                         print("Turning into next bay")
-                        robot.follower.step(BASE_SPEED)
+                        # robot.follower.step(BASE_SPEED)
                         robot.follower.turn(turnout, SPIN_SPEED)
                     else: 
                         # give up, go to next rack. raise error
@@ -518,7 +518,7 @@ def run():
                 
                 if plan == 3:
                     #Go forward with caution, letting us intervene if needed
-                    robot.follower.step(EXTRA_SLOW_SPEED)
+                    robot.follower.step(SLOW_SPEED)
                     sleep_ms(250)
                     pass
       

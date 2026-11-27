@@ -28,18 +28,18 @@ class LineFollower:
         return True
 
     def stepreverse(self, base_speed):
-        """step as above but in reverse"""
-        error = self.sensors.error()
-        if error == None:
-            self.drive.stop()
-            return False
-        self.integral = error * DT 
-        derivative = (error - self.last_error)/DT
-        mdelta = KD * derivative + KP * error + KI * self.integral
-        # TODO: check this works? would then be worth using
-        self.drive.drive(-(base_speed + mdelta), -(base_speed - mdelta))
-        self.last_error = error
-
+        # """step as above but in reverse"""
+        # error = self.sensors.error()
+        # if error == None:
+        #     self.drive.stop()
+        #     return False
+        # self.integral = error * DT 
+        # derivative = (error - self.last_error)/DT
+        # mdelta = KD * derivative + KP * error + KI * self.integral
+        # # TODO: check this works? would then be worth using
+        # self.drive.drive(-(base_speed + mdelta), -(base_speed - mdelta))
+        # self.last_error = error
+        print("don't call this nonsense again!")
         return True
 
     def reverse(self, base_speed):

@@ -9,7 +9,7 @@ Fill ROUTES by walking the table and counting junctions on the line.
 ROUTES = {
     ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"],
-    ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP",],
+    ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
     ("START", "rack_R_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],
     ("START", "deposit_L1"):["STRAIGHT", "RIGHTTURN", "RIGHTTURN"],
     ("START", "deposit_L2"):["STRAIGHT", "RIGHTTURN", "STRAIGHT", "RIGHTTURN"],
