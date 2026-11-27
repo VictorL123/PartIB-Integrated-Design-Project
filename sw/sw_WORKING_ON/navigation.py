@@ -8,7 +8,7 @@ Fill ROUTES by walking the table and counting junctions on the line.
 # assume routes from depos start in right direction
 # if not going upwards, i think we need an extra straight?? start off ON middle line (on junction)
 ROUTES = {
-    ("START", "rack_L_low"): ["STRAIGHT", "RIGHTTURN", "STRAIGHT", "STRAIGHT"],
+    ("START", "rack_L_low"): ["STRAIGHT", "HALFRIGHTTURN", "STRAIGHT", "STRAIGHT"],
     ("START", "rack_R_low"): ["STRAIGHT", "LEFTTURN", "STRAIGHT", "STRAIGHT"], 
     ("START", "rack_L_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP",], 
     ("START", "rack_R_top"): ["WAIT_LIGHTS", "STRAIGHT_RAMP"],

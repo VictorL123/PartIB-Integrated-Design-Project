@@ -43,7 +43,7 @@ def run():
             """ set all the lights off, choose a navigation scheme, and finally travel begins """
             
             # Ensure all the lights are off at the start
-            robot.lights.amber_off()
+            robot.lights.amber_on()
             robot.lights.red_off()
             robot.lights.green_off() 
             sleep_ms(1000)
@@ -123,6 +123,14 @@ def run():
                         print("calling turn from main")
                         robot.navigate.next_move()
                         robot.follower.turn("RIGHT", SPIN_SPEED)
+
+                    elif robot.navigate.peek_next_move() == "HALFRIGHTTURN":
+                        #Turn forward to the right 90 degrees; steps so must be going forward
+                        robot.follower.step(BASE_SPEED)
+                        reversing = False
+                        print("calling turn from main")
+                        robot.navigate.next_move()
+                        robot.follower.turn("RIGHT", SPIN_SPEED, polarity="N")
 
                     elif robot.navigate.peek_next_move() == "ABOUTTURN":
                         #Turn the robot fully around, sleeping it so it doesnt detect any white lines it passes over as it turns
@@ -224,6 +232,7 @@ def run():
                 print(bay_count)
                 
                 # Turn into first bay
+                robot.follower.step(BASE_SPEED)
                 robot.follower.turn(turnin, SPIN_SPEED)
                 print(f"calling {turnin} turn")
                 
@@ -255,7 +264,7 @@ def run():
                     if bay_count < 6:
                         # keep going to search next bay
                         print("Turning into next bay")
-                        # robot.follower.step(BASE_SPEED)
+                        robot.follower.step(BASE_SPEED)
                         robot.follower.turn(turnout, SPIN_SPEED, reversing=True)
                     else: 
                         # give up, go to next rack. raise error
@@ -303,6 +312,9 @@ def run():
                     robot.follower.turn("LEFT", SPIN_SPEED, reversing=True)
                 elif robot.navigate.location in ("rack_R_low", "rack_L_top"):
                     robot.follower.turn("RIGHT", SPIN_SPEED, reversing=True)
+
+                # while robot.sensors.at_junction() == False:
+                #     robot.follower.reverse(BASE_SPEED)
 
                 print("back to state = SEARCH")
                 state = "SEARCH"
